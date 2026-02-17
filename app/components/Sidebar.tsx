@@ -1,0 +1,190 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  LogOut,
+  Home,
+  FolderOpen,
+  Users,
+  FileText,
+  Settings,
+  Menu,
+  X,
+  Sun,
+  Moon,
+  Plus,
+  Image,
+  File,
+  Layout,
+  BarChart,
+  Search,
+  Puzzle,
+  Archive,
+} from "lucide-react";
+
+type Theme = "light" | "dark";
+
+interface SidebarProps {
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+  onLogout: () => void;
+  isLoggingOut: boolean;
+  theme: Theme;
+  onToggleTheme: () => void;
+}
+
+export default function Sidebar({
+  sidebarOpen,
+  setSidebarOpen,
+  onLogout,
+  isLoggingOut,
+  theme,
+  onToggleTheme,
+}: SidebarProps) {
+  const pathname = usePathname();
+
+  const navGroups = [
+    {
+      title: "Dashboard",
+      items: [{ icon: Home, label: "Dashboard", href: "/app/dashboard" }],
+    },
+    {
+      title: "Content Management",
+      items: [
+        { icon: Plus, label: "New Content", href: "/app/content/create" },
+        { icon: FileText, label: "All Content", href: "/app/content" },
+        { icon: FolderOpen, label: "Categories", href: "/app/categories" },
+        { icon: Image, label: "Media Library", href: "/app/media" },
+        { icon: File, label: "Pages", href: "/app/pages" },
+        { icon: Layout, label: "Templates", href: "#", soon: true },
+      ],
+    },
+    {
+      title: "Analytics & SEO",
+      items: [
+        { icon: BarChart, label: "Analytics", href: "#", soon: true },
+        { icon: Search, label: "SEO Tools", href: "#", soon: true },
+      ],
+    },
+    {
+      title: "User Management",
+      items: [{ icon: Users, label: "Users", href: "/app/users" }],
+    },
+    {
+      title: "Advanced",
+      items: [
+        { icon: Puzzle, label: "Plugins", href: "#", soon: true },
+        { icon: Archive, label: "Backup & Restore", href: "#", soon: true },
+      ],
+    },
+    {
+      title: "Settings",
+      items: [{ icon: Settings, label: "Settings", href: "/app/settings" }],
+    },
+  ];
+
+  const isActive = (href: string) => pathname === href;
+
+  return (
+    <div
+      className={`sidebar ${sidebarOpen ? "sidebar-open" : "sidebar-closed"}`}
+    >
+      {/* Logo */}
+      <div className="sidebar-logo">
+        <div className="sidebar-logo-content">
+          <div className="sidebar-logo-icon">
+            <FolderOpen className="w-4 h-4 text-white" />
+          </div>
+          {sidebarOpen && <h1 className="sidebar-logo-text">NextCMS</h1>}
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="sidebar-nav">
+        {navGroups.map((group) => (
+          <div key={group.title} className="sidebar-nav-group">
+            {sidebarOpen && (
+              <h3 className="sidebar-group-title">{group.title}</h3>
+            )}
+            {group.items.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`sidebar-nav-item group ${
+                  isActive(item.href)
+                    ? "text-gray-900 dark:text-white bg-gray-200 dark:bg-[#323232]"
+                    : ""
+                } ${item.soon ? "opacity-60 cursor-not-allowed" : ""}`}
+                onClick={item.soon ? (e) => e.preventDefault() : undefined}
+              >
+                <item.icon className="sidebar-nav-icon group-hover:text-blue-400" />
+                {sidebarOpen && (
+                  <div className="flex items-center justify-between flex-1">
+                    <span className="sidebar-nav-label">{item.label}</span>
+                    {item.soon && (
+                      <span className="sidebar-nav-badge">SOON</span>
+                    )}
+                  </div>
+                )}
+              </Link>
+            ))}
+          </div>
+        ))}
+      </nav>
+
+      {/* User Menu */}
+      <div className="sidebar-user">
+        <div className="sidebar-user-profile">
+          <div className="sidebar-user-avatar">
+            <span className="sidebar-user-avatar-text">U</span>
+          </div>
+          {sidebarOpen && (
+            <div className="sidebar-user-info">
+              <p className="sidebar-user-name">User</p>
+              <p className="sidebar-user-email">user@example.com</p>
+            </div>
+          )}
+        </div>
+        <button
+          onClick={onLogout}
+          disabled={isLoggingOut}
+          className="sidebar-logout-btn"
+        >
+          <LogOut className="sidebar-logout-icon" />
+          {sidebarOpen && <span className="sidebar-logout-text">Logout</span>}
+        </button>
+      </div>
+
+      {/* Theme Toggle & Sidebar Toggle */}
+      <div className="sidebar-footer">
+        <button
+          onClick={onToggleTheme}
+          className="sidebar-theme-btn"
+          title={theme === "light" ? "Dark mode" : "Light mode"}
+        >
+          {theme === "light" ? (
+            <Moon className="sidebar-theme-icon" />
+          ) : (
+            <Sun className="sidebar-theme-icon" />
+          )}
+          {sidebarOpen && (
+            <span className="sidebar-theme-text">
+              {theme === "light" ? "Dark" : "Light"}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="sidebar-toggle-btn"
+        >
+          {sidebarOpen ? (
+            <X className="sidebar-toggle-icon" />
+          ) : (
+            <Menu className="sidebar-toggle-icon" />
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}

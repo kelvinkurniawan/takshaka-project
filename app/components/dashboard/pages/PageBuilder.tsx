@@ -297,6 +297,34 @@ const PageBuilder = forwardRef<PageBuilderHandle, PageBuilderProps>(
       );
     };
 
+    // Update video properties
+    const updateVideoProps = (
+      blockId: string,
+      columnId: string,
+      props: Partial<ColumnContent["videoProps"]>,
+    ) => {
+      setBlocks(
+        blocks.map((block) =>
+          block.id === blockId
+            ? {
+                ...block,
+                content: block.content.map((col) =>
+                  col.id === columnId
+                    ? {
+                        ...col,
+                        videoProps: {
+                          ...col.videoProps,
+                          ...props,
+                        } as ColumnContent["videoProps"],
+                      }
+                    : col,
+                ),
+              }
+            : block,
+        ),
+      );
+    };
+
     // Update carousel properties
     const updateCarouselProps = (
       blockId: string,
@@ -331,6 +359,42 @@ const PageBuilder = forwardRef<PageBuilderHandle, PageBuilderProps>(
         blocks.map((block) =>
           block.id === blockId ? { ...block, customCSS } : block,
         ),
+      );
+    };
+
+    // Update block columns
+    const updateBlockColumns = (blockId: string, newColumns: number) => {
+      setBlocks(
+        blocks.map((block) => {
+          if (block.id !== blockId) return block;
+
+          const currentColumns = block.content.length;
+
+          if (newColumns > currentColumns) {
+            // Add new empty columns
+            const newContent = [
+              ...block.content,
+              ...Array.from(
+                { length: newColumns - currentColumns },
+                (_, i) => ({
+                  id: `col-${Date.now()}-${currentColumns + i}`,
+                  type: "text" as ContentType,
+                  content: "",
+                }),
+              ),
+            ];
+            return { ...block, columns: newColumns, content: newContent };
+          } else if (newColumns < currentColumns) {
+            // Keep only first N columns
+            return {
+              ...block,
+              columns: newColumns,
+              content: block.content.slice(0, newColumns),
+            };
+          }
+
+          return block;
+        }),
       );
     };
 
@@ -382,9 +446,6 @@ const PageBuilder = forwardRef<PageBuilderHandle, PageBuilderProps>(
         }
 
         setSuccess("Page saved successfully!");
-        setTimeout(() => {
-          router.push("/app/pages");
-        }, 1500);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to save page");
       } finally {
@@ -573,6 +634,24 @@ const PageBuilder = forwardRef<PageBuilderHandle, PageBuilderProps>(
                       </span>
                     </div>
                     <div className="block-actions">
+                      <div className="block-column-selector">
+                        <span className="text-xs text-gray-600 dark:text-gray-400 mr-2">
+                          Columns:
+                        </span>
+                        {[1, 2, 3, 4].map((cols) => (
+                          <button
+                            key={cols}
+                            onClick={() => updateBlockColumns(block.id, cols)}
+                            className={`block-column-btn ${
+                              block.columns === cols ? "active" : ""
+                            }`}
+                            title={`Change to ${cols} column${cols > 1 ? "s" : ""}`}
+                            type="button"
+                          >
+                            {cols}
+                          </button>
+                        ))}
+                      </div>
                       <button
                         onClick={() =>
                           setExpandedCSSBlock(
@@ -958,7 +1037,7 @@ const PageBuilder = forwardRef<PageBuilderHandle, PageBuilderProps>(
                                     };
                                     updateCarouselProps(block.id, column.id, {
                                       items: [
-                                        ...column.carouselProps.items,
+                                        ...(column.carouselProps?.items || []),
                                         newItem,
                                       ],
                                     });
@@ -1023,7 +1102,7 @@ const PageBuilder = forwardRef<PageBuilderHandle, PageBuilderProps>(
                                                   column.id,
                                                   {
                                                     items:
-                                                      column.carouselProps.items.filter(
+                                                      column?.carouselProps?.items.filter(
                                                         (i) => i.id !== item.id,
                                                       ),
                                                   },
@@ -1053,7 +1132,7 @@ const PageBuilder = forwardRef<PageBuilderHandle, PageBuilderProps>(
                                                   value={item.media}
                                                   onChange={(url) => {
                                                     const updatedItems =
-                                                      column.carouselProps.items.map(
+                                                      column?.carouselProps?.items.map(
                                                         (i) =>
                                                           i.id === item.id
                                                             ? {
@@ -1102,7 +1181,7 @@ const PageBuilder = forwardRef<PageBuilderHandle, PageBuilderProps>(
                                                   value={item.title || ""}
                                                   onChange={(e) => {
                                                     const updatedItems =
-                                                      column.carouselProps.items.map(
+                                                      column?.carouselProps?.items.map(
                                                         (i) =>
                                                           i.id === item.id
                                                             ? {
@@ -1133,7 +1212,7 @@ const PageBuilder = forwardRef<PageBuilderHandle, PageBuilderProps>(
                                                   value={item.subtitle || ""}
                                                   onChange={(e) => {
                                                     const updatedItems =
-                                                      column.carouselProps.items.map(
+                                                      column?.carouselProps?.items.map(
                                                         (i) =>
                                                           i.id === item.id
                                                             ? {
@@ -1164,7 +1243,7 @@ const PageBuilder = forwardRef<PageBuilderHandle, PageBuilderProps>(
                                                   value={item.link || ""}
                                                   onChange={(e) => {
                                                     const updatedItems =
-                                                      column.carouselProps.items.map(
+                                                      column?.carouselProps?.items.map(
                                                         (i) =>
                                                           i.id === item.id
                                                             ? {

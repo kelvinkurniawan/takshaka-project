@@ -1,0 +1,1 @@
+DROP INDEX `categories_slug_unique`;
