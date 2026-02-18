@@ -3,35 +3,42 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+	variable: "--font-geist-sans",
+	subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+	variable: "--font-geist-mono",
+	subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "NextCMS - Headless CMS",
-    template: "%s | NextCMS",
-  },
-  description: "Modern headless CMS built with Next.js",
+	title: {
+		default: "NextCMS - Headless CMS",
+		template: "%s | NextCMS",
+	},
+	description: "Modern headless CMS built with Next.js",
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en">
+			<head>
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `(function(){try{const theme=localStorage.getItem('theme');const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;const isDark = theme==='dark'||(!theme&&prefersDark); if(isDark){document.documentElement.classList.add('dark');document.documentElement.style.colorScheme='dark';}else{document.documentElement.classList.remove('dark');document.documentElement.style.colorScheme='light';}}catch(e){} })()`,
+					}}
+				/>
+			</head>
+			<body
+				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+			>
+				{children}
+			</body>
+		</html>
+	);
 }
