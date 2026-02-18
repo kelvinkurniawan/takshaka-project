@@ -102,3 +102,33 @@ export const navigation = sqliteTable("navigation", {
 	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 	deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+
+export const comments = sqliteTable("comments", {
+	id: integer("id").primaryKey({ autoIncrement: true }),
+	contentId: integer("content_id").notNull(),
+	name: text("name").notNull(),
+	email: text("email").notNull(),
+	content: text("content").notNull(),
+	status: text("status").notNull().default("pending"), // pending, approved, rejected
+	ipAddress: text("ip_address"),
+	userAgent: text("user_agent"),
+	isSpam: integer("is_spam", { mode: "boolean" }).notNull().default(false),
+	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+	deletedAt: integer("deleted_at", { mode: "timestamp" }),
+});
+
+export const commentReplies = sqliteTable("comment_replies", {
+	id: integer("id").primaryKey({ autoIncrement: true }),
+	commentId: integer("comment_id").notNull(),
+	name: text("name").notNull(),
+	email: text("email").notNull(),
+	content: text("content").notNull(),
+	status: text("status").notNull().default("pending"), // pending, approved, rejected
+	ipAddress: text("ip_address"),
+	userAgent: text("user_agent"),
+	isSpam: integer("is_spam", { mode: "boolean" }).notNull().default(false),
+	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+	deletedAt: integer("deleted_at", { mode: "timestamp" }),
+});
