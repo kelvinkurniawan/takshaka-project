@@ -1475,7 +1475,7 @@ label {
 
 	/* Quotes and Code Blocks */
 	.index-page-content blockquote {
-		@apply border-l-4 border-blue-500 pl-4 py-2 italic text-gray-600 dark:text-gray-400 my-6 py-4 px-4 rounded;
+		@apply border-l-4 border-blue-500 pl-4 py-4 px-4 italic text-gray-600 dark:text-gray-400 my-6 rounded;
 		background-color: #f3f4f6;
 	}
 

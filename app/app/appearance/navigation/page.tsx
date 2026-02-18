@@ -1,7 +1,7 @@
 import { getDB } from "@/lib/db";
 import { navigation, settings } from "@/lib/schema";
 import { isNull, asc, eq } from "drizzle-orm";
-import PublicHeaderClient from "./PublicHeaderClient";
+import NavigationClient from "./NavigationClient";
 
 interface NavigationItem {
 	id: number;
@@ -64,35 +64,9 @@ async function fetchNavigationSetting(): Promise<boolean> {
 	}
 }
 
-async function fetchLogoSetting(): Promise<string> {
-	try {
-		const db = getDB({});
-		const result = await db
-			.select()
-			.from(settings)
-			.where(eq(settings.key, "logo"))
-			.limit(1);
-
-		if (result.length > 0 && result[0].value) {
-			return result[0].value;
-		}
-		return ""; // No logo set
-	} catch (error) {
-		console.error("Error fetching logo setting:", error);
-		return "";
-	}
-}
-
-export default async function PublicHeader() {
+export default async function NavigationPage() {
 	const items = await fetchNavigation();
 	const isNavEnabled = await fetchNavigationSetting();
-	const logo = await fetchLogoSetting();
 
-	return (
-		<PublicHeaderClient
-			navigationItems={items}
-			isNavEnabled={isNavEnabled}
-			logo={logo}
-		/>
-	);
+	return <NavigationClient initialItems={items} isNavEnabled={isNavEnabled} />;
 }
