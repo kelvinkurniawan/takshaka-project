@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CommentsList from "@/components/CommentsList";
@@ -67,11 +68,12 @@ export default async function BlogDetailPage({
 		<>
 			{/* Featured Image */}
 			{content.featuredImage && (
-				<div className="w-full h-96 bg-gray-200 overflow-hidden">
-					<img
+				<div className="w-full h-96 bg-gray-200 overflow-hidden relative">
+					<Image
 						src={content.featuredImage}
 						alt={content.title}
-						className="w-full h-full object-cover"
+						fill
+						className="object-cover"
 					/>
 				</div>
 			)}

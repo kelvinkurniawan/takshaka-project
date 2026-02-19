@@ -135,7 +135,7 @@ export async function POST(request: Request, context: any) {
 	} catch (error) {
 		if (error instanceof z.ZodError) {
 			return Response.json(
-				{ error: "Validasi gagal", details: error.errors },
+				{ error: "Validasi gagal", details: error.issues },
 				{ status: 400 },
 			);
 		}

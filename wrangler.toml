@@ -1,10 +1,10 @@
-name = "my-next-app"
+name = "nextcms"
 compatibility_date = "2026-02-12"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = ".vercel/output/static"
+pages_build_output_dir = ".next/static"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "nextcms-base"
 database_id = "cd780285-ccef-43bb-bacf-10ffd7b85c4e"
-
+migrations_dir = "drizzle"

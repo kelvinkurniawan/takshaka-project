@@ -39,9 +39,11 @@ export default function PublicHeaderClient({
 			typeof window !== "undefined" &&
 			window.matchMedia &&
 			window.matchMedia("(prefers-color-scheme: dark)").matches;
-		const initialTheme = "light";
+		const initialTheme =
+			(savedTheme as "light" | "dark" | null) ||
+			(prefersDark ? "dark" : "light");
 		// eslint-disable-next-line react-hooks/set-state-in-effect
-		setTheme(initialTheme as "light" | "dark");
+		setTheme(initialTheme);
 
 		// Ensure document class matches (RootLayout script sets this early on first paint)
 		if (initialTheme === "dark") {

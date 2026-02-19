@@ -1,6 +1,6 @@
 import { getDB } from "@/lib/db";
 import { comments as commentsTable } from "@/lib/schema";
-import { eq, isNull, inArray, and } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 
 export const runtime = "nodejs";
 
@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 		const contentIds = contentIdsParam.split(",").map((id) => parseInt(id));
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const db = getDB(process.env as any);
+		const db = getDB({} as any);
 
 		// Fetch all comments for the specified content IDs
 		const allComments = await db

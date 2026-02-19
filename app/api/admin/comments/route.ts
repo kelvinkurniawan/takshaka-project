@@ -1,7 +1,7 @@
 import { requireAuth } from "@/lib/rbac";
 import { getDB } from "@/lib/db";
-import { comments as commentsTable, commentReplies } from "@/lib/schema";
-import { eq, isNull, and, desc } from "drizzle-orm";
+import { comments as commentsTable } from "@/lib/schema";
+import { desc } from "drizzle-orm";
 
 export const runtime = "nodejs";
 

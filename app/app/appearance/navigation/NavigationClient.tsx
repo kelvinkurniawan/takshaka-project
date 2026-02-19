@@ -126,7 +126,8 @@ export default function NavigationClient({
 			parentId: item.parentId,
 			order: item.order,
 			icon: item.icon || "",
-			target: (item.target as any) || "_self",
+			target:
+				(item.target as "_self" | "_blank" | "_parent" | "_top") || "_self",
 			isActive: item.isActive,
 		});
 		setEditingId(item.id);
@@ -345,6 +346,7 @@ export default function NavigationClient({
 									onChange={(e) =>
 										setFormData({
 											...formData,
+											// eslint-disable-next-line @typescript-eslint/no-explicit-any
 											target: e.target.value as any,
 										})
 									}
