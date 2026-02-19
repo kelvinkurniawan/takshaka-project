@@ -9,6 +9,7 @@ import {
 import { eq, desc } from "drizzle-orm";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const createCommentSchema = z.object({
 	contentId: z.number().int().positive("Content ID harus valid"),

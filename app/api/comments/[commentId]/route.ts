@@ -9,6 +9,7 @@ import {
 import { eq, desc } from "drizzle-orm";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const createReplySchema = z.object({
 	name: z.string().min(2, "Nama minimal 2 karakter").max(100),

@@ -4,6 +4,7 @@ import { comments as commentsTable } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 /**
  * POST /api/admin/comments/[commentId]/approve - Approve a comment

@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:push": "drizzle-kit push:sqlite"
+    "db:push": "drizzle-kit push:sqlite",
+    "cf-build": "next build && npx @cloudflare/next-on-pages --experimental-caching",
+    "deploy": "npm run cf-build && npx wrangler pages deploy .vercel/output/static --project-name=takshaka-project"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.990.0",

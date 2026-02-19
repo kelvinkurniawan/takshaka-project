@@ -3,6 +3,7 @@ import { comments as commentsTable } from "@/lib/schema";
 import { inArray } from "drizzle-orm";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 /**
  * GET /api/comments/count - Get comment count for multiple contents

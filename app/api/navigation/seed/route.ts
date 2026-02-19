@@ -1,4 +1,5 @@
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 import { getDB } from "@/lib/db";
 import { navigation } from "@/lib/schema";

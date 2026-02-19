@@ -6,6 +6,7 @@ import { eq, isNull } from "drizzle-orm";
 import { getSessionUserId } from "@/lib/session";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const createCategorySchema = z.object({
 	name: z.string().min(1, "Nama kategori diperlukan").max(255),

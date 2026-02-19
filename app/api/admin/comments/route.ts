@@ -4,6 +4,7 @@ import { comments as commentsTable } from "@/lib/schema";
 import { desc } from "drizzle-orm";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 /**
  * GET /api/admin/comments - Get all comments with filters
