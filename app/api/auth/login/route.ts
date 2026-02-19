@@ -2,7 +2,7 @@ import { z } from "zod";
 import { verifyPassword } from "@/lib/auth";
 import { setSessionCookie } from "@/lib/session";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const loginSchema = z.object({

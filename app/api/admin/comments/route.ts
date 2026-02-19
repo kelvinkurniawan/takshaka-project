@@ -3,7 +3,7 @@ import { getDB } from "@/lib/db";
 import { comments as commentsTable } from "@/lib/schema";
 import { desc } from "drizzle-orm";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 /**

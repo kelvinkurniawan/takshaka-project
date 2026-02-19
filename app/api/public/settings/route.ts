@@ -1,7 +1,7 @@
 import { getDB } from "@/lib/db";
 import { settings } from "@/lib/schema";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

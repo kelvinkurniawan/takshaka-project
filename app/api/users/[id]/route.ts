@@ -4,7 +4,7 @@ import { getDB } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq, ne, isNull, and } from "drizzle-orm";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const updateUserSchema = z.object({

@@ -3,7 +3,7 @@ import { mediaGallery } from "@/lib/schema";
 import { isNull, eq } from "drizzle-orm";
 import { requireAuth } from "@/lib/rbac";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 /**

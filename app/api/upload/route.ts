@@ -4,7 +4,7 @@ import { getDB } from "@/lib/db";
 import { mediaGallery } from "@/lib/schema";
 import { getSessionUserId } from "@/lib/session";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 // Initialize S3 client for R2

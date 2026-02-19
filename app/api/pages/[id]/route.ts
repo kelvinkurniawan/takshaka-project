@@ -3,7 +3,7 @@ import { pages } from "@/lib/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { z } from "zod";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const updatePageSchema = z.object({
