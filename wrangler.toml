@@ -6,6 +6,9 @@ pages_build_output_dir = ".next/static"
 [env.production]
 pages_build_output_dir = ".next/static"
 
+[pages]
+project_name = "takshaka-project"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "nextcms-base"
