@@ -3,6 +3,9 @@ compatibility_date = "2026-02-12"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".next/static"
 
+[env.production]
+pages_build_output_dir = ".next/static"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "nextcms-base"
