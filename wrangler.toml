@@ -1,10 +1,14 @@
 name = "nextcms"
+account_id = "e5b017488de17a396200fae490d8ea6d"
 compatibility_date = "2026-02-12"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".next/static"
 
 [env.production]
 pages_build_output_dir = ".next/static"
+
+[deploy]
+command = "wrangler pages deploy .next/static"
 
 [[d1_databases]]
 binding = "DB"
