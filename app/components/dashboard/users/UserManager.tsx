@@ -14,7 +14,7 @@ export default async function UserManager() {
   }
 
   // Get database connection
-  const db = getDB(process.env);
+  const db = getDB();
 
   // Fetch users
   const usersData = await db

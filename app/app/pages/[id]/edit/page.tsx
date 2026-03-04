@@ -32,7 +32,7 @@ export default async function EditPagePage({ params }: PageEditProps) {
   }
 
   // Fetch page data
-  const db = getDB(process.env);
+  const db = getDB();
   const result = await db
     .select()
     .from(pages)

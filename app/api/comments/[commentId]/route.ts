@@ -21,9 +21,11 @@ const createReplySchema = z.object({
 /**
  * GET /api/comments/[commentId] - Get replies for a specific comment
  */
-export async function GET(request: Request) {
+export async function GET(
+	request: Request,
+	{ params }: { params: Promise<{ commentId: string }> },
+) {
 	try {
-		const { params } = context;
 		const { commentId } = await params;
 
 		const db = getDB();
@@ -55,9 +57,11 @@ export async function GET(request: Request) {
 /**
  * POST /api/comments/[commentId] - Create a reply to a comment
  */
-export async function POST(request: Request) {
+export async function POST(
+	request: Request,
+	{ params }: { params: Promise<{ commentId: string }> },
+) {
 	try {
-		const { params } = context;
 		const { commentId } = await params;
 		const body = await request.json();
 
@@ -111,7 +115,6 @@ export async function POST(request: Request) {
 
 		// Perform spam check
 		const spamCheck = await performSpamCheck(
-			env,
 			validatedData.email,
 			validatedData.content,
 			validatedData.submissionTime,

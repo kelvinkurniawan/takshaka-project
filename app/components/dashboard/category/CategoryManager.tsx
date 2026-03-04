@@ -14,7 +14,7 @@ export default async function CategoryManager() {
   }
 
   // Get database connection
-  const db = getDB(process.env);
+  const db = getDB();
 
   // Fetch categories
   const categoriesData = await db

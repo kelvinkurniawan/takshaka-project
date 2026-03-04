@@ -4,7 +4,6 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuth } from "@/lib/rbac";
 
-# Use nodejs runtime for Node.js database operations
 export const dynamic = "force-dynamic";
 
 const updateContentSchema = z.object({
@@ -22,14 +21,17 @@ const updateContentSchema = z.object({
 	ogImage: z.string().optional(),
 });
 
-export async function GET(request: Request) {
+export async function GET(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
 		await requireAuth();
 
-		const { params } = context;
+		const { id } = await params;
 		const db = getDB();
 
-		const contentId = parseInt(params.id);
+		const contentId = parseInt(id);
 		if (isNaN(contentId)) {
 			return Response.json({ error: "Invalid content ID" }, { status: 400 });
 		}
@@ -54,15 +56,18 @@ export async function GET(request: Request) {
 	}
 }
 
-export async function PUT(request: Request) {
+export async function PUT(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
 		await requireAuth();
 
-		const { params } = context;
+		const { id } = await params;
 		const db = getDB();
 		const body = await request.json();
 
-		const contentId = parseInt(params.id);
+		const contentId = parseInt(id);
 		if (isNaN(contentId)) {
 			return Response.json({ error: "Invalid content ID" }, { status: 400 });
 		}
@@ -127,14 +132,17 @@ export async function PUT(request: Request) {
 	}
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
 		await requireAuth();
 
-		const { params } = context;
+		const { id } = await params;
 		const db = getDB();
 
-		const contentId = parseInt(params.id);
+		const contentId = parseInt(id);
 		if (isNaN(contentId)) {
 			return Response.json({ error: "Invalid content ID" }, { status: 400 });
 		}

@@ -16,11 +16,14 @@ const updateUserSchema = z.object({
 /**
  * GET /api/users/[id] - Get single user
  */
-export async function GET(request: Request) {
+export async function GET(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> }
+) {
 	try {
 		await requireAuth();
 
-		const { id } = await context.params;
+		const { id } = await params;
 		const userId = parseInt(id);
 		if (isNaN(userId)) {
 			return Response.json(
@@ -64,7 +67,10 @@ export async function GET(request: Request) {
 /**
  * PUT /api/users/[id] - Update user
  */
-export async function PUT(request: Request) {
+export async function PUT(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> }
+) {
 	try {
 		await requireAuth();
 
@@ -76,7 +82,7 @@ export async function PUT(request: Request) {
 			);
 		}
 
-		const { id } = await context.params;
+		const { id } = await params;
 		const userId = parseInt(id);
 		if (isNaN(userId)) {
 			return Response.json(
@@ -162,7 +168,10 @@ export async function PUT(request: Request) {
 /**
  * DELETE /api/users/[id] - Delete user
  */
-export async function DELETE(request: Request) {
+export async function DELETE(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> }
+) {
 	try {
 		await requireAuth();
 
@@ -174,7 +183,7 @@ export async function DELETE(request: Request) {
 			);
 		}
 
-		const { id } = await context.params;
+		const { id } = await params;
 		const userId = parseInt(id);
 		if (isNaN(userId)) {
 			return Response.json(

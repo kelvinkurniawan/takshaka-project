@@ -7,6 +7,7 @@ import {
 	integer,
 	uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 export const users = pgTable(
 	"users",
@@ -44,7 +45,7 @@ export const categories = pgTable(
 		return {
 			slugIdx: uniqueIndex("categories_slug_idx")
 				.on(table.slug)
-				.where(boolean("deleted_at is null")),
+				.where(sql`${table.deletedAt} is null`),
 		};
 	},
 );
@@ -79,7 +80,7 @@ export const contents = pgTable(
 		return {
 			slugIdx: uniqueIndex("contents_slug_idx")
 				.on(table.slug)
-				.where(boolean("deleted_at is null")),
+				.where(sql`${table.deletedAt} is null`),
 		};
 	},
 );
@@ -125,7 +126,7 @@ export const pages = pgTable(
 		return {
 			slugIdx: uniqueIndex("pages_slug_idx")
 				.on(table.slug)
-				.where(boolean("deleted_at is null")),
+				.where(sql`${table.deletedAt} is null`),
 		};
 	},
 );

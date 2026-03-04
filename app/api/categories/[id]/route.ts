@@ -16,11 +16,14 @@ const updateCategorySchema = z.object({
 /**
  * GET /api/categories/[id] - Get single category
  */
-export async function GET(request: Request) {
+export async function GET(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> }
+) {
 	try {
 		await requireAuth();
 
-		const { id } = await context.params;
+		const { id } = await params;
 		const categoryId = parseInt(id);
 		if (isNaN(categoryId)) {
 			return Response.json(
@@ -66,7 +69,10 @@ export async function GET(request: Request) {
 /**
  * PUT /api/categories/[id] - Update category
  */
-export async function PUT(request: Request) {
+export async function PUT(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> }
+) {
 	try {
 		await requireAuth();
 
@@ -78,7 +84,7 @@ export async function PUT(request: Request) {
 			);
 		}
 
-		const { id } = await context.params;
+		const { id } = await params;
 		const categoryId = parseInt(id);
 		if (isNaN(categoryId)) {
 			return Response.json(
@@ -166,7 +172,10 @@ export async function PUT(request: Request) {
 /**
  * DELETE /api/categories/[id] - Delete category
  */
-export async function DELETE(request: Request) {
+export async function DELETE(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> }
+) {
 	try {
 		await requireAuth();
 
@@ -178,7 +187,7 @@ export async function DELETE(request: Request) {
 			);
 		}
 
-		const { id } = await context.params;
+		const { id } = await params;
 		const categoryId = parseInt(id);
 		if (isNaN(categoryId)) {
 			return Response.json(

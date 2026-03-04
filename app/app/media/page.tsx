@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default async function MediaPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = getDB(process.env as any);
+  const db = getDB();
 
   let media: Media[] = [];
   let error: Error | null = null;

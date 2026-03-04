@@ -98,7 +98,6 @@ export async function POST(request: Request) {
 
 		// Perform spam check
 		const spamCheck = await performSpamCheck(
-			env,
 			validatedData.email,
 			validatedData.content,
 			validatedData.submissionTime,

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default async function DashboardPage() {
 	// Server component: fetch counts from DB and pass as props to client component
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const db = getDB({} as any);
+	const db = getDB();
 
 	let totals = { contents: 0, users: 0, categories: 0 };
 	let hasError = false;

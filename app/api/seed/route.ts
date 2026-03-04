@@ -1,5 +1,8 @@
 import { z } from "zod";
 import { hashPassword } from "@/lib/auth";
+import { getDB } from "@/lib/db";
+import { users } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -16,57 +19,50 @@ export async function POST(request: Request) {
 		// Validate input
 		const validatedData = seedSchema.parse(body);
 
-		// Use better-sqlite3 directly
-		const Database = require("better-sqlite3");
-		const db = new Database("dev.db");
+		const db = getDB();
 
-		try {
-			// Check if user already exists
-			const existingUser = db
-				.prepare("SELECT id FROM users WHERE email = ?")
-				.get(validatedData.email);
+		// Check if user already exists
+		const existingUsers = await db
+			.select()
+			.from(users)
+			.where(eq(users.email, validatedData.email));
 
-			if (existingUser) {
-				db.close();
-				return Response.json(
-					{ error: "User dengan email ini sudah exist" },
-					{ status: 400 },
-				);
-			}
+		const activeUser = existingUsers.filter((user: any) => user.deletedAt === null);
 
-			// Hash password
-			const hashedPassword = hashPassword(validatedData.password);
-
-			// Insert user
-			const stmt = db.prepare(`
-        INSERT INTO users (name, email, password, created_at)
-        VALUES (?, ?, ?, ?)
-      `);
-
-			stmt.run(
-				validatedData.name || validatedData.email.split("@")[0],
-				validatedData.email,
-				hashedPassword,
-				Date.now(),
-			);
-
-			db.close();
-
+		if (activeUser.length > 0) {
 			return Response.json(
-				{
-					success: true,
-					message: "User berhasil dibuat",
-					user: {
-						email: validatedData.email,
-						name: validatedData.name || validatedData.email.split("@")[0],
-					},
-				},
-				{ status: 201 },
+				{ error: "User dengan email ini sudah exist" },
+				{ status: 400 },
 			);
-		} catch (error) {
-			db.close();
-			throw error;
 		}
+
+		// Hash password
+		const hashedPassword = hashPassword(validatedData.password);
+
+		// Insert user
+		const result = await db
+			.insert(users)
+			.values({
+				name: validatedData.name || validatedData.email.split("@")[0],
+				email: validatedData.email,
+				password: hashedPassword,
+				role: "editor",
+				createdAt: new Date(),
+			})
+			.returning();
+
+		return Response.json(
+			{
+				success: true,
+				message: "User berhasil dibuat",
+				user: {
+					id: result[0].id,
+					email: result[0].email,
+					name: result[0].name,
+				},
+			},
+			{ status: 201 },
+		);
 	} catch (error) {
 		if (error instanceof z.ZodError) {
 			return Response.json(

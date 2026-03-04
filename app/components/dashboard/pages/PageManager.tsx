@@ -14,7 +14,7 @@ export default async function PageManager() {
   }
 
   // Get database connection
-  const db = getDB(process.env);
+  const db = getDB();
 
   // Fetch pages
   const pagesData = await db

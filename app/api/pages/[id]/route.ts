@@ -14,11 +14,13 @@ const updatePageSchema = z.object({
 	metaDescription: z.string().max(500).optional(),
 });
 
-export async function GET(request: Request) {
+export async function GET(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
-		const { env, params } = context;
 		const db = getDB();
-		const pageId = parseInt(params.id);
+		const pageId = parseInt((await params).id);
 
 		if (isNaN(pageId)) {
 			return Response.json({ error: "Invalid page ID" }, { status: 400 });
@@ -41,11 +43,13 @@ export async function GET(request: Request) {
 	}
 }
 
-export async function PUT(request: Request) {
+export async function PUT(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
-		const { env, params } = context;
 		const db = getDB();
-		const pageId = parseInt(params.id);
+		const pageId = parseInt((await params).id);
 		const body = await request.json();
 
 		if (isNaN(pageId)) {
@@ -108,11 +112,13 @@ export async function PUT(request: Request) {
 	}
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
-		const { env, params } = context;
 		const db = getDB();
-		const pageId = parseInt(params.id);
+		const pageId = parseInt((await params).id);
 
 		if (isNaN(pageId)) {
 			return Response.json({ error: "Invalid page ID" }, { status: 400 });

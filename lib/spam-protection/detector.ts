@@ -189,12 +189,11 @@ export function checkEmailValidity(email: string): SpamCheckResult {
  * Check for duplicate submissions
  */
 export async function checkDuplicateSubmission(
-	env: Record<string, unknown>,
 	email: string,
 	content: string,
 ): Promise<SpamCheckResult> {
 	try {
-		const db = getDB(env);
+		const db = getDB();
 		const oneHourAgo = new Date(Date.now() - 3600000); // 1 hour ago
 
 		// Check for duplicate comments
@@ -248,7 +247,6 @@ export async function checkDuplicateSubmission(
  * Comprehensive spam check
  */
 export async function performSpamCheck(
-	env: Record<string, unknown>,
 	email: string,
 	content: string,
 	submissionTime: number,
@@ -259,7 +257,7 @@ export async function performSpamCheck(
 		checkContentLength(content),
 		checkExcessiveLinks(content),
 		checkEmailValidity(email),
-		await checkDuplicateSubmission(env, email, content),
+		await checkDuplicateSubmission(email, content),
 	];
 
 	// Calculate spam score

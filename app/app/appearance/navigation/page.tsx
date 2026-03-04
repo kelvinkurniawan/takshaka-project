@@ -17,7 +17,7 @@ interface NavigationItem {
 
 async function fetchNavigation(): Promise<NavigationItem[]> {
 	try {
-		const db = getDB({});
+		const db = getDB();
 		const items = await db
 			.select()
 			.from(navigation)
@@ -47,7 +47,7 @@ async function fetchNavigation(): Promise<NavigationItem[]> {
 
 async function fetchNavigationSetting(): Promise<boolean> {
 	try {
-		const db = getDB({});
+		const db = getDB();
 		const result = await db
 			.select()
 			.from(settings)

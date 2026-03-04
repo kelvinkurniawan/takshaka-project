@@ -4,7 +4,6 @@ import { getDB } from "@/lib/db";
 import { settings } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-# Use nodejs runtime for Node.js database operations
 export const dynamic = "force-dynamic";
 
 const updateSettingSchema = z.object({
@@ -16,11 +15,14 @@ const updateSettingSchema = z.object({
 /**
  * GET /api/settings/[key] - Get single setting
  */
-export async function GET(request: Request) {
+export async function GET(
+	request: Request,
+	{ params }: { params: Promise<{ key: string }> }
+) {
 	try {
 		await requireAuth();
 
-		const { key } = await context.params;
+		const { key } = await params;
 		const settingKey = decodeURIComponent(key);
 
 		const db = getDB();
@@ -59,7 +61,10 @@ export async function GET(request: Request) {
 /**
  * PUT /api/settings/[key] - Update single setting
  */
-export async function PUT(request: Request) {
+export async function PUT(
+	request: Request,
+	{ params }: { params: Promise<{ key: string }> }
+) {
 	try {
 		await requireAuth();
 
@@ -71,7 +76,7 @@ export async function PUT(request: Request) {
 			);
 		}
 
-		const { key } = await context.params;
+		const { key } = await params;
 		const settingKey = decodeURIComponent(key);
 
 		const body = await request.json();
@@ -139,7 +144,10 @@ export async function PUT(request: Request) {
 /**
  * DELETE /api/settings/[key] - Delete single setting
  */
-export async function DELETE(request: Request) {
+export async function DELETE(
+	request: Request,
+	{ params }: { params: Promise<{ key: string }> }
+) {
 	try {
 		await requireAuth();
 
@@ -151,7 +159,7 @@ export async function DELETE(request: Request) {
 			);
 		}
 
-		const { key } = await context.params;
+		const { key } = await params;
 		const settingKey = decodeURIComponent(key);
 
 		const db = getDB();

@@ -15,10 +15,13 @@ const updateNavigationSchema = z.object({
 	isActive: z.boolean().optional(),
 });
 
-export async function PUT(request: Request) {
+export async function PUT(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
 		const db = getDB();
-		const { id } = context.params;
+		const { id } = await params;
 		const body = await request.json();
 
 		const validatedData = updateNavigationSchema.parse(body);
@@ -56,10 +59,13 @@ export async function PUT(request: Request) {
 	}
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
 		const db = getDB();
-		const { id } = context.params;
+		const { id } = await params;
 
 		const result = await db
 			.update(navigation)

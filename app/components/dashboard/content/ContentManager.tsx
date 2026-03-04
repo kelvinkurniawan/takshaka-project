@@ -23,7 +23,7 @@ interface ContentManagerState {
 
 export default async function ContentManager() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = getDB(process.env as any);
+  const db = getDB();
 
   let state: ContentManagerState = { data: null, error: null };
 

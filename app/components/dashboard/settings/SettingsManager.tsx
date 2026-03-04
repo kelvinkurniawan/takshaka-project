@@ -14,7 +14,7 @@ export default async function SettingsManager() {
   }
 
   // Get database connection
-  const db = getDB(process.env);
+  const db = getDB();
 
   // Fetch all settings
   const settingsData = await db

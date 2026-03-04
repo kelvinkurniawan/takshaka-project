@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default async function CreateContentPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = getDB(process.env as any);
+  const db = getDB();
 
   let activeCategories: Category[] = [];
   let allUsers: User[] = [];

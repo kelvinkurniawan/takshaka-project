@@ -4,9 +4,11 @@ import { isNull, eq } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request) {
+export async function GET(
+	request: Request,
+	{ params }: { params: Promise<{ slug: string }> },
+) {
 	try {
-		const { params } = context;
 		const { slug } = await params;
 
 		const db = getDB();
