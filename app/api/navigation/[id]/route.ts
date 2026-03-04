@@ -1,4 +1,3 @@
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 import { getDB } from "@/lib/db";
@@ -16,10 +15,9 @@ const updateNavigationSchema = z.object({
 	isActive: z.boolean().optional(),
 });
 
-export async function PUT(request: Request, context: any) {
+export async function PUT(request: Request) {
 	try {
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 		const { id } = context.params;
 		const body = await request.json();
 
@@ -58,10 +56,9 @@ export async function PUT(request: Request, context: any) {
 	}
 }
 
-export async function DELETE(request: Request, context: any) {
+export async function DELETE(request: Request) {
 	try {
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 		const { id } = context.params;
 
 		const result = await db

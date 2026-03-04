@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuth } from "@/lib/rbac";
 
-export const runtime = "edge";
+# Use nodejs runtime for Node.js database operations
 export const dynamic = "force-dynamic";
 
 const updateContentSchema = z.object({
@@ -22,13 +22,12 @@ const updateContentSchema = z.object({
 	ogImage: z.string().optional(),
 });
 
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		await requireAuth();
 
 		const { params } = context;
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		const contentId = parseInt(params.id);
 		if (isNaN(contentId)) {
@@ -55,13 +54,12 @@ export async function GET(request: Request, context: any) {
 	}
 }
 
-export async function PUT(request: Request, context: any) {
+export async function PUT(request: Request) {
 	try {
 		await requireAuth();
 
 		const { params } = context;
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 		const body = await request.json();
 
 		const contentId = parseInt(params.id);
@@ -129,13 +127,12 @@ export async function PUT(request: Request, context: any) {
 	}
 }
 
-export async function DELETE(request: Request, context: any) {
+export async function DELETE(request: Request) {
 	try {
 		await requireAuth();
 
 		const { params } = context;
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		const contentId = parseInt(params.id);
 		if (isNaN(contentId)) {

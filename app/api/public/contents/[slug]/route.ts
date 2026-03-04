@@ -2,16 +2,14 @@ import { getDB } from "@/lib/db";
 import { contents } from "@/lib/schema";
 import { isNull, eq } from "drizzle-orm";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		const { params } = context;
 		const { slug } = await params;
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Fetch content by slug
 		const allContents = await db

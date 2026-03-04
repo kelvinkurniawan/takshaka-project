@@ -2,16 +2,14 @@ import { getDB } from "@/lib/db";
 import { pages } from "@/lib/schema";
 import { isNull, eq } from "drizzle-orm";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		const { params } = context;
 		const { slug } = await params;
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Fetch page by slug
 		const allPages = await db.select().from(pages).where(eq(pages.slug, slug));

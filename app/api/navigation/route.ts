@@ -1,4 +1,3 @@
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 import { getDB } from "@/lib/db";
@@ -16,10 +15,9 @@ const createNavigationSchema = z.object({
 	isActive: z.boolean().default(true),
 });
 
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Get all active navigation items
 		const items = await db
@@ -51,10 +49,9 @@ export async function GET(request: Request, context: any) {
 	}
 }
 
-export async function POST(request: Request, context: any) {
+export async function POST(request: Request) {
 	try {
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 		const body = await request.json();
 
 		const validatedData = createNavigationSchema.parse(body);

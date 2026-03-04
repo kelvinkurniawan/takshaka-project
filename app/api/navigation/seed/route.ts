@@ -1,13 +1,11 @@
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 import { getDB } from "@/lib/db";
 import { navigation } from "@/lib/schema";
 
-export async function POST(request: Request, context: any) {
+export async function POST(request: Request) {
 	try {
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Sample navigation data
 		const sampleItems = [

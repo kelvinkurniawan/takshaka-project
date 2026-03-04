@@ -5,7 +5,6 @@ import { users } from "@/lib/schema";
 import { eq, isNull } from "drizzle-orm";
 import { getSessionUserId } from "@/lib/session";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const createUserSchema = z.object({
@@ -24,12 +23,11 @@ const updateUserSchema = z.object({
 /**
  * GET /api/users - Get all users
  */
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		await requireAuth();
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		const usersData = await db
 			.select({
@@ -40,8 +38,7 @@ export async function GET(request: Request, context: any) {
 				createdAt: users.createdAt,
 			})
 			.from(users)
-			.where(isNull(users.deletedAt))
-			.orderBy(users.createdAt);
+			.where(isNull(users.deletedAt));
 
 		return Response.json(usersData);
 	} catch (error) {
@@ -59,7 +56,7 @@ export async function GET(request: Request, context: any) {
 /**
  * POST /api/users - Create new user
  */
-export async function POST(request: Request, context: any) {
+export async function POST(request: Request) {
 	try {
 		await requireAuth();
 
@@ -75,8 +72,7 @@ export async function POST(request: Request, context: any) {
 		const body = await request.json();
 		const validatedData = createUserSchema.parse(body);
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Check if email already exists (exclude soft deleted)
 		const existing = await db
@@ -95,28 +91,27 @@ export async function POST(request: Request, context: any) {
 		// Hash password (simplified for now, should use proper hashing)
 		const hashedPassword = validatedData.password; // TODO: implement proper password hashing
 
-		const result = await db.insert(users).values({
-			name: validatedData.name,
-			email: validatedData.email,
-			password: hashedPassword,
-			role: validatedData.role,
-			createdAt: new Date(),
-		});
-
-		// Fetch the created user
-		const [createdUser] = await db
-			.select({
-				id: users.id,
-				name: users.name,
-				email: users.email,
-				role: users.role,
-				createdAt: users.createdAt,
+		const result = await db
+			.insert(users)
+			.values({
+				name: validatedData.name,
+				email: validatedData.email,
+				password: hashedPassword,
+				role: validatedData.role,
+				createdAt: new Date(),
 			})
-			.from(users)
-			.where(eq(users.id, result.lastInsertRowid))
-			.limit(1);
+			.returning();
 
-		return Response.json(createdUser, { status: 201 });
+		return Response.json(
+			{
+				id: result[0].id,
+				name: result[0].name,
+				email: result[0].email,
+				role: result[0].role,
+				createdAt: result[0].createdAt,
+			},
+			{ status: 201 },
+		);
 	} catch (error) {
 		if (error instanceof z.ZodError) {
 			return Response.json(

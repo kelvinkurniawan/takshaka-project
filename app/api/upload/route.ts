@@ -4,7 +4,6 @@ import { getDB } from "@/lib/db";
 import { mediaGallery } from "@/lib/schema";
 import { getSessionUserId } from "@/lib/session";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 // Initialize S3 client for R2
@@ -34,7 +33,7 @@ const ALLOWED_TYPES = {
 	video: ["video/mp4", "video/webm", "video/quicktime"],
 };
 
-export async function POST(request: Request, context: any) {
+export async function POST(request: Request) {
 	try {
 		// Get current user
 		const userId = await getSessionUserId();
@@ -98,8 +97,7 @@ export async function POST(request: Request, context: any) {
 		const publicUrl = `${process.env.R2_PUBLIC_URL}/${filename}`;
 
 		// Save media to database
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		const result = await db.insert(mediaGallery).values({
 			filename: filename,

@@ -3,21 +3,20 @@ import { getDB } from "@/lib/db";
 import { comments as commentsTable } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-export const runtime = "edge";
+# Use nodejs runtime for Node.js database operations
 export const dynamic = "force-dynamic";
 
 /**
  * DELETE /api/admin/comments/[commentId] - Delete a comment (soft delete)
  */
-export async function DELETE(request: Request, context: any) {
+export async function DELETE(request: Request) {
 	try {
 		await requireAuth();
 
 		const { params } = context;
 		const { commentId } = await params;
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Soft delete the comment
 		await db

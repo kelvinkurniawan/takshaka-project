@@ -8,7 +8,6 @@ import {
 } from "@/lib/spam-protection/detector";
 import { eq, desc } from "drizzle-orm";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const createReplySchema = z.object({
@@ -22,13 +21,12 @@ const createReplySchema = z.object({
 /**
  * GET /api/comments/[commentId] - Get replies for a specific comment
  */
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		const { params } = context;
 		const { commentId } = await params;
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Fetch approved replies only
 		const allReplies = await db
@@ -57,7 +55,7 @@ export async function GET(request: Request, context: any) {
 /**
  * POST /api/comments/[commentId] - Create a reply to a comment
  */
-export async function POST(request: Request, context: any) {
+export async function POST(request: Request) {
 	try {
 		const { params } = context;
 		const { commentId } = await params;
@@ -71,8 +69,7 @@ export async function POST(request: Request, context: any) {
 		// Validate input
 		const validatedData = createReplySchema.parse(body);
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 		const commentIdNum = parseInt(commentId);
 
 		// Verify comment exists and is approved

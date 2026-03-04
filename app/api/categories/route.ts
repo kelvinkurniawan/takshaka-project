@@ -5,7 +5,6 @@ import { categories } from "@/lib/schema";
 import { eq, isNull } from "drizzle-orm";
 import { getSessionUserId } from "@/lib/session";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const createCategorySchema = z.object({
@@ -17,12 +16,12 @@ const createCategorySchema = z.object({
 /**
  * GET /api/categories - Get all categories
  */
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
+		// Verify authentication
 		await requireAuth();
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		const categoriesData = await db
 			.select({
@@ -35,8 +34,7 @@ export async function GET(request: Request, context: any) {
 				updated_at: categories.updatedAt,
 			})
 			.from(categories)
-			.where(isNull(categories.deletedAt))
-			.orderBy(categories.createdAt);
+			.where(isNull(categories.deletedAt));
 
 		return Response.json(categoriesData);
 	} catch (error) {
@@ -54,8 +52,9 @@ export async function GET(request: Request, context: any) {
 /**
  * POST /api/categories - Create new category
  */
-export async function POST(request: Request, context: any) {
+export async function POST(request: Request) {
 	try {
+		// Verify authentication
 		await requireAuth();
 
 		// Check if user can edit
@@ -70,8 +69,7 @@ export async function POST(request: Request, context: any) {
 		const body = await request.json();
 		const validatedData = createCategorySchema.parse(body);
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Check if slug already exists (exclude soft deleted)
 		const existing = await db
@@ -95,31 +93,30 @@ export async function POST(request: Request, context: any) {
 			return Response.json({ error: "User tidak ditemukan" }, { status: 401 });
 		}
 
-		const result = await db.insert(categories).values({
-			name: validatedData.name,
-			slug: validatedData.slug,
-			description: validatedData.description || null,
-			createdBy: userId,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		});
-
-		// Fetch the created category
-		const [createdCategory] = await db
-			.select({
-				id: categories.id,
-				name: categories.name,
-				slug: categories.slug,
-				description: categories.description,
-				created_by: categories.createdBy,
-				created_at: categories.createdAt,
-				updated_at: categories.updatedAt,
+		const result = await db
+			.insert(categories)
+			.values({
+				name: validatedData.name,
+				slug: validatedData.slug,
+				description: validatedData.description || null,
+				createdBy: userId,
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			})
-			.from(categories)
-			.where(eq(categories.id, result.lastInsertRowid))
-			.limit(1);
+			.returning();
 
-		return Response.json(createdCategory, { status: 201 });
+		return Response.json(
+			{
+				id: result[0].id,
+				name: result[0].name,
+				slug: result[0].slug,
+				description: result[0].description,
+				created_by: result[0].createdBy,
+				created_at: result[0].createdAt,
+				updated_at: result[0].updatedAt,
+			},
+			{ status: 201 },
+		);
 	} catch (error) {
 		if (error instanceof z.ZodError) {
 			return Response.json(

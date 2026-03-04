@@ -2,7 +2,6 @@ import { getDB } from "@/lib/db";
 import { comments as commentsTable } from "@/lib/schema";
 import { inArray } from "drizzle-orm";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 /**

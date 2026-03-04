@@ -1,83 +1,137 @@
-import { sqliteTable, integer, text } from "drizzle-orm/sqlite-core";
+import {
+	pgTable,
+	serial,
+	text,
+	timestamp,
+	boolean,
+	integer,
+	uniqueIndex,
+} from "drizzle-orm/pg-core";
 
-export const users = sqliteTable("users", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
-	name: text("name").notNull(),
-	email: text("email").notNull().unique(),
-	password: text("password").notNull(),
-	role: text("role").notNull().default("editor"), // admin, editor, viewer
-	createdAt: integer("created_at", { mode: "timestamp" })
-		.notNull()
-		.$defaultFn(() => new Date()),
-	deletedAt: integer("deleted_at", { mode: "timestamp" }),
-});
+export const users = pgTable(
+	"users",
+	{
+		id: serial("id").primaryKey(),
+		name: text("name").notNull(),
+		email: text("email").notNull(),
+		password: text("password").notNull(),
+		role: text("role").notNull().default("editor"), // admin, editor, viewer
+		createdAt: timestamp("created_at", { mode: "date" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+		deletedAt: timestamp("deleted_at", { mode: "date" }),
+	},
+	(table) => {
+		return {
+			emailIdx: uniqueIndex("users_email_idx").on(table.email),
+		};
+	},
+);
 
-export const categories = sqliteTable("categories", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
-	name: text("name").notNull(),
-	slug: text("slug").notNull(),
-	description: text("description"),
-	createdBy: integer("created_by").notNull(),
-	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-	deletedAt: integer("deleted_at", { mode: "timestamp" }),
-});
+export const categories = pgTable(
+	"categories",
+	{
+		id: serial("id").primaryKey(),
+		name: text("name").notNull(),
+		slug: text("slug").notNull(),
+		description: text("description"),
+		createdBy: integer("created_by").notNull(),
+		createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+		updatedAt: timestamp("updated_at", { mode: "date" }).notNull(),
+		deletedAt: timestamp("deleted_at", { mode: "date" }),
+	},
+	(table) => {
+		return {
+			slugIdx: uniqueIndex("categories_slug_idx")
+				.on(table.slug)
+				.where(boolean("deleted_at is null")),
+		};
+	},
+);
 
-export const contents = sqliteTable("contents", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
-	title: text("title").notNull(),
-	slug: text("slug").notNull(),
-	content: text("content").notNull(),
-	excerpt: text("excerpt"),
-	type: text("type").notNull().default("article"), // article, news, etc
-	categoryId: integer("category_id"),
-	featuredImage: text("featured_image"),
-	status: text("status").notNull().default("draft"), // draft, published, archived
-	publishedAt: integer("published_at", { mode: "timestamp" }),
-	metaTitle: text("meta_title"),
-	metaDescription: text("meta_description"),
-	metaKeywords: text("meta_keywords"),
-	canonicalUrl: text("canonical_url"),
-	robots: text("robots"), // index, noindex, follow, nofollow
-	ogTitle: text("og_title"),
-	ogDescription: text("og_description"),
-	ogImage: text("og_image"),
-	createdBy: integer("created_by").notNull(),
-	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-	deletedAt: integer("deleted_at", { mode: "timestamp" }),
-});
+export const contents = pgTable(
+	"contents",
+	{
+		id: serial("id").primaryKey(),
+		title: text("title").notNull(),
+		slug: text("slug").notNull(),
+		content: text("content").notNull(),
+		excerpt: text("excerpt"),
+		type: text("type").notNull().default("article"), // article, news, etc
+		categoryId: integer("category_id"),
+		featuredImage: text("featured_image"),
+		status: text("status").notNull().default("draft"), // draft, published, archived
+		publishedAt: timestamp("published_at", { mode: "date" }),
+		metaTitle: text("meta_title"),
+		metaDescription: text("meta_description"),
+		metaKeywords: text("meta_keywords"),
+		canonicalUrl: text("canonical_url"),
+		robots: text("robots"), // index, noindex, follow, nofollow
+		ogTitle: text("og_title"),
+		ogDescription: text("og_description"),
+		ogImage: text("og_image"),
+		createdBy: integer("created_by").notNull(),
+		createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+		updatedAt: timestamp("updated_at", { mode: "date" }).notNull(),
+		deletedAt: timestamp("deleted_at", { mode: "date" }),
+	},
+	(table) => {
+		return {
+			slugIdx: uniqueIndex("contents_slug_idx")
+				.on(table.slug)
+				.where(boolean("deleted_at is null")),
+		};
+	},
+);
 
-export const settings = sqliteTable("settings", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
-	key: text("key").notNull().unique(),
-	value: text("value"),
-	type: text("type").notNull().default("string"), // string, boolean, number, json
-	description: text("description"),
-	createdAt: integer("created_at", { mode: "timestamp" })
-		.notNull()
-		.$defaultFn(() => new Date()),
-	updatedAt: integer("updated_at", { mode: "timestamp" })
-		.notNull()
-		.$defaultFn(() => new Date()),
-});
+export const settings = pgTable(
+	"settings",
+	{
+		id: serial("id").primaryKey(),
+		key: text("key").notNull(),
+		value: text("value"),
+		type: text("type").notNull().default("string"), // string, boolean, number, json
+		description: text("description"),
+		createdAt: timestamp("created_at", { mode: "date" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+		updatedAt: timestamp("updated_at", { mode: "date" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+	},
+	(table) => {
+		return {
+			keyIdx: uniqueIndex("settings_key_idx").on(table.key),
+		};
+	},
+);
 
-export const pages = sqliteTable("pages", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
-	title: text("title").notNull(),
-	slug: text("slug").notNull(),
-	content: text("content").notNull(), // JSON string containing blocks structure
-	status: text("status").notNull().default("draft"), // draft, published
-	metaTitle: text("meta_title"),
-	metaDescription: text("meta_description"),
-	createdBy: integer("created_by").notNull(),
-	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-	deletedAt: integer("deleted_at", { mode: "timestamp" }),
-});
+export const pages = pgTable(
+	"pages",
+	{
+		id: serial("id").primaryKey(),
+		title: text("title").notNull(),
+		slug: text("slug").notNull(),
+		content: text("content").notNull(), // JSON string containing blocks structure
+		status: text("status").notNull().default("draft"), // draft, published
+		metaTitle: text("meta_title"),
+		metaDescription: text("meta_description"),
+		createdBy: integer("created_by").notNull(),
+		createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+		updatedAt: timestamp("updated_at", { mode: "date" }).notNull(),
+		deletedAt: timestamp("deleted_at", { mode: "date" }),
+	},
+	(table) => {
+		return {
+			slugIdx: uniqueIndex("pages_slug_idx")
+				.on(table.slug)
+				.where(boolean("deleted_at is null")),
+		};
+	},
+);
 
-export const mediaGallery = sqliteTable("media_gallery", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
+export const mediaGallery = pgTable("media_gallery", {
+	id: serial("id").primaryKey(),
 	filename: text("filename").notNull(),
 	url: text("url").notNull(),
 	type: text("type").notNull(), // image, video
@@ -85,26 +139,26 @@ export const mediaGallery = sqliteTable("media_gallery", {
 	fileSize: integer("file_size").notNull(),
 	mimeType: text("mime_type").notNull(),
 	createdBy: integer("created_by").notNull(),
-	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-	deletedAt: integer("deleted_at", { mode: "timestamp" }),
+	createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+	deletedAt: timestamp("deleted_at", { mode: "date" }),
 });
 
-export const navigation = sqliteTable("navigation", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
+export const navigation = pgTable("navigation", {
+	id: serial("id").primaryKey(),
 	label: text("label").notNull(),
 	url: text("url").notNull(),
 	parentId: integer("parent_id"),
 	order: integer("order").notNull().default(0),
 	icon: text("icon"),
 	target: text("target").default("_self"), // _self, _blank, _parent, _top
-	isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
-	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-	deletedAt: integer("deleted_at", { mode: "timestamp" }),
+	isActive: boolean("is_active").notNull().default(true),
+	createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+	updatedAt: timestamp("updated_at", { mode: "date" }).notNull(),
+	deletedAt: timestamp("deleted_at", { mode: "date" }),
 });
 
-export const comments = sqliteTable("comments", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
+export const comments = pgTable("comments", {
+	id: serial("id").primaryKey(),
 	contentId: integer("content_id").notNull(),
 	name: text("name").notNull(),
 	email: text("email").notNull(),
@@ -112,14 +166,14 @@ export const comments = sqliteTable("comments", {
 	status: text("status").notNull().default("pending"), // pending, approved, rejected
 	ipAddress: text("ip_address"),
 	userAgent: text("user_agent"),
-	isSpam: integer("is_spam", { mode: "boolean" }).notNull().default(false),
-	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-	deletedAt: integer("deleted_at", { mode: "timestamp" }),
+	isSpam: boolean("is_spam").notNull().default(false),
+	createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+	updatedAt: timestamp("updated_at", { mode: "date" }).notNull(),
+	deletedAt: timestamp("deleted_at", { mode: "date" }),
 });
 
-export const commentReplies = sqliteTable("comment_replies", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
+export const commentReplies = pgTable("comment_replies", {
+	id: serial("id").primaryKey(),
 	commentId: integer("comment_id").notNull(),
 	name: text("name").notNull(),
 	email: text("email").notNull(),
@@ -127,8 +181,8 @@ export const commentReplies = sqliteTable("comment_replies", {
 	status: text("status").notNull().default("pending"), // pending, approved, rejected
 	ipAddress: text("ip_address"),
 	userAgent: text("user_agent"),
-	isSpam: integer("is_spam", { mode: "boolean" }).notNull().default(false),
-	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-	deletedAt: integer("deleted_at", { mode: "timestamp" }),
+	isSpam: boolean("is_spam").notNull().default(false),
+	createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+	updatedAt: timestamp("updated_at", { mode: "date" }).notNull(),
+	deletedAt: timestamp("deleted_at", { mode: "date" }),
 });

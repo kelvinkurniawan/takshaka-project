@@ -3,18 +3,15 @@ import { mediaGallery } from "@/lib/schema";
 import { isNull, eq } from "drizzle-orm";
 import { requireAuth } from "@/lib/rbac";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 /**
  * GET /api/media-gallery - Get all media
  */
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		await requireAuth();
-
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		const media = await db
 			.select()
@@ -35,7 +32,7 @@ export async function GET(request: Request, context: any) {
 /**
  * DELETE /api/media-gallery/:id - Delete media (soft delete)
  */
-export async function DELETE(request: Request, context: any) {
+export async function DELETE(request: Request) {
 	try {
 		await requireAuth();
 
@@ -46,8 +43,7 @@ export async function DELETE(request: Request, context: any) {
 			return Response.json({ error: "Media ID is required" }, { status: 400 });
 		}
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Soft delete
 		await db

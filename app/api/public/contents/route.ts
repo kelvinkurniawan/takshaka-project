@@ -2,17 +2,15 @@ import { getDB } from "@/lib/db";
 import { contents } from "@/lib/schema";
 import { isNull, eq, desc } from "drizzle-orm";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		const { searchParams } = new URL(request.url);
 		const type = searchParams.get("type");
 		const categoryId = searchParams.get("categoryId");
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Fetch all non-deleted contents
 		const allContents = await db

@@ -1,4 +1,3 @@
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 import { getDB } from "@/lib/db";
@@ -12,10 +11,9 @@ const reorderSchema = z.object({
 	parentId: z.number().nullable().optional(),
 });
 
-export async function POST(request: Request, context: any) {
+export async function POST(request: Request) {
 	try {
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 		const body = await request.json();
 
 		const { id, direction, parentId } = reorderSchema.parse(body);

@@ -4,7 +4,6 @@ import { getDB } from "@/lib/db";
 import { settings } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const updateSettingSchema = z.object({
@@ -14,12 +13,10 @@ const updateSettingSchema = z.object({
 /**
  * GET /api/settings - Get all settings
  */
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		await requireAuth();
-
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		const settingsData = await db
 			.select({
@@ -50,7 +47,7 @@ export async function GET(request: Request, context: any) {
 /**
  * POST /api/settings - Create or update multiple settings
  */
-export async function POST(request: Request, context: any) {
+export async function POST(request: Request) {
 	try {
 		await requireAuth();
 
@@ -66,8 +63,7 @@ export async function POST(request: Request, context: any) {
 		const body = await request.json();
 		const validatedData = z.record(z.string(), z.string()).parse(body); // Expect object with string key-value pairs
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		const results = [];
 

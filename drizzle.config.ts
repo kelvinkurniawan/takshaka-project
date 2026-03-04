@@ -1,11 +1,13 @@
 import type { Config } from "drizzle-kit";
 
 export default {
-  schema: "./lib/schema.ts",
-  out: "./drizzle",
-  driver: "d1-http",
-  dialect: "sqlite",
-  dbCredentials: {
-    url: process.env.D1_URL || "",
-  },
+	schema: "./lib/schema.ts",
+	out: "./drizzle",
+	dialect: "postgresql",
+	dbCredentials: {
+		url: process.env.DATABASE_URL || "",
+	},
+	migrations: {
+		migrationsFolder: "drizzle",
+	},
 } satisfies Config;

@@ -8,7 +8,6 @@ import {
 } from "@/lib/spam-protection/detector";
 import { eq, desc } from "drizzle-orm";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const createCommentSchema = z.object({
@@ -23,7 +22,7 @@ const createCommentSchema = z.object({
 /**
  * GET /api/comments - Get comments for a content (public API)
  */
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		const { searchParams } = new URL(request.url);
 		const contentId = searchParams.get("contentId");
@@ -34,8 +33,7 @@ export async function GET(request: Request, context: any) {
 			return Response.json({ error: "Content ID diperlukan" }, { status: 400 });
 		}
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Fetch approved comments only
 		const allComments = await db
@@ -73,7 +71,7 @@ export async function GET(request: Request, context: any) {
 /**
  * POST /api/comments - Create a new comment (public API with spam protection)
  */
-export async function POST(request: Request, context: any) {
+export async function POST(request: Request) {
 	try {
 		const body = await request.json();
 
@@ -85,7 +83,6 @@ export async function POST(request: Request, context: any) {
 		// Validate input
 		const validatedData = createCommentSchema.parse(body);
 
-		const { env } = context;
 		const ipAddress =
 			request.headers.get("x-forwarded-for") ||
 			request.headers.get("x-real-ip") ||
@@ -107,7 +104,7 @@ export async function POST(request: Request, context: any) {
 			validatedData.submissionTime,
 		);
 
-		const db = getDB(env);
+		const db = getDB();
 
 		// Create comment
 		const result = await db.insert(commentsTable).values({

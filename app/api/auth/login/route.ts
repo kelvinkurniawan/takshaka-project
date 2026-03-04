@@ -1,8 +1,11 @@
 import { z } from "zod";
 import { verifyPassword } from "@/lib/auth";
 import { setSessionCookie } from "@/lib/session";
+import { getDB } from "@/lib/db";
+import { users } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
-export const runtime = "edge";
+// Use nodejs runtime to support better-sqlite3 in development and D1 in production
 export const dynamic = "force-dynamic";
 
 const loginSchema = z.object({
@@ -17,18 +20,25 @@ export async function POST(request: Request) {
 		// Validate input
 		const validatedData = loginSchema.parse(body);
 
-		// Use better-sqlite3 directly
-		const Database = require("better-sqlite3");
-		const db = new Database("dev.db");
+		// Get database instance with proper environment handling
+		const db = getDB();
 
 		try {
-			// Find user by email
-			const user = db
-				.prepare("SELECT id, name, email, password FROM users WHERE email = ?")
-				.get(validatedData.email) as any;
+			// Find user by email using Drizzle ORM
+			const userResult = await db
+				.select({
+					id: users.id,
+					name: users.name,
+					email: users.email,
+					password: users.password,
+				})
+				.from(users)
+				.where(eq(users.email, validatedData.email))
+				.limit(1);
+
+			const user = userResult[0];
 
 			if (!user) {
-				db.close();
 				return Response.json(
 					{ error: "Email atau password salah" },
 					{ status: 401 },
@@ -42,14 +52,11 @@ export async function POST(request: Request) {
 			);
 
 			if (!isPasswordValid) {
-				db.close();
 				return Response.json(
 					{ error: "Email atau password salah" },
 					{ status: 401 },
 				);
 			}
-
-			db.close();
 
 			// Set session cookie
 			await setSessionCookie(user.id);
@@ -66,7 +73,7 @@ export async function POST(request: Request) {
 				{ status: 200 },
 			);
 		} catch (error) {
-			db.close();
+			console.error("Database error:", error);
 			throw error;
 		}
 	} catch (error) {

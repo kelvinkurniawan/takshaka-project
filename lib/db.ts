@@ -1,29 +1,23 @@
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "./schema";
 
-let localDb: any;
+let db: any = null;
 
-export function getDB(env: Record<string, any>) {
-	// Production: Use D1 binding from Cloudflare
-	if (env?.DB) {
-		const { drizzle } = require("drizzle-orm/d1");
-		return drizzle(env.DB, { schema });
+export function getDB() {
+	if (db) return db;
+
+	const databaseUrl = process.env.DATABASE_URL;
+
+	if (!databaseUrl) {
+		throw new Error(
+			"DATABASE_URL tidak ditemukan. Pastikan sudah set di .env.local",
+		);
 	}
 
-	// Development or fallback to local SQLite
-	if (!localDb) {
-		try {
-			// Dynamic require to avoid bundling better-sqlite3 in production
-			const Database = require("better-sqlite3");
-			const betterSqliteDatabase = require("drizzle-orm/better-sqlite3");
-			const db = new Database("dev.db");
-			localDb = betterSqliteDatabase.drizzle(db, { schema });
-		} catch (error) {
-			console.error("Database init error:", error);
-			throw new Error(
-				"better-sqlite3 tidak tersedia. Pastikan sudah install dengan: npm install",
-			);
-		}
-	}
+	// Buat koneksi PostgreSQL
+	const client = postgres(databaseUrl);
+	db = drizzle(client, { schema });
 
-	return localDb;
+	return db;
 }

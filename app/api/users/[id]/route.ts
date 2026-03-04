@@ -4,7 +4,7 @@ import { getDB } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq, ne, isNull, and } from "drizzle-orm";
 
-export const runtime = "edge";
+// # Use nodejs runtime for Node.js database operations
 export const dynamic = "force-dynamic";
 
 const updateUserSchema = z.object({
@@ -16,7 +16,7 @@ const updateUserSchema = z.object({
 /**
  * GET /api/users/[id] - Get single user
  */
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		await requireAuth();
 
@@ -29,8 +29,7 @@ export async function GET(request: Request, context: any) {
 			);
 		}
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		const [user] = await db
 			.select({
@@ -65,7 +64,7 @@ export async function GET(request: Request, context: any) {
 /**
  * PUT /api/users/[id] - Update user
  */
-export async function PUT(request: Request, context: any) {
+export async function PUT(request: Request) {
 	try {
 		await requireAuth();
 
@@ -89,8 +88,7 @@ export async function PUT(request: Request, context: any) {
 		const body = await request.json();
 		const validatedData = updateUserSchema.parse(body);
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Check if user exists
 		const [existing] = await db
@@ -164,7 +162,7 @@ export async function PUT(request: Request, context: any) {
 /**
  * DELETE /api/users/[id] - Delete user
  */
-export async function DELETE(request: Request, context: any) {
+export async function DELETE(request: Request) {
 	try {
 		await requireAuth();
 
@@ -185,8 +183,7 @@ export async function DELETE(request: Request, context: any) {
 			);
 		}
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Check if user exists
 		const [existing] = await db

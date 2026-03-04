@@ -4,7 +4,6 @@ import { isNull, eq, desc } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuth } from "@/lib/rbac";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const createContentSchema = z.object({
@@ -30,12 +29,10 @@ const createContentSchema = z.object({
 
 const updateContentSchema = createContentSchema.partial();
 
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		await requireAuth();
-
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Get all active (non-deleted) contents
 		const allContents = await db
@@ -60,12 +57,10 @@ export async function GET(request: Request, context: any) {
 	}
 }
 
-export async function POST(request: Request, context: any) {
+export async function POST(request: Request) {
 	try {
 		await requireAuth();
-
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 		const body = await request.json();
 
 		// Validate input

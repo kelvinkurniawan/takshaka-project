@@ -3,7 +3,6 @@ import { pages } from "@/lib/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { z } from "zod";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const updatePageSchema = z.object({
@@ -15,10 +14,10 @@ const updatePageSchema = z.object({
 	metaDescription: z.string().max(500).optional(),
 });
 
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		const { env, params } = context;
-		const db = getDB(env);
+		const db = getDB();
 		const pageId = parseInt(params.id);
 
 		if (isNaN(pageId)) {
@@ -42,10 +41,10 @@ export async function GET(request: Request, context: any) {
 	}
 }
 
-export async function PUT(request: Request, context: any) {
+export async function PUT(request: Request) {
 	try {
 		const { env, params } = context;
-		const db = getDB(env);
+		const db = getDB();
 		const pageId = parseInt(params.id);
 		const body = await request.json();
 
@@ -109,10 +108,10 @@ export async function PUT(request: Request, context: any) {
 	}
 }
 
-export async function DELETE(request: Request, context: any) {
+export async function DELETE(request: Request) {
 	try {
 		const { env, params } = context;
-		const db = getDB(env);
+		const db = getDB();
 		const pageId = parseInt(params.id);
 
 		if (isNaN(pageId)) {

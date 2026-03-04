@@ -3,13 +3,12 @@ import { getDB } from "@/lib/db";
 import { comments as commentsTable } from "@/lib/schema";
 import { desc } from "drizzle-orm";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 /**
  * GET /api/admin/comments - Get all comments with filters
  */
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		await requireAuth();
 
@@ -19,8 +18,7 @@ export async function GET(request: Request, context: any) {
 		const status = searchParams.get("status") || "all";
 		const spam = searchParams.get("spam") || "all";
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Fetch all comments
 		const allComments = await db

@@ -2,12 +2,10 @@ import { getDB } from "@/lib/db";
 import { pages } from "@/lib/schema";
 import { isNull, eq } from "drizzle-orm";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Fetch all published pages (not deleted)
 		const allPages = await db

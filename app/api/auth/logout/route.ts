@@ -1,6 +1,6 @@
 import { clearSessionCookie } from "@/lib/session";
 
-export const runtime = "edge";
+// Use nodejs runtime for consistency with login route
 export const dynamic = "force-dynamic";
 
 export async function POST() {

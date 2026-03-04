@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { hashPassword } from "@/lib/auth";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const seedSchema = z.object({

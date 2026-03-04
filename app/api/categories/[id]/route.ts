@@ -4,7 +4,7 @@ import { getDB } from "@/lib/db";
 import { categories } from "@/lib/schema";
 import { eq, ne, isNull, and } from "drizzle-orm";
 
-export const runtime = "edge";
+// Use nodejs runtime for Node.js database operations
 export const dynamic = "force-dynamic";
 
 const updateCategorySchema = z.object({
@@ -16,7 +16,7 @@ const updateCategorySchema = z.object({
 /**
  * GET /api/categories/[id] - Get single category
  */
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		await requireAuth();
 
@@ -29,8 +29,7 @@ export async function GET(request: Request, context: any) {
 			);
 		}
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		const [category] = await db
 			.select({
@@ -67,7 +66,7 @@ export async function GET(request: Request, context: any) {
 /**
  * PUT /api/categories/[id] - Update category
  */
-export async function PUT(request: Request, context: any) {
+export async function PUT(request: Request) {
 	try {
 		await requireAuth();
 
@@ -91,8 +90,7 @@ export async function PUT(request: Request, context: any) {
 		const body = await request.json();
 		const validatedData = updateCategorySchema.parse(body);
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Check if category exists
 		const [existing] = await db
@@ -168,7 +166,7 @@ export async function PUT(request: Request, context: any) {
 /**
  * DELETE /api/categories/[id] - Delete category
  */
-export async function DELETE(request: Request, context: any) {
+export async function DELETE(request: Request) {
 	try {
 		await requireAuth();
 
@@ -189,8 +187,7 @@ export async function DELETE(request: Request, context: any) {
 			);
 		}
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Check if category exists
 		const [existing] = await db

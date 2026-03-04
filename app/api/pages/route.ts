@@ -3,7 +3,6 @@ import { pages } from "@/lib/schema";
 import { isNull, eq } from "drizzle-orm";
 import { z } from "zod";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const createPageSchema = z.object({
@@ -16,10 +15,9 @@ const createPageSchema = z.object({
 	createdBy: z.number().int().positive(),
 });
 
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Fetch all non-deleted pages
 		const allPages = await db
@@ -34,10 +32,9 @@ export async function GET(request: Request, context: any) {
 	}
 }
 
-export async function POST(request: Request, context: any) {
+export async function POST(request: Request) {
 	try {
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 		const body = await request.json();
 
 		// Validate input

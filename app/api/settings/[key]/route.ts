@@ -4,7 +4,7 @@ import { getDB } from "@/lib/db";
 import { settings } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-export const runtime = "edge";
+# Use nodejs runtime for Node.js database operations
 export const dynamic = "force-dynamic";
 
 const updateSettingSchema = z.object({
@@ -16,15 +16,14 @@ const updateSettingSchema = z.object({
 /**
  * GET /api/settings/[key] - Get single setting
  */
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request) {
 	try {
 		await requireAuth();
 
 		const { key } = await context.params;
 		const settingKey = decodeURIComponent(key);
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		const [setting] = await db
 			.select({
@@ -60,7 +59,7 @@ export async function GET(request: Request, context: any) {
 /**
  * PUT /api/settings/[key] - Update single setting
  */
-export async function PUT(request: Request, context: any) {
+export async function PUT(request: Request) {
 	try {
 		await requireAuth();
 
@@ -78,8 +77,7 @@ export async function PUT(request: Request, context: any) {
 		const body = await request.json();
 		const validatedData = updateSettingSchema.parse(body);
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Check if setting exists
 		const [existing] = await db
@@ -141,7 +139,7 @@ export async function PUT(request: Request, context: any) {
 /**
  * DELETE /api/settings/[key] - Delete single setting
  */
-export async function DELETE(request: Request, context: any) {
+export async function DELETE(request: Request) {
 	try {
 		await requireAuth();
 
@@ -156,8 +154,7 @@ export async function DELETE(request: Request, context: any) {
 		const { key } = await context.params;
 		const settingKey = decodeURIComponent(key);
 
-		const { env } = context;
-		const db = getDB(env);
+		const db = getDB();
 
 		// Check if setting exists
 		const [existing] = await db
