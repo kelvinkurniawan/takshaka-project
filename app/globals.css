@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,100..900;1,100..900&display=swap");
+@import "aos/dist/aos.css"; /* AOS animation styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -46,7 +47,7 @@ body {
 body {
 	background: var(--background);
 	color: var(--foreground);
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: var(--font-pt-serif), serif;
 }
 
 label {
@@ -1602,5 +1603,109 @@ label {
 	/* Carousel */
 	.index-page-content .carousel-container {
 		@apply my-6;
+	}
+
+	/* Apply Serif font for public pages */
+	@layer base {
+		.public-page {
+			font-family: serif;
+		}
+	}
+
+	/* ============================================
+	   Animation Utilities for Page Sections
+	   ============================================ */
+	@layer components {
+		/* Fade-in animation */
+		.animate-fade-in {
+			animation: fadeInUp 0.8s ease-out forwards;
+			opacity: 0;
+		}
+
+		/* Staggered animation delays */
+		.delay-100 {
+			animation-delay: 0.1s;
+		}
+
+		.delay-200 {
+			animation-delay: 0.2s;
+		}
+
+		.delay-300 {
+			animation-delay: 0.3s;
+		}
+
+		.delay-400 {
+			animation-delay: 0.4s;
+		}
+
+		.delay-500 {
+			animation-delay: 0.5s;
+		}
+
+		/* Smooth transition for interactive elements */
+		.transition-smooth {
+			@apply transition-all duration-300 ease-in-out;
+		}
+
+		/* Hover lift effect */
+		.hover-lift {
+			@apply transition-transform duration-300 hover:scale-105 hover:-translate-y-2;
+		}
+	}
+
+	/* Keyframe animations */
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(30px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes slideInFromLeft {
+		from {
+			opacity: 0;
+			transform: translateX(-50px);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	}
+
+	@keyframes slideInFromRight {
+		from {
+			opacity: 0;
+			transform: translateX(50px);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	}
+
+	@keyframes scaleIn {
+		from {
+			opacity: 0;
+			transform: scale(0.95);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	@keyframes pulse-soft {
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.7;
+		}
 	}
 }

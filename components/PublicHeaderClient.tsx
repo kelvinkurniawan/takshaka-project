@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useLayoutEffect } from "react";
-import { Sun, Moon, ChevronDown } from "lucide-react";
+import { Sun, Moon, ChevronDown, Search, Users, Menu } from "lucide-react";
 
 interface NavigationItem {
 	id: number;
@@ -31,46 +31,21 @@ export default function PublicHeaderClient({
 	const pathname = usePathname();
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const [theme, setTheme] = useState<"light" | "dark">("light");
+	const [searchOpen, setSearchOpen] = useState(false);
 
 	useLayoutEffect(() => {
-		const savedTheme =
-			typeof window !== "undefined" ? localStorage.getItem("theme") : null;
-		const prefersDark =
-			typeof window !== "undefined" &&
-			window.matchMedia &&
-			window.matchMedia("(prefers-color-scheme: dark)").matches;
-		const initialTheme =
-			(savedTheme as "light" | "dark" | null) ||
-			(prefersDark ? "dark" : "light");
+		const initialTheme = "light";
 		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setTheme(initialTheme);
-
-		// Ensure document class matches (RootLayout script sets this early on first paint)
-		if (initialTheme === "dark") {
-			document.documentElement.classList.add("dark");
-			document.documentElement.style.colorScheme = "dark";
-		} else {
-			document.documentElement.classList.remove("dark");
-			document.documentElement.style.colorScheme = "light";
-		}
+		document.documentElement.classList.remove("dark");
+		document.documentElement.style.colorScheme = "light";
 	}, []);
 
-	const toggleTheme = () => {
-		const newTheme = theme === "light" ? "dark" : "light";
-		setTheme(newTheme);
-		try {
-			if (newTheme === "dark") {
-				document.documentElement.classList.add("dark");
-				document.documentElement.style.colorScheme = "dark";
-			} else {
-				document.documentElement.classList.remove("dark");
-				document.documentElement.style.colorScheme = "light";
-			}
-			localStorage.setItem("theme", newTheme);
-		} catch (e) {
-			console.error(e);
-		}
-	};
+	// Force light mode for public pages
+	useEffect(() => {
+		document.documentElement.classList.remove("dark");
+		document.documentElement.style.colorScheme = "light";
+	}, []);
 
 	const isActive = (href: string) => {
 		if (href === "/") {
@@ -179,16 +154,12 @@ export default function PublicHeaderClient({
 	return (
 		<header className="sticky top-0 z-50 border-b bg-white dark:bg-[#1a1a1a] shadow-sm dark:border-[#3a3a3a]">
 			<nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-				<div className="flex items-center justify-between h-16">
+				<div className="flex items-center justify-between h-16 text-sm">
 					{/* Logo */}
 					<Link href="/" className="flex items-center space-x-2">
-						{logo ? (
-							<img src={logo} alt="Site Logo" className="h-10 w-auto" />
-						) : (
-							<span className="text-2xl font-bold text-primary">NextCMS</span>
-						)}
+						<Users size={18} />
+						<span>CONTACT US | +62 361 123456</span>
 					</Link>
-
 					{/* Desktop Navigation */}
 					{isNavEnabled && navigationItems && navigationItems.length > 0 && (
 						<div className="hidden md:flex items-center space-x-8">
@@ -199,45 +170,20 @@ export default function PublicHeaderClient({
 										<Link
 											key={item.id}
 											href={item.url}
-											className="text-foreground hover:text-primary transition-colors"
+											className="text-foreground hover:text-primary transition-colors uppercase tracking-wider text-sm font-medium"
 											target={item.target}
 										>
 											{item.label}
 										</Link>
 									),
 							)}
-
 							<button
-								onClick={toggleTheme}
-								className="p-2 text-gray-600 dark:text-[#929292] hover:text-gray-900 dark:hover:text-[#e5e5e5] hover:bg-gray-100 dark:hover:bg-[#323232] rounded-md transition-colors"
-								title={
-									theme === "light"
-										? "Switch to dark mode"
-										: "Switch to light mode"
-								}
-								aria-label="Toggle theme"
+								onClick={() => setSearchOpen(!searchOpen)}
+								className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+								title="Search"
+								aria-label="Search"
 							>
-								{theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
-							</button>
-						</div>
-					)}
-
-					{/* Fallback: Show when nav disabled or no items */}
-					{(!isNavEnabled ||
-						!navigationItems ||
-						navigationItems.length === 0) && (
-						<div className="hidden md:flex items-center space-x-4">
-							<button
-								onClick={toggleTheme}
-								className="p-2 text-gray-600 dark:text-[#929292] hover:text-gray-900 dark:hover:text-[#e5e5e5] hover:bg-gray-100 dark:hover:bg-[#323232] rounded-md transition-colors"
-								title={
-									theme === "light"
-										? "Switch to dark mode"
-										: "Switch to light mode"
-								}
-								aria-label="Toggle theme"
-							>
-								{theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+								<Search size={20} />
 							</button>
 						</div>
 					)}
@@ -247,36 +193,43 @@ export default function PublicHeaderClient({
 						className="md:hidden p-2"
 						onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
 					>
-						<svg
-							className="w-6 h-6"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M4 6h16M4 12h16M4 18h16"
-							/>
-						</svg>
+						<Menu size={24} />
 					</button>
 				</div>
 
-				{/* Mobile Navigation */}
-				{isNavEnabled && mobileMenuOpen && (
-					<div className="md:hidden pb-4 space-y-2">
-						{renderNavItems(navigationItems, true)}
-
-						<button
-							className="w-full text-left py-2 text-foreground hover:text-primary"
-							onClick={() => {
-								toggleTheme();
-								setMobileMenuOpen(false);
-							}}
+				{/* Popup search form */}
+				{searchOpen && (
+					<div
+						className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4"
+						onClick={() => setSearchOpen(false)}
+					>
+						<div
+							className="bg-white dark:bg-[#1a1a1a] p-8 rounded-lg shadow-2xl w-full max-w-2xl"
+							onClick={(e) => e.stopPropagation()}
 						>
-							{theme === "light" ? "Dark mode" : "Light mode"}
-						</button>
+							<div className="flex items-center justify-between mb-8">
+								<h2 className="text-3xl font-semibold text-foreground">
+									<Search size={32} className="inline-block mr-2 mb-2" />
+									Search
+								</h2>
+								<button
+									onClick={() => setSearchOpen(false)}
+									className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 text-3xl leading-none"
+									aria-label="Close search"
+								>
+									&times;
+								</button>
+							</div>
+							<input
+								type="text"
+								placeholder="Cari artikel, halaman, atau konten..."
+								className="w-full p-4 border border-gray-300 dark:border-[#3a3a3a] rounded-md bg-white dark:bg-[#282828] text-foreground text-lg focus:outline-none focus:ring-2 focus:ring-primary"
+								autoFocus
+							/>
+							<p className="mt-4 text-base text-gray-500 dark:text-gray-400">
+								Tekan Enter untuk mencari atau ESC untuk menutup
+							</p>
+						</div>
 					</div>
 				)}
 			</nav>

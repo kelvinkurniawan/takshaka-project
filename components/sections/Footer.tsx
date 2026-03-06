@@ -1,0 +1,121 @@
+"use client";
+
+import { useState } from "react";
+
+interface FooterLink {
+	label: string;
+	href: string;
+}
+
+interface FooterSection {
+	title: string;
+	links: FooterLink[];
+}
+
+interface FooterProps {
+	sections: FooterSection[];
+	copyright?: string;
+}
+
+export default function Footer({ sections, copyright }: FooterProps) {
+	const [email, setEmail] = useState("");
+
+	const handleSubscribe = (e: React.FormEvent) => {
+		e.preventDefault();
+		// Handle subscription logic here
+		console.log("Subscribe with email:", email);
+		setEmail("");
+	};
+
+	return (
+		<footer className="w-full">
+			{/* Subscribe Section */}
+			<section
+				className="w-full py-16 px-4 sm:px-6 lg:px-8"
+				style={{ backgroundColor: "#1a1f3a" }}
+			>
+				<div className="mx-auto max-w-7xl">
+					<div className="flex flex-col md:flex-row md:justify-between md:items-center">
+						{/* Get Inspired */}
+						<h3 className="text-white text-2xl font-light tracking-widest mb-8 md:mb-0">
+							Get Inspired
+						</h3>
+
+						{/* Subscribe Form */}
+						<form
+							onSubmit={handleSubscribe}
+							className="flex items-center gap-2"
+						>
+							<input
+								type="email"
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+								placeholder="Enter your email"
+								className="px-4 py-2 bg-transparent border-b border-white text-white placeholder-gray-400 focus:outline-none focus:border-amber-600 transition-colors"
+								required
+							/>
+							<button
+								type="submit"
+								className="px-6 py-2 text-white font-semibold text-sm tracking-wider hover:text-amber-600 transition-colors"
+							>
+								SUBSCRIBE
+							</button>
+						</form>
+					</div>
+				</div>
+			</section>
+
+			{/* Footer Links Section */}
+			<section
+				className="w-full py-16 px-4 sm:px-6 lg:px-8 border-t border-gray-700"
+				style={{ backgroundColor: "#1a1f3a" }}
+			>
+				<div className="mx-auto max-w-7xl">
+					<div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
+						{sections.map((section, idx) => (
+							<div key={idx}>
+								<h4 className="text-white font-semibold tracking-wider mb-4 text-sm uppercase">
+									{section.title}
+								</h4>
+								<ul className="space-y-3">
+									{section.links.map((link, linkIdx) => (
+										<li key={linkIdx}>
+											<a
+												href={link.href}
+												className="text-gray-400 hover:text-white text-sm leading-relaxed transition-colors"
+											>
+												{link.label}
+											</a>
+										</li>
+									))}
+								</ul>
+							</div>
+						))}
+					</div>
+
+					{/* Divider */}
+					<div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row md:justify-between md:items-center">
+						{/* Logo */}
+						<div className="mb-6 md:mb-0">
+							<img
+								src="/images/logo.png"
+								alt="Takshaka Logo"
+								className="h-16"
+							/>
+						</div>
+
+						{/* Copyright */}
+						<p className="text-gray-400 text-sm">
+							{copyright || "Copyright 2026. Takshaka Event & Experience"}
+						</p>
+
+						{/* Social Links */}
+						<div className="flex gap-4 mt-6 md:mt-0">
+							<span className="text-gray-400 text-sm">Follow us on:</span>
+						</div>
+					</div>
+				</div>
+			</section>
+		</footer>
+	);
+}
