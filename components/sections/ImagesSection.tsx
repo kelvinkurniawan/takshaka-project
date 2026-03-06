@@ -22,15 +22,17 @@ export default function ImagesSection({
 					// if last index, add margin-bottom-0, else mb-4
 					<div
 						key={index}
-						className={`w-full h-48 md:h-64 overflow-hidden ${
+						className={`relative w-full h-48 md:h-64 overflow-hidden transform transition-transform duration-500 ease-out hover:scale-105 cursor-pointer ${
 							index === images.length - 1 ? "mb-0" : "mb-4"
 						}`}
 					>
 						<img
 							src={image.src}
 							alt={image.alt}
-							className="w-full h-full object-cover"
+							className="w-full h-full object-cover transition-brightness duration-500 group-hover:brightness-110"
 						/>
+						{/* dark overlay that deepens on hover */}
+						<div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-opacity duration-500" />
 					</div>
 				))}
 			</div>

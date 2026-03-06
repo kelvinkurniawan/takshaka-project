@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { PT_Serif } from "next/font/google";
 import "./globals.css";
 import AOSInit from "../components/AOSInit";
+import { Footer } from "@/components/sections";
+import { getFooterSections, getAppMetadata } from "@/lib/page-helpers";
 
 const ptSerif = PT_Serif({
 	variable: "--font-pt-serif",
@@ -9,13 +11,17 @@ const ptSerif = PT_Serif({
 	weight: ["400", "700"],
 });
 
-export const metadata: Metadata = {
-	title: {
-		default: "NextCMS - Headless CMS",
-		template: "%s | NextCMS",
-	},
-	description: "Modern headless CMS built with Next.js",
-};
+export async function generateMetadata(): Promise<Metadata> {
+	const { name, description } = await getAppMetadata();
+
+	return {
+		title: {
+			default: name,
+			template: `%s | ${name}`,
+		},
+		description: description,
+	};
+}
 
 export default function RootLayout({
 	children,

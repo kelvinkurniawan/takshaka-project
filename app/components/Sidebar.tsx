@@ -88,10 +88,11 @@ export default function Sidebar({
 			{/* Logo */}
 			<div className="sidebar-logo">
 				<div className="sidebar-logo-content">
-					<div className="sidebar-logo-icon">
-						<FolderOpen className="w-4 h-4 text-white" />
-					</div>
-					{sidebarOpen && <h1 className="sidebar-logo-text">NextCMS</h1>}
+					<img
+						src="/images/logo_colored.png"
+						alt="Takshaka Logo"
+						className="w-12 h-12"
+					/>
 				</div>
 			</div>
 

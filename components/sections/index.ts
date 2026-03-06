@@ -1,4 +1,5 @@
 export { default as HeroSection } from "./HeroSection";
+export { default as ParallaxHero } from "./ParallaxHero";
 export { default as HeroNavigation } from "./HeroNavigation";
 export { default as FeaturedSection } from "./FeaturedSection";
 export { default as NavigationMenu } from "./NavigationMenu";
@@ -7,4 +8,8 @@ export { default as ImagesSection } from "./ImagesSection";
 export { default as CuratedExperiencesSection } from "./CuratedExperiencesSection";
 export { default as ExperiencesSharedSection } from "./ExperiencesSharedSection";
 export { default as SustainableImpactSection } from "./SustainableImpactSection";
+export { default as BoardLetterSection } from "./BoardLetterSection";
+export { default as TakskaWaySection } from "./TakskaWaySection";
+export { default as BrandStorySection } from "./BrandStorySection";
+export { default as TimelineSection } from "./TimelineSection";
 export { default as Footer } from "./Footer";

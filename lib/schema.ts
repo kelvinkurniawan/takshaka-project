@@ -187,3 +187,28 @@ export const commentReplies = pgTable("comment_replies", {
 	updatedAt: timestamp("updated_at", { mode: "date" }).notNull(),
 	deletedAt: timestamp("deleted_at", { mode: "date" }),
 });
+
+export const pageSections = pgTable(
+	"page_sections",
+	{
+		id: serial("id").primaryKey(),
+		pageName: text("page_name").notNull(),
+		pageSlug: text("page_slug").notNull(),
+		pageData: text("page_data").notNull(), // JSON string containing all section data
+		createdBy: integer("created_by").notNull(),
+		createdAt: timestamp("created_at", { mode: "date" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+		updatedAt: timestamp("updated_at", { mode: "date" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+		deletedAt: timestamp("deleted_at", { mode: "date" }),
+	},
+	(table) => {
+		return {
+			slugIdx: uniqueIndex("page_sections_slug_idx")
+				.on(table.pageSlug)
+				.where(sql`${table.deletedAt} is null`),
+		};
+	},
+);

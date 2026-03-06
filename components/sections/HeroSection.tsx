@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import HeroNavigation from "./HeroNavigation";
 
-interface HeroSectionProps {
+export interface HeroSectionProps {
 	title: string;
 	description: string;
 	backgroundImage?: string;
+	backgroundScale?: number;
 }
 
 // Collection of beautiful Unsplash images for slideshow
@@ -25,6 +26,7 @@ export default function HeroSection({
 	title,
 	description,
 	backgroundImage,
+	backgroundScale = 1,
 }: HeroSectionProps) {
 	const [currentImageIndex, setCurrentImageIndex] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
@@ -57,7 +59,14 @@ export default function HeroSection({
 					}
 				/>
 				{/* Background Image Slideshow */}
-				<div className="absolute inset-0">
+				<div
+					className="absolute inset-0"
+					style={{
+						transform: `scale(${backgroundScale})`,
+						transformOrigin: "center",
+						transition: "transform 0.05s linear",
+					}}
+				>
 					{images.map((image, index) => (
 						<div
 							key={index}
