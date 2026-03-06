@@ -1,5 +1,7 @@
 import PublicHeader from "@/components/PublicHeader";
 import PublicFooter from "@/components/PublicFooter";
+import { getFooterSections } from "@/lib/page-helpers";
+import { Footer } from "@/components/sections";
 
 export const metadata = {
 	title: "NextCMS - Headless CMS Modern",
@@ -25,7 +27,12 @@ export default function PublicLayout({
 			<div className="public-light flex flex-col min-h-screen bg-white text-gray-900">
 				<PublicHeader />
 				<main className="flex-1">{children}</main>
-				<PublicFooter />
+
+				{/* Footer */}
+				<Footer
+					sections={getFooterSections()}
+					copyright="Copyright 2026. Takshaka Event & Experience"
+				/>
 			</div>
 		</>
 	);

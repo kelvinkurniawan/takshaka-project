@@ -6,6 +6,7 @@ import {
 	TimelineSection,
 } from "@/components/sections";
 import Image from "next/image";
+import { getPageSectionsFromDB } from "@/lib/page-helpers";
 
 export const metadata = {
 	title: "Our Inspiration",
@@ -13,51 +14,85 @@ export const metadata = {
 		"Discover the inspiration and vision behind our premium experiences",
 };
 
-export default function OurInspirationPage() {
+export default async function OurInspirationPage() {
+	const inspirationSections = await getPageSectionsFromDB("our-inspiration");
+
+	if (!inspirationSections) {
+		return (
+			<>
+				<div className="text-center py-20">The Page Cannot Be Rendered</div>
+			</>
+		);
+	}
+
 	return (
-		<div className="public-light flex flex-col min-h-screen bg-white text-gray-900">
-			<main className="flex-1">
-				{/* Hero Section */}
+		<>
+			{/* Hero Section */}
+			{inspirationSections.hero && (
 				<ParallaxHero
-					title="BOARD LETTER"
-					description="A message from our leadership"
-					backgroundImage="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&q=80"
+					title={inspirationSections.hero.title}
+					description={inspirationSections.hero.description}
+					backgroundImage={inspirationSections.hero.background}
 				/>
+			)}
 
-				{/* Board Letter Content Section */}
-				<BoardLetterSection
-					imageUrl="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80"
-					paragraphs={[
-						"At Taksaka, we believe that leadership is defined by the ability to adapt and innovate in an evolving landscape. This past year has tested our resolve and resilience, strengthening our commitment to our guests and partners. We reimagined experiences with a dedicated Team Taksaka to unlock transformational journeys in excellence.",
-						"Our philosophy has always centered on authentic value to our clients and partners. By integrating forward-thinking strategies with a dedicated team, Taksaka is not just keeping pace with the industry—we are setting the standard for the future.",
-						"We thank you for your continued trust as we embark on this next chapter of our journey.",
-					]}
-					signatureName="Leadership Team"
-					signatureTitle="Taksaka"
-				/>
+			{/* Board Letter Content Section */}
+			{inspirationSections.boardLetter && (
+				<div data-aos="fade-up" data-aos-duration="800">
+					<BoardLetterSection
+						imageUrl={inspirationSections.boardLetter.imageUrl}
+						paragraphs={inspirationSections.boardLetter.paragraphs}
+						signatureName={inspirationSections.boardLetter.signatureName}
+						signatureTitle={inspirationSections.boardLetter.signatureTitle}
+					/>
+				</div>
+			)}
 
-				{/* Fullwidth Image Section */}
+			{/* Fullwidth Image Section */}
+			{inspirationSections.fullwidthImage && (
 				<section className="w-full h-auto">
 					<div className="relative w-full" style={{ aspectRatio: "1920/1080" }}>
 						<Image
-							src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&q=80"
-							alt="Inspiration"
+							src={inspirationSections.fullwidthImage.src}
+							alt={inspirationSections.fullwidthImage.alt}
 							fill
 							className="object-cover"
 							priority
 						/>
 					</div>
 				</section>
+			)}
 
-				{/* Taksaka Way Section */}
-				<TakskaWaySection />
+			{/* Taksaka Way Section */}
+			{inspirationSections.takskaWay && (
+				<div data-aos="fade-right" data-aos-delay="100" data-aos-duration="800">
+					<TakskaWaySection
+						sectionTitle={inspirationSections.takskaWay.sectionTitle}
+						items={inspirationSections.takskaWay.items}
+					/>
+				</div>
+			)}
 
-				{/* Brand Story Section */}
-				<BrandStorySection />
+			{/* Brand Story Section */}
+			{inspirationSections.brandStory && (
+				<div data-aos="fade-left" data-aos-delay="200" data-aos-duration="800">
+					<BrandStorySection
+						backgroundImage={inspirationSections.brandStory.backgroundImage}
+						sectionTitle={inspirationSections.brandStory.sectionTitle}
+						items={inspirationSections.brandStory.items}
+					/>
+				</div>
+			)}
 
-				{/* Timeline Section */}
-				<TimelineSection />
-			</main>
-		</div>
+			{/* Timeline Section */}
+			{inspirationSections.timeline && (
+				<div data-aos="fade-right" data-aos-delay="300" data-aos-duration="800">
+					<TimelineSection
+						sectionTitle={inspirationSections.timeline.sectionTitle}
+						items={inspirationSections.timeline.items}
+					/>
+				</div>
+			)}
+		</>
 	);
 }

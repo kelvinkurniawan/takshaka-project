@@ -1,6 +1,51 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,100..900;1,100..900&display=swap");
 @import "aos/dist/aos.css"; /* AOS animation styles */
 @tailwind base;
+
+@font-face {
+	font-family: "MinionPro";
+	src: url("/fonts/MinionPro-Medium.otf") format("opentype");
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "MinionPro";
+	src: url("/fonts/MinionPro-MediumIt.otf") format("opentype");
+	font-weight: 400;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: "MinionPro";
+	src: url("/fonts/MinionPro-Semibold.otf") format("opentype");
+	font-weight: 600;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "MinionPro";
+	src: url("/fonts/MinionPro-SemiboldIt.otf") format("opentype");
+	font-weight: 600;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: "MinionPro";
+	src: url("/fonts/MinionPro-Bold.otf") format("opentype");
+	font-weight: 700;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "MinionPro";
+	src: url("/fonts/MinionPro-BoldIt.otf") format("opentype");
+	font-weight: 700;
+	font-style: italic;
+}
+
+@tailwind components;
+@tailwind utilities;
 @tailwind components;
 @tailwind utilities;
 
@@ -47,7 +92,7 @@ body {
 body {
 	background: var(--background);
 	color: var(--foreground);
-	font-family: var(--font-pt-serif), serif;
+	font-family: "MinionPro", serif;
 }
 
 label {

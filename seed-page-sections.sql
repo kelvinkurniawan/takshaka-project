@@ -233,3 +233,203 @@ VALUES (
   NOW(),
   NOW()
 );
+
+-- Insert Our Inspiration page sections
+INSERT INTO page_sections (page_name, page_slug, page_data, created_by, created_at, updated_at)
+VALUES (
+  'Our Inspiration',
+  'our-inspiration',
+  '{
+    "hero": {
+      "title": "BOARD LETTER",
+      "description": "A message from our leadership",
+      "background": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&q=80"
+    },
+    "boardLetter": {
+      "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80",
+      "paragraphs": [
+        "At Taksaka, we believe that leadership is defined by the ability to adapt and innovate in an evolving landscape. This past year has tested our resolve and resilience, strengthening our commitment to our guests and partners. We reimagined experiences with a dedicated Team Taksaka to unlock transformational journeys in excellence.",
+        "Our philosophy has always centered on authentic value to our clients and partners. By integrating forward-thinking strategies with a dedicated team, Taksaka is not just keeping pace with the industry—we are setting the standard for the future.",
+        "We thank you for your continued trust as we embark on this next chapter of our journey."
+      ],
+      "signatureName": "Leadership Team",
+      "signatureTitle": "Taksaka"
+    },
+    "fullwidthImage": {
+      "src": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&q=80",
+      "alt": "Inspiration"
+    },
+    "takskaWay": {
+      "sectionTitle": "TAKSAKA WAY",
+      "items": [
+        {
+          "id": "authenticity",
+          "title": "AUTHENTICITY",
+          "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&q=80"
+        },
+        {
+          "id": "transformation",
+          "title": "TRANSFORMATION",
+          "imageUrl": "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=500&q=80"
+        },
+        {
+          "id": "sustainability",
+          "title": "SUSTAINABILITY",
+          "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=500&q=80"
+        },
+        {
+          "id": "harmony",
+          "title": "HARMONY",
+          "imageUrl": "https://images.unsplash.com/photo-1502933691298-84fc14542831?w=500&q=80"
+        },
+        {
+          "id": "excellence",
+          "title": "EXCELLENCE\nIN EXPERIENCE",
+          "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80"
+        }
+      ]
+    },
+    "brandStory": {
+      "backgroundImage": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&q=80",
+      "sectionTitle": "BRAND STORY",
+      "items": [
+        {
+          "id": "origin",
+          "title": "THE ORIGIN",
+          "description": "Taksaka draws from a rich cultural heritage, weaving together ancestral wisdom with contemporary consciousness to create transformative journeys.",
+          "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80"
+        },
+        {
+          "id": "myth",
+          "title": "MYTH & SYMBOL",
+          "description": "More than mythology, Taksaka embodies the sacred connection between the ethereal and the spiritual, honoring the timeless and cherished traditions.",
+          "imageUrl": "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=600&q=80"
+        },
+        {
+          "id": "meaning",
+          "title": "MEANING",
+          "description": "At its heart, Taksaka seeks to awaken collective revelation advancing consciousness, responsibility, and renewal to transform experience.",
+          "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&q=80"
+        }
+      ]
+    },
+    "timeline": {
+      "sectionTitle": "SPIRITUAL JOURNEY",
+      "items": [
+        {
+          "id": "mount-agung",
+          "title": "MOUNT AGUNG",
+          "description": "The axis of spiritual elevation."
+        },
+        {
+          "id": "cloud",
+          "title": "CLOUD",
+          "description": "Aspiration beyond boundaries."
+        },
+        {
+          "id": "air",
+          "title": "AIR",
+          "description": "Invisible force that connects all."
+        },
+        {
+          "id": "fire",
+          "title": "FIRE",
+          "description": "Energy of transformation."
+        },
+        {
+          "id": "water",
+          "title": "WATER",
+          "description": "Balance through adaptability."
+        },
+        {
+          "id": "night-queen",
+          "title": "NIGHT QUEEN",
+          "description": "Timeless victory and grace."
+        },
+        {
+          "id": "dragon",
+          "title": "DRAGON",
+          "description": "Directional growth and evolution."
+        },
+        {
+          "id": "dragon-wing",
+          "title": "DRAGON WING",
+          "description": "Transcendental strength."
+        },
+        {
+          "id": "gold-crown",
+          "title": "GOLD CROWN",
+          "description": "Illuminated authority."
+        },
+        {
+          "id": "circle",
+          "title": "CIRCLE",
+          "description": "Eternal unity."
+        },
+        {
+          "id": "gold-jewels",
+          "title": "GOLD JEWELS",
+          "description": "Inner prosperity and clarity."
+        }
+      ]
+    }
+  }',
+  1,
+  NOW(),
+  NOW()
+);
+
+-- Insert Prestige Events page sections
+INSERT INTO page_sections (page_name, page_slug, page_data, created_by, created_at, updated_at)
+VALUES (
+  'Prestige Events',
+  'prestige-events',
+  '{
+    "hero": {
+      "title": "PRESTIGE EVENTS",
+      "description": "IDEAS DEMAND WORTHY STAGES",
+      "background": "https://images.unsplash.com/photo-1540575467063-5f88a4ab0908?w=1920&q=80"
+    },
+    "heroContent": {
+      "backgroundImage": "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1920&q=80",
+      "alt": "Prestige Event Stage",
+      "badge": "CONFERENCE & SUMMIT",
+      "heading": "IDEAS DEMAND\nWORTHY STAGES",
+      "description": "The world''s boldest ideas deserve a stage to match, and TakskaEvents creates experiences that turn conversation into transformation. Every event unfolds as a carefully choreographed masterpiece—from intimate roundtables to grand summits with thousands. We believe in creating powerful moments of connection and impact while building global peer communities."
+    },
+    "twoColumn": {
+      "title": "WHERE BUSINESS",
+      "titleItalic": "TRANSFORM INTO",
+      "titleBold": "EXPERIENCE",
+      "description": "When business gathers in the right setting, shaped by clear intention, it doesn''t just meet objectives. It transcends them. The world''s most forward-thinking organizations choose Taksaka to ensure their people experience something extraordinary and their most important conversations are held in the settings they deserve to be held in.",
+      "imageUrl": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80"
+    },
+    "imageGallery": {
+      "images": [
+        {
+          "id": "1",
+          "src": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80",
+          "alt": "Mountain landscape"
+        },
+        {
+          "id": "2",
+          "src": "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=600&q=80",
+          "alt": "Abstract fire and light"
+        },
+        {
+          "id": "3",
+          "src": "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=80",
+          "alt": "Aerial pattern"
+        },
+        {
+          "id": "4",
+          "src": "https://images.unsplash.com/photo-1421821537131-d7a4dcf3f7ca?w=600&q=80",
+          "alt": "Galaxy stars"
+        }
+      ]
+    }
+  }',
+  1,
+  NOW(),
+  NOW()
+);
