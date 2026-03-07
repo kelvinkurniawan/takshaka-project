@@ -97,7 +97,7 @@ export default function Sidebar({
 					<img
 						src="/images/logo_colored.png"
 						alt="Takshaka Logo"
-						className="w-12 h-12"
+						className="w-auto h-12"
 					/>
 				</div>
 			</div>
