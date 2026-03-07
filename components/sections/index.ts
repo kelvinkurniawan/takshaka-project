@@ -3,7 +3,7 @@ export { default as ParallaxHero } from "./ParallaxHero";
 export { default as HeroNavigation } from "./HeroNavigation";
 export { default as FeaturedSection } from "./FeaturedSection";
 export { default as NavigationMenu } from "./NavigationMenu";
-export { default as ThreeItemSection, SectionItem } from "./ThreeItemSection";
+export { default as ThreeItemSection } from "./ThreeItemSection";
 export { default as ImagesSection } from "./ImagesSection";
 export { default as CuratedExperiencesSection } from "./CuratedExperiencesSection";
 export { default as ExperiencesSharedSection } from "./ExperiencesSharedSection";
