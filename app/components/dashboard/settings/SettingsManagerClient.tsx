@@ -101,7 +101,7 @@ export default function SettingsManagerClient({
 			);
 
 			setGeneralSettings({
-				site_name: settingMap.site_name || "NextCMS",
+				site_name: settingMap.site_name || "Takshaka CMS",
 				site_description:
 					settingMap.site_description ||
 					"A modern headless CMS built with Next.js",

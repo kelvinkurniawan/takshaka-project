@@ -2,7 +2,7 @@
 
 ## Overview
 
-NextCMS sekarang memiliki public-facing pages yang memungkinkan pengunjung untuk melihat konten published tanpa memerlukan authentikasi. Struktur ini mengikuti pattern yang sama dengan https://takshaka.id/ dengan halaman landing (home), blog listing, dan halaman detail.
+Takshaka CMS sekarang memiliki public-facing pages yang memungkinkan pengunjung untuk melihat konten published tanpa memerlukan authentikasi. Struktur ini mengikuti pattern yang sama dengan https://takshaka.id/ dengan halaman landing (home), blog listing, dan halaman detail.
 
 ## Struktur File
 
@@ -63,13 +63,13 @@ Return semua settings dalam format object:
 
 ```json
 {
-  "site_title": "NextCMS",
-  "site_description": "Headless CMS modern",
-  "hero_title": "NextCMS Platform",
-  "hero_description": "Headless CMS modern yang powerful...",
-  "show_features": "true",
-  "show_articles": "true",
-  "index_page": "1"
+	"site_title": "Takshaka CMS",
+	"site_description": "Headless CMS modern",
+	"hero_title": "Takshaka CMS Platform",
+	"hero_description": "Headless CMS modern yang powerful...",
+	"show_features": "true",
+	"show_articles": "true",
+	"index_page": "1"
 }
 ```
 
@@ -79,9 +79,9 @@ Buat atau update settings berikut di dashboard (`/app/settings`) untuk mengontro
 
 | Setting Key        | Type           | Default                  | Deskripsi                               |
 | ------------------ | -------------- | ------------------------ | --------------------------------------- |
-| `site_title`       | string         | "NextCMS"                | Judul website                           |
+| `site_title`       | string         | "Takshaka CMS"           | Judul website                           |
 | `site_description` | string         | "Headless CMS modern..." | Deskripsi website                       |
-| `hero_title`       | string         | "NextCMS Platform"       | Judul hero section                      |
+| `hero_title`       | string         | "Takshaka CMS Platform"  | Judul hero section                      |
 | `hero_description` | string         | "Headless CMS modern..." | Deskripsi hero section                  |
 | `show_features`    | boolean/string | "true"                   | Tampilkan fitur section? (true/false)   |
 | `show_articles`    | boolean/string | "true"                   | Tampilkan artikel terbaru? (true/false) |
@@ -171,15 +171,15 @@ Return semua published pages (soft-deleted filtered out):
 
 ```json
 [
-  {
-    "id": 1,
-    "title": "About Us",
-    "slug": "about-us",
-    "content": "<h1>...</h1>",
-    "status": "published",
-    "metaTitle": "...",
-    "metaDescription": "..."
-  }
+	{
+		"id": 1,
+		"title": "About Us",
+		"slug": "about-us",
+		"content": "<h1>...</h1>",
+		"status": "published",
+		"metaTitle": "...",
+		"metaDescription": "..."
+	}
 ]
 ```
 
@@ -189,11 +189,11 @@ Return single published page atau 404:
 
 ```json
 {
-  "id": 1,
-  "title": "About Us",
-  "slug": "about-us",
-  "content": "<h1>...</h1>",
-  "status": "published"
+	"id": 1,
+	"title": "About Us",
+	"slug": "about-us",
+	"content": "<h1>...</h1>",
+	"status": "published"
 }
 ```
 
@@ -208,17 +208,17 @@ Return semua published contents (articles) dengan optional filters:
 
 ```json
 [
-  {
-    "id": 1,
-    "title": "Article Title",
-    "slug": "article-slug",
-    "content": "...",
-    "excerpt": "...",
-    "type": "article",
-    "status": "published",
-    "featuredImage": "...",
-    "publishedAt": "2026-02-17T00:00:00Z"
-  }
+	{
+		"id": 1,
+		"title": "Article Title",
+		"slug": "article-slug",
+		"content": "...",
+		"excerpt": "...",
+		"type": "article",
+		"status": "published",
+		"featuredImage": "...",
+		"publishedAt": "2026-02-17T00:00:00Z"
+	}
 ]
 ```
 

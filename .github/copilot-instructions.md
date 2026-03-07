@@ -1,8 +1,8 @@
-# AI Coding Assistant Instructions for NextCMS
+# AI Coding Assistant Instructions for Takshaka CMS
 
 ## Project Overview
 
-NextCMS is a Next.js 15 headless CMS with SQLite database, designed for dual-environment deployment:
+Takshaka CMS is a Next.js 15 headless CMS with SQLite database, designed for dual-environment deployment:
 
 - **Development**: Local SQLite (dev.db) with Node.js runtime
 - **Production**: Cloudflare D1 + Workers (edge runtime)
@@ -24,8 +24,8 @@ The `getDB(env)` function handles environment-specific database initialization:
 ```typescript
 // CORRECT - In API routes
 export async function GET(request: Request, context: any) {
-  const { env } = context;
-  const db = getDB(env);
+	const { env } = context;
+	const db = getDB(env);
 }
 
 // INCORRECT - Do not use process.env.DB in production
@@ -48,11 +48,11 @@ All API routes must:
 export const runtime = "nodejs";
 
 export async function GET(request: Request, context: any) {
-  const { env } = context;
-  const db = getDB(env);
+	const { env } = context;
+	const db = getDB(env);
 
-  const data = await db.select().from(table);
-  return Response.json(data);
+	const data = await db.select().from(table);
+	return Response.json(data);
 }
 ```
 
@@ -90,8 +90,8 @@ Tables use standard Drizzle SQLite syntax:
 
 ```typescript
 export const users = sqliteTable("users", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  name: text("name").notNull(),
+	id: integer("id").primaryKey({ autoIncrement: true }),
+	name: text("name").notNull(),
 });
 ```
 
@@ -148,21 +148,21 @@ const user = await db.select().from(users).where(eq(users.id, id));
 
 // Select single result
 const firstUser = await db
-  .select()
-  .from(users)
-  .where(eq(users.id, id))
-  .limit(1);
+	.select()
+	.from(users)
+	.where(eq(users.id, id))
+	.limit(1);
 
 // Select with multiple conditions (use and() for multi-where queries)
 import { and } from "drizzle-orm";
 const activeUsers = await db
-  .select()
-  .from(users)
-  .where(and(eq(users.role, "admin"), eq(users.active, true)));
+	.select()
+	.from(users)
+	.where(and(eq(users.role, "admin"), eq(users.active, true)));
 
 // Insert
 await db.insert(users).values({
-  name: "John Doe",
+	name: "John Doe",
 });
 
 // Update
@@ -203,9 +203,9 @@ let globalDb = getDB({});
 // ✅ Always use getDB(env) from context
 export const runtime = "nodejs";
 export async function GET(request: Request, context: any) {
-  const { env } = context;
-  const db = getDB(env);
-  // db is properly initialized for both production and development
+	const { env } = context;
+	const db = getDB(env);
+	// db is properly initialized for both production and development
 }
 
 // ✅ Always pass env parameter to getDB
@@ -213,7 +213,7 @@ const db = getDB(env); // With env from context
 
 // ✅ Call getDB fresh on each request
 export async function POST(request: Request, context: any) {
-  const db = getDB(context.env); // Fresh instance per request
+	const db = getDB(context.env); // Fresh instance per request
 }
 ```
 
@@ -259,37 +259,37 @@ export default function CategoryManager() {
 ```typescript
 // ✅ CORRECT - Schema with soft delete (NO unique constraints in DB)
 export const categories = sqliteTable("categories", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  name: text("name").notNull(),
-  slug: text("slug").notNull(), // No .unique() - handled in application
-  description: text("description"),
-  createdBy: integer("created_by").notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-  deletedAt: integer("deleted_at", { mode: "timestamp" }),
+	id: integer("id").primaryKey({ autoIncrement: true }),
+	name: text("name").notNull(),
+	slug: text("slug").notNull(), // No .unique() - handled in application
+	description: text("description"),
+	createdBy: integer("created_by").notNull(),
+	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+	deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
 
 // ✅ CORRECT - Soft delete in API
 await db
-  .update(categories)
-  .set({ deletedAt: new Date() })
-  .where(eq(categories.id, categoryId));
+	.update(categories)
+	.set({ deletedAt: new Date() })
+	.where(eq(categories.id, categoryId));
 
 // ✅ CORRECT - Filter soft deleted records
 const categories = await db
-  .select()
-  .from(categories)
-  .where(isNull(categories.deletedAt)); // Exclude soft deleted
+	.select()
+	.from(categories)
+	.where(isNull(categories.deletedAt)); // Exclude soft deleted
 
 // ✅ CORRECT - Manual filtering for uniqueness checks (Drizzle limitation workaround)
 const existing = await db
-  .select()
-  .from(categories)
-  .where(eq(categories.slug, validatedData.slug));
+	.select()
+	.from(categories)
+	.where(eq(categories.slug, validatedData.slug));
 
 const activeCategories = existing.filter((cat) => cat.deletedAt === null);
 if (activeCategories.length > 0) {
-  return Response.json({ error: "Slug sudah digunakan" }, { status: 400 });
+	return Response.json({ error: "Slug sudah digunakan" }, { status: 400 });
 }
 ```
 
@@ -310,24 +310,24 @@ if (activeCategories.length > 0) {
 ```css
 /* ✅ CORRECT - globals.css */
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-  }
+	:root {
+		--background: 0 0% 100%;
+		--foreground: 222.2 84% 4.9%;
+		--primary: 221.2 83.2% 53.3%;
+	}
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-  }
+	.dark {
+		--background: 222.2 84% 4.9%;
+		--foreground: 210 40% 98%;
+		--primary: 217.2 91.2% 59.8%;
+	}
 }
 
 @layer components {
-  .btn-primary {
-    background-color: hsl(var(--primary));
-    color: hsl(var(--foreground));
-  }
+	.btn-primary {
+		background-color: hsl(var(--primary));
+		color: hsl(var(--foreground));
+	}
 }
 ```
 
@@ -414,28 +414,28 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 export async function POST(request: Request, context: any) {
-  try {
-    const { env } = context;
-    const db = getDB(env);
-    const body = await request.json();
+	try {
+		const { env } = context;
+		const db = getDB(env);
+		const body = await request.json();
 
-    // Validate input (see Input Validation section)
-    const data = validateUserInput(body);
+		// Validate input (see Input Validation section)
+		const data = validateUserInput(body);
 
-    // Execute query
-    await db.insert(users).values(data);
+		// Execute query
+		await db.insert(users).values(data);
 
-    return Response.json({ success: true });
-  } catch (error) {
-    // Log full error server-side
-    console.error("Database operation failed:", error);
+		return Response.json({ success: true });
+	} catch (error) {
+		// Log full error server-side
+		console.error("Database operation failed:", error);
 
-    // Return safe error to client (never expose stack trace)
-    return Response.json(
-      { error: "Failed to process request" },
-      { status: 500 },
-    );
-  }
+		// Return safe error to client (never expose stack trace)
+		return Response.json(
+			{ error: "Failed to process request" },
+			{ status: 500 },
+		);
+	}
 }
 ```
 
@@ -455,36 +455,36 @@ import { z } from "zod";
 
 // Define validation schema
 const createUserSchema = z.object({
-  name: z.string().min(1, "Name is required").max(255),
-  email: z.string().email("Invalid email").optional(),
+	name: z.string().min(1, "Name is required").max(255),
+	email: z.string().email("Invalid email").optional(),
 });
 
 export async function POST(request: Request, context: any) {
-  try {
-    const body = await request.json();
+	try {
+		const body = await request.json();
 
-    // Validate input
-    const validatedData = createUserSchema.parse(body);
+		// Validate input
+		const validatedData = createUserSchema.parse(body);
 
-    // Now safe to use in database
-    const { env } = context;
-    const db = getDB(env);
-    await db.insert(users).values(validatedData);
+		// Now safe to use in database
+		const { env } = context;
+		const db = getDB(env);
+		await db.insert(users).values(validatedData);
 
-    return Response.json({ success: true });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      // Return validation errors to client
-      return Response.json(
-        { error: "Validation failed", details: error.errors },
-        { status: 400 },
-      );
-    }
+		return Response.json({ success: true });
+	} catch (error) {
+		if (error instanceof z.ZodError) {
+			// Return validation errors to client
+			return Response.json(
+				{ error: "Validation failed", details: error.errors },
+				{ status: 400 },
+			);
+		}
 
-    // Handle other errors
-    console.error("Error:", error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
-  }
+		// Handle other errors
+		console.error("Error:", error);
+		return Response.json({ error: "Internal server error" }, { status: 500 });
+	}
 }
 ```
 

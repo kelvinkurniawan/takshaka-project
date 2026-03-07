@@ -26,7 +26,6 @@ interface PublicHeaderClientProps {
 export default function PublicHeaderClient({
 	navigationItems,
 	isNavEnabled,
-	logo,
 }: PublicHeaderClientProps) {
 	const pathname = usePathname();
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -153,7 +152,7 @@ export default function PublicHeaderClient({
 
 	return (
 		<header className="sticky top-0 z-50 border-b bg-white dark:bg-[#1a1a1a] shadow-sm dark:border-[#3a3a3a]">
-			<nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+			<nav className="mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between h-16 text-sm">
 					{/* Logo */}
 					<Link href="/" className="flex items-center space-x-2">

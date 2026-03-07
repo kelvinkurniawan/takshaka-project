@@ -11,70 +11,14 @@ interface TimelineSectionProps {
 	items?: TimelineItem[];
 }
 
-const DEFAULT_ITEMS: TimelineItem[] = [
-	{
-		id: "mount-agung",
-		title: "MOUNT AGUNG",
-		description: "The axis of spiritual elevation.",
-	},
-	{
-		id: "cloud",
-		title: "CLOUD",
-		description: "Aspiration beyond boundaries.",
-	},
-	{
-		id: "air",
-		title: "AIR",
-		description: "Invisible force that connects all.",
-	},
-	{
-		id: "fire",
-		title: "FIRE",
-		description: "Energy of transformation.",
-	},
-	{
-		id: "water",
-		title: "WATER",
-		description: "Balance through adaptability.",
-	},
-	{
-		id: "night-queen",
-		title: "NIGHT QUEEN",
-		description: "Timeless victory and grace.",
-	},
-	{
-		id: "dragon",
-		title: "DRAGON",
-		description: "Directional growth and evolution.",
-	},
-	{
-		id: "dragon-wing",
-		title: "DRAGON WING",
-		description: "Transcendental strength.",
-	},
-	{
-		id: "gold-crown",
-		title: "GOLD CROWN",
-		description: "Illuminated authority.",
-	},
-	{
-		id: "circle",
-		title: "CIRCLE",
-		description: "Eternal unity.",
-	},
-	{
-		id: "gold-jewels",
-		title: "GOLD JEWELS",
-		description: "Inner prosperity and clarity.",
-	},
-];
+const DEFAULT_ITEMS: TimelineItem[] = [];
 
 export default function TimelineSection({
 	sectionTitle = "SPIRITUAL JOURNEY",
 	items = DEFAULT_ITEMS,
 }: TimelineSectionProps) {
 	return (
-		<section className="py-16 md:py-24 bg-white">
+		<section className="py-16 md:py-24 bg-[#fff8f5]">
 			<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Section Title */}
 				<div
@@ -102,12 +46,9 @@ export default function TimelineSection({
 								data-aos-duration="600"
 								className="flex flex-col items-center relative"
 							>
-								{/* Center Dot */}
-								<div className="w-5 h-5 bg-gray-900 rounded-full border-4 border-white shadow-md relative z-10 mb-4"></div>
-
 								{/* Text Content - Centered */}
-								<div className="text-center max-w-md">
-									<h3 className="text-lg md:text-xl font-bold text-gray-900 tracking-wide mb-1">
+								<div className="text-center max-w-md bg-[#fff8f5] py-4">
+									<h3 className="text-lg md:text-xl  text-gray-900 tracking-wide mb-1">
 										{item.title}
 									</h3>
 									<p className="text-sm md:text-base text-gray-600 leading-relaxed">

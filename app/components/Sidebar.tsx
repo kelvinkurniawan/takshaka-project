@@ -19,6 +19,7 @@ import {
 	Navigation,
 	Brush,
 	MessageSquare,
+	Layers,
 } from "lucide-react";
 
 type Theme = "light" | "dark";
@@ -55,6 +56,11 @@ export default function Sidebar({
 				{ icon: FolderOpen, label: "Categories", href: "/app/categories" },
 				{ icon: Image, label: "Media Library", href: "/app/media" },
 				{ icon: File, label: "Pages", href: "/app/pages" },
+				{
+					icon: Layers,
+					label: "Section Management",
+					href: "/app/page-sections",
+				},
 				{ icon: MessageSquare, label: "Comments", href: "/app/comments" },
 			],
 		},

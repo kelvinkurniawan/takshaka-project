@@ -24,7 +24,9 @@ export default function DashboardClient({
 						<LayoutDashboard className="welcome-card-icon-svg" />
 					</div>
 					<div className="welcome-card-text">
-						<h3 className="welcome-card-title">Selamat Datang di NextCMS</h3>
+						<h3 className="welcome-card-title">
+							Selamat Datang di Takshaka CMS
+						</h3>
 						<p className="welcome-card-desc">
 							Kelola konten Anda dengan mudah menggunakan headless CMS yang
 							powerful

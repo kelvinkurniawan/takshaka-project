@@ -4,7 +4,7 @@ import { getFooterSections } from "@/lib/page-helpers";
 import { Footer } from "@/components/sections";
 
 export const metadata = {
-	title: "NextCMS - Headless CMS Modern",
+	title: "Takshaka CMS - Headless CMS Modern",
 	description: "Platform CMS modern untuk mengelola konten digital Anda",
 };
 
@@ -24,7 +24,7 @@ export default function PublicLayout({
           --tw-bg-opacity: 1;
         }
       `}</style>
-			<div className="public-light flex flex-col min-h-screen bg-white text-gray-900">
+			<div className="public-light flex flex-col min-h-screen bg-[#fff8f5] text-gray-900">
 				<PublicHeader />
 				<main className="flex-1">{children}</main>
 

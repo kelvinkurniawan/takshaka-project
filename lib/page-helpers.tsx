@@ -84,7 +84,7 @@ export async function getAppMetadata(): Promise<{
 		const allSettings = await getSettingsFromDB();
 		console.log("Fetched settings for metadata:", allSettings);
 		return {
-			name: allSettings.site_name ?? "NextCMS",
+			name: allSettings.site_name ?? "Takshaka CMS",
 			description:
 				allSettings.site_description ??
 				"Modern headless CMS built with Next.js",
@@ -92,7 +92,7 @@ export async function getAppMetadata(): Promise<{
 	} catch (error) {
 		console.error("Failed to fetch app metadata:", error);
 		return {
-			name: "NextCMS",
+			name: "Takshaka CMS",
 			description: "Modern headless CMS built with Next.js",
 		};
 	}

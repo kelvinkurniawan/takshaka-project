@@ -27,15 +27,15 @@ export default function CuratedExperiencesSection({
 	const activeTabContent = tabs.find((tab) => tab.id === activeTab);
 
 	return (
-		<section className="w-full bg-white py-24 px-4 sm:px-6 lg:px-8">
-			<div className="mx-auto max-w-7xl">
+		<section className="w-fullpy-24 px-4 sm:px-6 lg:px-8 py-24">
+			<div className="mx-auto">
 				{/* Title */}
-				<h2 className="text-center text-4xl md:text-5xl font-bold tracking-wider mb-12">
+				<h2 className="text-center text-4xl md:text-5xl font-light tracking-wider mb-12">
 					CURATED EXPERIENCES
 				</h2>
 
 				{/* Tabs */}
-				<div className="flex flex-wrap justify-center gap-6 mb-12 border-b border-gray-200">
+				<div className="flex flex-wrap justify-center gap-6 mb-12 border-b border-gray-200 ">
 					{tabs.map((tab) => (
 						<button
 							key={tab.id}
@@ -53,7 +53,7 @@ export default function CuratedExperiencesSection({
 
 				{/* Tab Content - Grid of Images */}
 				{activeTabContent && (
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
 						{activeTabContent.items.map((item) => (
 							<div
 								key={item.id}
@@ -70,11 +70,11 @@ export default function CuratedExperiencesSection({
 								<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
 
 								{/* Floating Content */}
-								<div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-									<h3 className="text-lg font-semibold mb-2 uppercase tracking-wide">
+								<div className="absolute top-60 left-0 right-0 p-6 text-white">
+									<h3 className="text-sm font-semibold mb-4 uppercase tracking-widest text-center">
 										{item.title}
 									</h3>
-									<p className="text-sm text-gray-300 leading-relaxed">
+									<p className="text-xs text-gray-300 leading-relaxed text-center">
 										{item.description}
 									</p>
 								</div>

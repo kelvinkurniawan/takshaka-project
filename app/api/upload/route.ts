@@ -50,9 +50,25 @@ export async function POST(request: Request) {
 			return Response.json({ error: "No file provided" }, { status: 400 });
 		}
 
+		if (!typeParam) {
+			return Response.json(
+				{ error: "File type (image or video) is required" },
+				{ status: 400 },
+			);
+		}
+
 		// Validate type
-		const validatedType = uploadSchema.parse({ type: typeParam });
-		const { type } = validatedType;
+		const validatedType = uploadSchema.safeParse({ type: typeParam });
+		if (!validatedType.success) {
+			return Response.json(
+				{
+					error: "Invalid file type. Must be 'image' or 'video'",
+					details: validatedType.error.errors,
+				},
+				{ status: 400 },
+			);
+		}
+		const { type } = validatedType.data;
 
 		// Validate file type
 		if (

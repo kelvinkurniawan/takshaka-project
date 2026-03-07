@@ -42,8 +42,6 @@ export default async function OurInspirationPage() {
 					<BoardLetterSection
 						imageUrl={inspirationSections.boardLetter.imageUrl}
 						paragraphs={inspirationSections.boardLetter.paragraphs}
-						signatureName={inspirationSections.boardLetter.signatureName}
-						signatureTitle={inspirationSections.boardLetter.signatureTitle}
 					/>
 				</div>
 			)}

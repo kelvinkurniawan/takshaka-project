@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
 	title: "Dashboard",
-	description: "NextCMS dashboard overview",
+	description: "Takshaka CMS dashboard overview",
 };
 
 export default async function DashboardPage() {

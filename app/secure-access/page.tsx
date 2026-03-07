@@ -57,7 +57,7 @@ export default function SecureAccessPage() {
 			</div>
 			<div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40"></div>
 
-			<div className="relative z-10 max-w-md w-full space-y-8 px-4 sm:px-6 lg:px-8 text-white py-4 bg-white/50 backdrop-blur-md">
+			<div className="relative z-10 max-w-md w-full space-y-8 px-8 sm:px-6 lg:px-8 text-white py-8 rounded-lg bg-white/50 backdrop-blur-sm">
 				{/* Header */}
 				<div className="text-center space-y-3">
 					<div className="flex items-center justify-center">

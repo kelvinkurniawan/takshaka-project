@@ -1,6 +1,6 @@
-# NextCMS - Supabase + Vercel Migration Complete ✅
+# Takshaka CMS - Supabase + Vercel Migration Complete ✅
 
-Your NextCMS project has been successfully refactored from **Cloudflare D1 + Workers** to **Supabase PostgreSQL + Vercel**.
+Your Takshaka CMS project has been successfully refactored from **Cloudflare D1 + Workers** to **Supabase PostgreSQL + Vercel**.
 
 ## What Changed
 
@@ -116,7 +116,7 @@ Required for production:
 
 ```env
 # Supabase PostgreSQL
-DATABASE_URL=postgresql://user:password@host:5432/nextcms
+DATABASE_URL=postgresql://user:password@host:5432/Takshaka CMS
 
 # Optional
 NODE_ENV=production

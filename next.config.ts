@@ -11,6 +11,13 @@ const nextConfig: NextConfig = {
 				protocol: "https",
 				hostname: "images.unsplash.com",
 			},
+			// R2 domain - can be configured via R2_PUBLIC_URL env var
+			{
+				protocol: "https",
+				hostname: process.env.R2_PUBLIC_URL
+					? new URL(process.env.R2_PUBLIC_URL).hostname
+					: "pub-326b3cc59f484d4fa165e65b5c4836c1.r2.dev",
+			},
 		],
 	},
 };

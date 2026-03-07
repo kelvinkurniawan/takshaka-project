@@ -70,7 +70,7 @@ export default async function Home() {
 	return (
 		<>
 			<PublicHeader />
-			<div className="public-light flex flex-col min-h-screen bg-white text-gray-900 overflow-x-hidden">
+			<div className="public-light flex flex-col min-h-screen bg-[#fff8f5] text-gray-900 overflow-x-hidden">
 				<main className="flex-1">
 					{/* Hero Section */}
 					{homeSections.hero && (
@@ -136,18 +136,12 @@ export default async function Home() {
 					)}
 
 					{/* Sustainable Impact Section */}
-					<div
-						data-aos="fade-right"
-						data-aos-delay="500"
-						data-aos-duration="800"
-					>
-						<SustainableImpactSection
-							title="SUSTAINABLE IMPACT"
-							subtitle="Our Commitment to Environment & Communities"
-							buttonText="SEE OUR IMPACT"
-							backgroundImage="https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1920&q=80"
-						/>
-					</div>
+					<SustainableImpactSection
+						title="SUSTAINABLE IMPACT"
+						subtitle="Our Consent to Environment & Communities"
+						buttonText="SEE OUR IMPACT"
+						backgroundImage="/images/cta_background.png"
+					/>
 				</main>
 
 				{/* Footer */}

@@ -51,7 +51,7 @@ export default function TakskaWaySection({
 	items = DEFAULT_ITEMS,
 }: TakskaWaySectionProps) {
 	return (
-		<section className="py-16 md:py-24 bg-white">
+		<section className="py-16 md:py-24 ">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Section Title */}
 				<div
@@ -59,7 +59,7 @@ export default function TakskaWaySection({
 					data-aos-duration="800"
 					className="text-center mb-16"
 				>
-					<h2 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-wider">
+					<h2 className="text-center text-4xl md:text-5xl font-light tracking-wider mb-12">
 						{sectionTitle}
 					</h2>
 				</div>

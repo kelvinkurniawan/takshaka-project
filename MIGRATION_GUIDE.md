@@ -1,8 +1,8 @@
-# NextCMS: Cloudflare → Supabase + Vercel Migration Guide
+# Takshaka CMS: Cloudflare → Supabase + Vercel Migration Guide
 
 ## ✅ Refactoring Complete!
 
-This document summarizes the complete refactoring of NextCMS from Cloudflare D1 + Workers to Supabase PostgreSQL + Vercel.
+This document summarizes the complete refactoring of Takshaka CMS from Cloudflare D1 + Workers to Supabase PostgreSQL + Vercel.
 
 ## Changes Summary
 

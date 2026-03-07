@@ -15,23 +15,23 @@ export default function SustainableImpactSection({
 }: SustainableImpactSectionProps) {
 	return (
 		<section
-			className="relative w-full h-80 md:h-96 flex items-center justify-center overflow-hidden"
+			className="relative w-full overflow-hidden"
 			style={{
+				aspectRatio: "1728/549",
 				backgroundImage: `url('${backgroundImage}')`,
 				backgroundSize: "cover",
 				backgroundPosition: "center",
 			}}
 		>
-			{/* Dark Overlay */}
-			<div className="absolute inset-0 bg-black/50"></div>
-
 			{/* Content */}
-			<div className="relative z-10 text-center text-white">
-				<h2 className="text-4xl md:text-5xl font-bold tracking-wider mb-4">
+			<div className="relative z-10 w-full h-full flex flex-col items-center justify-center text-center text-white">
+				<h2 className="text-4xl md:text-4xl font-bold tracking-wider mb-4">
 					{title}
 				</h2>
-				<p className="text-lg md:text-xl mb-8 tracking-wide">{subtitle}</p>
-				<button className="px-8 py-3 border-2 border-white text-white font-semibold hover:bg-white hover:text-gray-900 transition-all duration-300 tracking-wider text-sm">
+				<p className="text-lg md:text-xl max-w-sm mx-auto mb-8 tracking-wide">
+					{subtitle}
+				</p>
+				<button className="px-3 py-1  border-2 bg-white text-[#1E234A] hover:bg-gray-400 transition-colors duration-300 rounded-3xl">
 					{buttonText}
 				</button>
 			</div>
