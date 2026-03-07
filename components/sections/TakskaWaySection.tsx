@@ -64,8 +64,8 @@ export default function TakskaWaySection({
 					</h2>
 				</div>
 
-				{/* Images Grid */}
-				<div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6">
+				{/* Images Grid - 5 columns on desktop, horizontal scroll on mobile */}
+				<div className="hidden md:grid md:grid-cols-5 gap-4 md:gap-6">
 					{items.map((item, index) => (
 						<div
 							key={item.id}
@@ -91,6 +91,38 @@ export default function TakskaWaySection({
 							</h3>
 						</div>
 					))}
+				</div>
+
+				{/* Mobile Horizontal Scrollable */}
+				<div className="md:hidden overflow-x-auto pb-4 -mx-4 px-4">
+					<div className="flex gap-4 min-w-min">
+						{items.map((item, index) => (
+							<div
+								key={item.id}
+								data-aos="fade-up"
+								data-aos-delay={index * 100}
+								data-aos-duration="800"
+								className="flex flex-col items-center flex-shrink-0"
+								style={{ width: "160px" }}
+							>
+								{/* Image Container */}
+								<div className="relative w-full aspect-[3/4] mb-3 overflow-hidden rounded-sm">
+									<Image
+										src={item.imageUrl}
+										alt={item.title}
+										fill
+										className="object-cover hover:scale-105 transition-transform duration-300"
+										sizes="160px"
+									/>
+								</div>
+
+								{/* Title */}
+								<h3 className="text-center text-xs sm:text-sm font-semibold text-gray-900 tracking-wide whitespace-pre-line">
+									{item.title}
+								</h3>
+							</div>
+						))}
+					</div>
 				</div>
 			</div>
 		</section>

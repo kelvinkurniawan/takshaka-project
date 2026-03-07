@@ -21,12 +21,12 @@ export default function ThreeItemSection({
 	const sectionItems: SectionItem[] = images || [];
 
 	return (
-		<section className="py-16 px-16 bg-white">
+		<section className="py-8 md:py-16 px-4 md:px-16 bg-white">
 			<div className="max-100 mx-auto px-4 sm:px-6 lg:px-8">
-				<h2 className="text-center font-light mb-12 text-xl">
+				<h2 className="text-center font-light mb-8 md:mb-12 text-lg md:text-xl">
 					{sectionHeading}
 				</h2>
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 max-w-7xl mx-auto">
 					{sectionItems.map((item, idx) => (
 						<div key={idx} className="relative group">
 							<img

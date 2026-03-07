@@ -31,27 +31,27 @@ export default function Footer({ sections, copyright }: FooterProps) {
 		<footer className="w-full">
 			{/* Subscribe Section */}
 			<section
-				className="w-full py-16 px-4 sm:px-6 lg:px-8"
+				className="w-full py-8 md:py-16 px-4 sm:px-6 lg:px-8"
 				style={{ backgroundColor: "#1a1f3a" }}
 			>
 				<div className="mx-auto max-w-7xl">
-					<div className="flex flex-col md:flex-row md:justify-between md:items-center">
+					<div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6 md:gap-0">
 						{/* Get Inspired */}
-						<h3 className="text-white text-2xl font-light tracking-widest mb-8 md:mb-0">
+						<h3 className="text-white text-lg md:text-2xl font-light tracking-widest mb-0">
 							Get Inspired
 						</h3>
 
 						{/* Subscribe Form */}
 						<form
 							onSubmit={handleSubscribe}
-							className="flex items-center gap-2"
+							className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto"
 						>
 							<input
 								type="email"
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
 								placeholder="Enter your email"
-								className="px-4 py-2 bg-transparent border-b border-white text-white placeholder-gray-400 focus:outline-none focus:border-amber-600 transition-colors"
+								className="px-3 sm:px-4 py-2 bg-transparent border-b border-white text-white placeholder-gray-400 focus:outline-none focus:border-amber-600 transition-colors text-sm w-full sm:w-auto"
 								required
 							/>
 							<button
@@ -67,17 +67,17 @@ export default function Footer({ sections, copyright }: FooterProps) {
 
 			{/* Footer Links Section */}
 			<section
-				className="w-full py-16 px-4 sm:px-6 lg:px-8 border-t border-gray-700"
+				className="w-full py-8 md:py-16 px-4 sm:px-6 lg:px-8 border-t border-gray-700"
 				style={{ backgroundColor: "#1a1f3a" }}
 			>
 				<div className="mx-auto max-w-7xl">
-					<div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
+					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 md:gap-12 mb-8 md:mb-12">
 						{sections.map((section, idx) => (
 							<div key={idx}>
-								<h4 className="text-white font-semibold tracking-wider mb-4 text-sm uppercase">
+								<h4 className="text-white font-semibold tracking-wider mb-3 md:mb-4 text-xs uppercase">
 									{section.title}
 								</h4>
-								<ul className="space-y-3">
+								<ul className="space-y-2 md:space-y-3">
 									{section.links.map((link, linkIdx) => (
 										<li key={linkIdx}>
 											<a
@@ -94,24 +94,26 @@ export default function Footer({ sections, copyright }: FooterProps) {
 					</div>
 
 					{/* Divider */}
-					<div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row md:justify-between md:items-center">
+					<div className="border-t border-gray-700 pt-6 md:pt-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0">
 						{/* Logo */}
-						<div className="mb-6 md:mb-0">
+						<div className="mb-0">
 							<img
 								src="/images/logo.png"
 								alt="Takshaka Logo"
-								className="h-16"
+								className="h-12 md:h-16"
 							/>
 						</div>
 
 						{/* Copyright */}
-						<p className="text-gray-400 text-sm">
+						<p className="text-gray-400 text-xs md:text-sm">
 							{copyright || "Copyright 2026. Takshaka Event & Experience"}
 						</p>
 
 						{/* Social Links */}
-						<div className="flex gap-4 mt-6 md:mt-0">
-							<span className="text-gray-400 text-sm">Follow us on:</span>
+						<div className="flex gap-4 mt-0">
+							<span className="text-gray-400 text-xs md:text-sm">
+								Follow us on:
+							</span>
 						</div>
 					</div>
 				</div>

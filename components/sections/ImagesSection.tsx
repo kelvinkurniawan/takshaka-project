@@ -22,8 +22,8 @@ export default function ImagesSection({
 					// if last index, add margin-bottom-0, else mb-4
 					<div
 						key={index}
-						className={`relative w-full h-48 md:h-64 overflow-hidden transform transition-transform duration-500 ease-out hover:scale-105 cursor-pointer ${
-							index === images.length - 1 ? "mb-0" : "mb-4"
+						className={`relative w-full h-40 md:h-64 overflow-hidden transform transition-transform duration-500 ease-out hover:scale-105 cursor-pointer ${
+							index === images.length - 1 ? "mb-0" : "mb-2 md:mb-4"
 						}`}
 					>
 						<img
@@ -38,9 +38,9 @@ export default function ImagesSection({
 			</div>
 
 			{/* Description section */}
-			<div className="bg-[#f5f0e6] py-12 px-4 sm:px-6 lg:px-8">
+			<div className="bg-[#f5f0e6] py-8 md:py-12 px-4 sm:px-6 lg:px-8">
 				<div className="mx-auto max-w-4xl">
-					<p className="text-center text-gray-700 text-xl leading-relaxed">
+					<p className="text-center text-gray-700 text-base md:text-xl leading-relaxed">
 						{description}
 					</p>
 				</div>

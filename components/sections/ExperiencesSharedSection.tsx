@@ -15,15 +15,15 @@ export default function ExperiencesSharedSection({
 	experiences,
 }: ExperiencesSharedSectionProps) {
 	return (
-		<section className="w-full py-24 px-4 sm:px-6 lg:px-8 bg-[#f5f0e6]">
+		<section className="w-full py-12 md:py-24 px-4 sm:px-6 lg:px-8 bg-[#f5f0e6]">
 			<div className="mx-auto max-w-7xl">
 				{/* Title */}
-				<h2 className="text-center text-4xl md:text-5xl font-light tracking-wider mb-12">
+				<h2 className="text-center text-2xl md:text-4xl lg:text-5xl font-light tracking-wider mb-8 md:mb-12">
 					EXPERIENCES SHARED
 				</h2>
 
 				{/* Experiences Grid */}
-				<div className="space-y-20">
+				<div className="space-y-10 md:space-y-20">
 					{experiences.map((experience, index) => (
 						<div
 							key={experience.id}
@@ -35,7 +35,7 @@ export default function ExperiencesSharedSection({
 						>
 							{/* Image */}
 							<div
-								className={`${index % 2 === 1 ? "md:col-start-2" : ""} bg-black inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent h-[400px]`}
+								className={`${index % 2 === 1 ? "md:col-start-2" : ""} bg-black inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent h-64 md:h-[400px]`}
 							>
 								<img
 									src={experience.image}
@@ -51,7 +51,7 @@ export default function ExperiencesSharedSection({
 								<h3 className="text-2xl md:text-2xl uppercase tracking-widest mb-6 text-gray-900">
 									{experience.title}
 								</h3>
-								<p className="leading-relaxed text-base italic">
+								<p className="leading-relaxed text-sm md:text-base italic">
 									{experience.description}
 								</p>
 							</div>

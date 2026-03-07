@@ -92,18 +92,18 @@ export default function HeroSection({
 
 				{/* Content */}
 				<div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-4xl">
-					<h1 className="text-5xl md:text-7xl font-bold mb-6 font-elegance leading-tight drop-shadow-lg">
+					<h1 className="text-3xl sm:text-5xl md:text-7xl font-bold mb-4 sm:mb-6 font-elegance leading-tight drop-shadow-lg">
 						{title}
 					</h1>
-					<p className="text-xl md:text-2xl text-gray-100 mb-12 font-light leading-relaxed max-w-3xl mx-auto drop-shadow">
+					<p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-100 mb-8 sm:mb-12 font-light leading-relaxed max-w-3xl mx-auto drop-shadow">
 						{description}
 					</p>
 
 					{/* CTA Buttons */}
-					<div className="flex flex-col sm:flex-row gap-6 justify-center">
+					<div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
 						<Link
 							href="#featured"
-							className="inline-block bg-white text-slate-900 px-12 py-2 rounded-full font-semibold hover:bg-gray-100 transition duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+							className="inline-block bg-white text-slate-900 px-8 sm:px-12 py-2 rounded-full font-semibold hover:bg-gray-100 transition duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base"
 						>
 							EXPLORE NOW
 						</Link>
@@ -111,11 +111,9 @@ export default function HeroSection({
 				</div>
 
 				{/* Scroll Indicator */}
-				<div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
+				<div className="absolute bottom-8 sm:bottom-16 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
 					<svg
-						className="w-8 h-8 text-white drop-shadow"
-						fill="none"
-						stroke="currentColor"
+						className="w-6 sm:w-8 h-6 sm:h-8 text-white drop-shadow"
 						viewBox="0 0 24 24"
 					>
 						<path

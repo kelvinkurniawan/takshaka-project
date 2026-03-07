@@ -42,7 +42,7 @@ export default function BrandStorySection({
 			{/* Content Grid */}
 			<div className="py-16 md:py-24 ">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-					<div className="space-y-20">
+					<div className="space-y-10 md:space-y-20">
 						{items.map((item, index) => {
 							const isEven = index % 2 === 0;
 							return (
@@ -51,7 +51,7 @@ export default function BrandStorySection({
 									data-aos="fade-up"
 									data-aos-delay={index * 100}
 									data-aos-duration="800"
-									className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
+									className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 items-center"
 								>
 									{/* Image */}
 									<div

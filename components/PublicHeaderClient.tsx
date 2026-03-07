@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useLayoutEffect } from "react";
-import { Sun, Moon, ChevronDown, Search, Users, Menu } from "lucide-react";
+import { Sun, Moon, ChevronDown, Search, Users, Menu, X } from "lucide-react";
 
 interface NavigationItem {
 	id: number;
@@ -53,103 +53,6 @@ export default function PublicHeaderClient({
 		return pathname.startsWith(href);
 	};
 
-	const renderNavItems = (items: NavigationItem[], isMobile = false) => {
-		if (!isNavEnabled || items.length === 0) {
-			return null;
-		}
-
-		// Filter for parent items only (where parentId is null)
-		const parentItems = items.filter((item) => item.parentId === null);
-
-		if (parentItems.length === 0) {
-			return null;
-		}
-
-		return parentItems.map((item) => {
-			const hasChildren = item.children && item.children.length > 0;
-
-			if (isMobile) {
-				return (
-					<div key={item.id}>
-						<Link
-							href={item.url}
-							className={`block py-2 transition-colors ${
-								isActive(item.url)
-									? "text-primary font-semibold"
-									: "text-foreground hover:text-primary"
-							}`}
-							onClick={() => setMobileMenuOpen(false)}
-							target={item.target}
-						>
-							{item.label}
-						</Link>
-						{hasChildren && (
-							<div className="ml-4 space-y-2">
-								{item.children
-									?.filter((child) => child.isActive)
-									.map((child) => (
-										<Link
-											key={child.id}
-											href={child.url}
-											className={`block py-2 text-sm transition-colors ${
-												isActive(child.url)
-													? "text-primary font-semibold"
-													: "text-foreground hover:text-primary"
-											}`}
-											onClick={() => setMobileMenuOpen(false)}
-											target={child.target}
-										>
-											{child.label}
-										</Link>
-									))}
-							</div>
-						)}
-					</div>
-				);
-			}
-
-			// Desktop view
-			return (
-				<div key={item.id} className="relative group">
-					<Link
-						href={item.url}
-						className={`flex items-center gap-1 transition-colors ${
-							isActive(item.url)
-								? "text-primary font-semibold"
-								: "text-foreground hover:text-primary"
-						}`}
-						target={item.target}
-					>
-						{item.label}
-						{hasChildren && <ChevronDown size={16} />}
-					</Link>
-
-					{/* Desktop Dropdown */}
-					{hasChildren && (
-						<div className="absolute left-0 mt-0 w-48 bg-white dark:bg-[#282828] border border-gray-200 dark:border-[#3a3a3a] rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-							{item.children
-								?.filter((child) => child.isActive)
-								.map((child) => (
-									<Link
-										key={child.id}
-										href={child.url}
-										className={`block px-4 py-2 first:rounded-t-md last:rounded-b-md hover:bg-gray-100 dark:hover:bg-[#3a3a3a] transition-colors text-sm ${
-											isActive(child.url)
-												? "text-primary font-semibold"
-												: "text-foreground"
-										}`}
-										target={child.target}
-									>
-										{child.label}
-									</Link>
-								))}
-						</div>
-					)}
-				</div>
-			);
-		});
-	};
-
 	return (
 		<header className="sticky top-0 z-50 border-b bg-white dark:bg-[#1a1a1a] shadow-sm dark:border-[#3a3a3a]">
 			<nav className="mx-auto px-4 sm:px-6 lg:px-8">
@@ -189,12 +92,79 @@ export default function PublicHeaderClient({
 
 					{/* Mobile Menu Button */}
 					<button
-						className="md:hidden p-2"
+						className="md:hidden p-2 text-gray-600 hover:text-gray-900 transition-transform duration-300 ease-in-out"
 						onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+						aria-label="Toggle menu"
+						style={{
+							transform: mobileMenuOpen ? "rotate(90deg)" : "rotate(0deg)",
+						}}
 					>
-						<Menu size={24} />
+						{mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
 					</button>
 				</div>
+
+				{/* Mobile Menu */}
+				{mobileMenuOpen && (
+					<div className="md:hidden h-full fixed top-16 left-0 bg-white/50 backdrop-blur-sm w-full z-40 animate-in fade-in slide-in-from-top-2 duration-300 ease-out">
+						<div className="px-4 py-4 space-y-2">
+							{navigationItems.map((item, idx) =>
+								item.parentId === null && item.isActive ? (
+									<div
+										key={item.id}
+										className="animate-in fade-in slide-in-from-top-2 duration-300 ease-out"
+										style={{ animationDelay: `${idx * 50}ms` }}
+									>
+										<Link
+											href={item.url}
+											className={`block p-3 font-medium transition-colors ${
+												isActive(item.url)
+													? "text-primary font-semibold"
+													: "text-foreground hover:text-primary"
+											}`}
+											onClick={() => setMobileMenuOpen(false)}
+											target={item.target}
+										>
+											{item.label}
+										</Link>
+										{item.children && item.children.length > 0 && (
+											<div className="ml-4 space-y-1">
+												{item.children
+													.filter((child) => child.isActive)
+													.map((child) => (
+														<Link
+															key={child.id}
+															href={child.url}
+															className={`block py-1 text-xs transition-colors ${
+																isActive(child.url)
+																	? "text-primary font-semibold"
+																	: "text-gray-600 hover:text-primary"
+															}`}
+															onClick={() => setMobileMenuOpen(false)}
+															target={child.target}
+														>
+															{child.label}
+														</Link>
+													))}
+											</div>
+										)}
+									</div>
+								) : null,
+							)}
+							<hr />
+							<button
+								onClick={() => {
+									setSearchOpen(true);
+									setMobileMenuOpen(false);
+								}}
+								className="w-full flex items-center gap-2 font-medium text-gray-600 hover:text-gray-900 transition-colors border-t border-gray-200 mt-2 p-3 bg-white"
+								aria-label="Search"
+							>
+								<Search size={18} />
+								<span>Search</span>
+							</button>
+						</div>
+					</div>
+				)}
 
 				{/* Popup search form */}
 				{searchOpen && (
@@ -203,17 +173,20 @@ export default function PublicHeaderClient({
 						onClick={() => setSearchOpen(false)}
 					>
 						<div
-							className="bg-white dark:bg-[#1a1a1a] p-8 rounded-lg shadow-2xl w-full max-w-2xl"
+							className="bg-white dark:bg-[#1a1a1a] p-6 md:p-8 rounded-lg shadow-2xl w-full max-w-2xl"
 							onClick={(e) => e.stopPropagation()}
 						>
-							<div className="flex items-center justify-between mb-8">
-								<h2 className="text-3xl font-semibold text-foreground">
-									<Search size={32} className="inline-block mr-2 mb-2" />
+							<div className="flex items-center justify-between mb-6 md:mb-8">
+								<h2 className="text-xl md:text-3xl font-semibold text-foreground">
+									<Search
+										size={24}
+										className="inline-block mr-2 mb-1 md:mb-2 md:size-8"
+									/>
 									Search
 								</h2>
 								<button
 									onClick={() => setSearchOpen(false)}
-									className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 text-3xl leading-none"
+									className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 text-2xl md:text-3xl leading-none"
 									aria-label="Close search"
 								>
 									&times;
@@ -222,10 +195,10 @@ export default function PublicHeaderClient({
 							<input
 								type="text"
 								placeholder="Cari artikel, halaman, atau konten..."
-								className="w-full p-4 border border-gray-300 dark:border-[#3a3a3a] rounded-md bg-white dark:bg-[#282828] text-foreground text-lg focus:outline-none focus:ring-2 focus:ring-primary"
+								className="w-full p-3 md:p-4 border border-gray-300 dark:border-[#3a3a3a] rounded-md bg-white dark:bg-[#282828] text-foreground text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-primary"
 								autoFocus
 							/>
-							<p className="mt-4 text-base text-gray-500 dark:text-gray-400">
+							<p className="mt-3 md:mt-4 text-sm md:text-base text-gray-500 dark:text-gray-400">
 								Tekan Enter untuk mencari atau ESC untuk menutup
 							</p>
 						</div>

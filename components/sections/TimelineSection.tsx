@@ -18,15 +18,15 @@ export default function TimelineSection({
 	items = DEFAULT_ITEMS,
 }: TimelineSectionProps) {
 	return (
-		<section className="py-16 md:py-24 bg-[#fff8f5]">
+		<section className="py-8 md:py-24 bg-[#fff8f5]">
 			<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Section Title */}
 				<div
 					data-aos="fade-up"
 					data-aos-duration="800"
-					className="text-center mb-20"
+					className="text-center mb-10"
 				>
-					<h2 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-wider">
+					<h2 className="text-center text-4xl md:text-5xl font-light tracking-wider mb-12">
 						{sectionTitle}
 					</h2>
 				</div>
