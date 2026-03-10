@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Sidebar from "@/app/components/Sidebar";
 import { Bell, User, LogOut, Sun, Moon } from "lucide-react";
@@ -19,13 +19,28 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const [theme, setTheme] = useState<Theme>("light");
 	const [isThemeLoaded, setIsThemeLoaded] = useState(false);
-	const [lastPathname, setLastPathname] = useState<string>("");
 
 	// Top progress bar state
 	const [progress, setProgress] = useState<number>(0);
 	const [progressVisible, setProgressVisible] = useState<boolean>(false);
 
-	// Load theme preference from localStorage on mount
+	// Use refs to track pathname and timers
+	const previousPathnameRef = useRef<string>("");
+	const timersRef = useRef<NodeJS.Timeout[]>([]);
+	const isFirstRenderRef = useRef(true);
+
+	// Apply theme to document
+	const applyTheme = (newTheme: Theme) => {
+		const root = document.documentElement;
+		if (newTheme === "dark") {
+			root.classList.add("dark");
+		} else {
+			root.classList.remove("dark");
+		}
+		localStorage.setItem("theme", newTheme);
+	};
+
+	// Load theme preference from localStorage on mount ONLY
 	useEffect(() => {
 		const savedTheme = localStorage.getItem("theme") as Theme | null;
 		const prefersDark = window.matchMedia(
@@ -38,40 +53,48 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
 		setIsThemeLoaded(true);
 	}, []);
 
-	// Show top progress bar when pathname changes (route transition)
+	// Show progress bar when pathname changes
 	useEffect(() => {
-		if (pathname !== lastPathname && lastPathname) {
-			// Route changed - show and complete progress bar immediately
-			setProgressVisible(true);
-			setProgress(40);
-
-			// Quick animation to complete
-			setTimeout(() => setProgress(100), 100);
-
-			// Fade out after completion
-			setTimeout(() => {
-				setProgressVisible(false);
-				setProgress(0);
-			}, 500);
+		// On first render, just initialize the ref
+		if (isFirstRenderRef.current) {
+			previousPathnameRef.current = pathname;
+			isFirstRenderRef.current = false;
+			return;
 		}
 
-		if (!lastPathname) {
-			setLastPathname(pathname);
-		} else if (pathname !== lastPathname) {
-			setLastPathname(pathname);
-		}
+		// Clear any existing timers
+		timersRef.current.forEach((timer) => clearTimeout(timer));
+		timersRef.current = [];
+
+		// Route changed - show progress bar immediately
+		setProgressVisible(true);
+		setProgress(30);
+
+		// Animation timeline
+		const timer1 = setTimeout(() => setProgress(80), 150);
+		timersRef.current.push(timer1);
+
+		const timer2 = setTimeout(() => {
+			setProgress(100);
+		}, 400);
+		timersRef.current.push(timer2);
+
+		const timer3 = setTimeout(() => {
+			setProgressVisible(false);
+			setProgress(0);
+		}, 600);
+		timersRef.current.push(timer3);
+
+		// Update ref
+		previousPathnameRef.current = pathname;
 	}, [pathname]);
 
-	// Apply theme to document
-	const applyTheme = (newTheme: Theme) => {
-		const root = document.documentElement;
-		if (newTheme === "dark") {
-			root.classList.add("dark");
-		} else {
-			root.classList.remove("dark");
-		}
-		localStorage.setItem("theme", newTheme);
-	};
+	// Cleanup timers on unmount
+	useEffect(() => {
+		return () => {
+			timersRef.current.forEach((timer) => clearTimeout(timer));
+		};
+	}, []);
 
 	// Toggle theme
 	const toggleTheme = () => {

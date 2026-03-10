@@ -273,7 +273,7 @@ label {
 	}
 
 	.comments-table-actions {
-		@apply flex items-center gap-2 flex-wrap;
+		@apply flex items-center flex-wrap;
 	}
 
 	.status-pending {

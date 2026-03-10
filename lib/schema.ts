@@ -212,3 +212,16 @@ export const pageSections = pgTable(
 		};
 	},
 );
+
+export const faqs = pgTable("faqs", {
+	id: serial("id").primaryKey(),
+	question: text("question").notNull(),
+	answer: text("answer").notNull(),
+	category: text("category"),
+	order: integer("order").notNull().default(0),
+	status: text("status").notNull().default("published"), // draft, published
+	createdBy: integer("created_by").notNull(),
+	createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+	updatedAt: timestamp("updated_at", { mode: "date" }).notNull(),
+	deletedAt: timestamp("deleted_at", { mode: "date" }),
+});

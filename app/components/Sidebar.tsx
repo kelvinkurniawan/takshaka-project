@@ -20,6 +20,7 @@ import {
 	Brush,
 	MessageSquare,
 	Layers,
+	HelpCircle,
 } from "lucide-react";
 
 type Theme = "light" | "dark";
@@ -62,6 +63,7 @@ export default function Sidebar({
 					href: "/app/page-sections",
 				},
 				{ icon: MessageSquare, label: "Comments", href: "/app/comments" },
+				{ icon: HelpCircle, label: "FAQ Management", href: "/app/faq" },
 			],
 		},
 		{

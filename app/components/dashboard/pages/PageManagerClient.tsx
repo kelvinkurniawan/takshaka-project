@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2, Eye, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Page {
@@ -34,7 +34,22 @@ export default function PageManagerClient({
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
+	const [searchQuery, setSearchQuery] = useState("");
+	const [statusFilter, setStatusFilter] = useState("all");
 	const router = useRouter();
+
+	const filteredPages = useMemo(() => {
+		return pages.filter((page) => {
+			const matchesSearch =
+				page.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				page.slug.toLowerCase().includes(searchQuery.toLowerCase());
+
+			const matchesStatus =
+				statusFilter === "all" || page.status === statusFilter;
+
+			return matchesSearch && matchesStatus;
+		});
+	}, [pages, searchQuery, statusFilter]);
 
 	const handleDelete = async (id: number) => {
 		if (!confirm("Are you sure you want to delete this page?")) return;
@@ -103,13 +118,48 @@ export default function PageManagerClient({
 
 				{/* Pages List */}
 				<div className="space-y-4 mt-4">
+					{/* Search and Filter Section */}
+					<div className="flex flex-col gap-3">
+						<div className="flex flex-col md:flex-row gap-3">
+							{/* Search Input */}
+							<div className="flex-1 relative">
+								<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-secondary dark:text-[#929292]" />
+								<input
+									type="text"
+									placeholder="Search by title or slug..."
+									value={searchQuery}
+									onChange={(e) => setSearchQuery(e.target.value)}
+									className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-[#e5e5e5] placeholder-secondary dark:placeholder-[#929292] focus:outline-none focus:ring-2 focus:ring-blue-500"
+								/>
+							</div>
+
+							{/* Status Filter */}
+							<select
+								value={statusFilter}
+								onChange={(e) => setStatusFilter(e.target.value)}
+								className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-blue-500"
+							>
+								<option value="all">All Status</option>
+								<option value="draft">Draft</option>
+								<option value="published">Published</option>
+							</select>
+						</div>
+
+						{/* Results Info */}
+						<div className="text-sm text-secondary dark:text-[#929292]">
+							Showing {filteredPages.length} of {pages.length} pages
+						</div>
+					</div>
+
 					<h3 className="text-lg font-semibold text-gray-900 dark:text-[#e5e5e5]">
-						List Pages ({pages.length})
+						List Pages
 					</h3>
 
-					{pages.length === 0 ? (
+					{filteredPages.length === 0 ? (
 						<p className="text-secondary dark:text-[#929292] text-center">
-							No pages found. Please create a new page.
+							{pages.length === 0
+								? "No pages found. Please create a new page."
+								: "No pages match your search or filter criteria."}
 						</p>
 					) : (
 						<div className="card-modern">
@@ -125,13 +175,13 @@ export default function PageManagerClient({
 										</tr>
 									</thead>
 									<tbody>
-										{pages.map((page) => (
+										{filteredPages.map((page) => (
 											<tr key={page.id}>
 												<td>
 													<div>
 														<Link
 															href={`/app/pages/${page.id}/edit`}
-															className="font-medium text-gray-900 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+															className="font-medium text-gray-900 hover:text-blue-600 dark:hover:text-blue-400 transition-colors dark:text-[#e5e5e5]"
 														>
 															{page.title}
 														</Link>
@@ -160,6 +210,15 @@ export default function PageManagerClient({
 												</td>
 												<td className="text-right">
 													<div className="flex items-center justify-end gap-1">
+														<a
+															href={`/${page.slug}`}
+															target="_blank"
+															rel="noopener noreferrer"
+															className="btn-icon btn-icon-primary"
+															title="View"
+														>
+															<Eye className="w-4 h-4" />
+														</a>
 														<Link
 															href={`/app/pages/${page.id}/edit`}
 															className="btn-icon btn-icon-primary"

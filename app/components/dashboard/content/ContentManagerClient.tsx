@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { Edit2, Trash2, Search } from "lucide-react";
+import { Edit2, Trash2, Search, Eye } from "lucide-react";
 
 interface Content {
 	id: number;
@@ -317,6 +317,15 @@ export default function ContentManagerClient({
 												</td>
 												<td className="text-right">
 													<div className="flex items-center justify-end gap-1">
+														<a
+															href={`/blog/${content.slug}`}
+															target="_blank"
+															rel="noopener noreferrer"
+															className="btn-icon btn-icon-primary"
+															title="View"
+														>
+															<Eye className="w-4 h-4" />
+														</a>
 														<Link
 															href={`/app/content/${content.id}/edit`}
 															className="btn-icon btn-icon-primary"

@@ -10,6 +10,7 @@ import {
 	Upload,
 	Plus,
 	Trash2,
+	Search,
 } from "lucide-react";
 import { pageSectionsConfig } from "@/lib/page-sections-config";
 
@@ -37,6 +38,15 @@ interface FormField {
 	tabFields?: FormField[];
 }
 
+// Utility function to format section titles (camelCase/snake_case to Title Case)
+const formatSectionTitle = (str: string): string => {
+	return str
+		.replace(/([a-z])([A-Z])/g, "$1 $2") // camelCase to spaces
+		.replace(/_/g, " ") // snake_case to spaces
+		.replace(/\b\w/g, (char) => char.toUpperCase()) // Title Case
+		.trim();
+};
+
 export default function SectionDataEditor({
 	section,
 	onSave,
@@ -45,6 +55,7 @@ export default function SectionDataEditor({
 		JSON.parse(section.pageData),
 	);
 	const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
+	const [searchQuery, setSearchQuery] = useState("");
 	const [saving, setSaving] = useState(false);
 	const [uploading, setUploading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -58,6 +69,22 @@ export default function SectionDataEditor({
 		const configMap = pageSectionsConfig as Record<string, any>;
 		return configMap[section.pageSlug as keyof typeof pageSectionsConfig] || {};
 	}, [section.pageSlug]);
+
+	const filteredSections = useMemo(() => {
+		const filteredConfig: Record<string, any> = {};
+		Object.entries(config).forEach(([key, value]) => {
+			if (
+				searchQuery === "" ||
+				key.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				formatSectionTitle(key)
+					.toLowerCase()
+					.includes(searchQuery.toLowerCase())
+			) {
+				filteredConfig[key] = value;
+			}
+		});
+		return filteredConfig;
+	}, [config, searchQuery]);
 
 	const toggleExpanded = (key: string) => {
 		setExpanded((prev) => ({
@@ -212,7 +239,7 @@ export default function SectionDataEditor({
 				delete updated[previewKey];
 				return updated;
 			});
-			
+
 			// Clear error state for this key
 			setImageErrors((prev) => {
 				const updated = { ...prev };
@@ -285,7 +312,7 @@ export default function SectionDataEditor({
 		itemIndex?: number,
 	): React.ReactNode => {
 		if (fieldConfig.type === "string") {
-			return fieldConfig.multiline ? (
+			return (
 				<textarea
 					value={value || ""}
 					onChange={(e) =>
@@ -303,29 +330,8 @@ export default function SectionDataEditor({
 									e.target.value,
 								)
 					}
-					className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-[#525252] rounded-md bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-					rows={4}
-				/>
-			) : (
-				<input
-					type="text"
-					value={value || ""}
-					onChange={(e) =>
-						itemIndex !== undefined
-							? handleNestedFieldChange(
-									sectionKey,
-									fieldKey,
-									itemIndex,
-									fieldConfig.target!,
-									e.target.value,
-								)
-							: handleFieldChange(
-									sectionKey,
-									fieldConfig.target || fieldKey,
-									e.target.value,
-								)
-					}
-					className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-[#525252] rounded-md bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+					className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-[#525252] rounded-md bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+					rows={fieldConfig.multiline ? 4 : 2}
 				/>
 			);
 		}
@@ -588,75 +594,111 @@ export default function SectionDataEditor({
 				</div>
 			)}
 
+			{/* Search Bar */}
+			<div className="flex-1 relative">
+				<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-secondary dark:text-[#929292]" />
+				<input
+					type="text"
+					placeholder="Search sections by name..."
+					value={searchQuery}
+					onChange={(e) => setSearchQuery(e.target.value)}
+					className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-[#e5e5e5] placeholder-secondary dark:placeholder-[#929292] focus:outline-none focus:ring-2 focus:ring-blue-500"
+				/>
+			</div>
+
+			{/* Search Results Info */}
+			{searchQuery && (
+				<div className="text-sm text-secondary dark:text-[#929292]">
+					Found {Object.entries(filteredSections).length} of{" "}
+					{Object.entries(config).length} sections
+				</div>
+			)}
+
 			{/* Sections */}
 			<div className="space-y-3">
-				{Object.entries(config).map(
-					([sectionKey, sectionFields]: [string, any]) => (
-						<div
-							key={sectionKey}
-							className="bg-white dark:bg-[#323232] border border-gray-200 dark:border-[#424242] rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-						>
-							<button
-								onClick={() => toggleExpanded(sectionKey)}
-								className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-[#424242] transition-colors group"
+				{Object.entries(filteredSections).length === 0 && searchQuery ? (
+					<div className="text-center py-8">
+						<p className="text-secondary dark:text-[#929292]">
+							No sections match "{searchQuery}"
+						</p>
+					</div>
+				) : (
+					Object.entries(filteredSections).map(
+						([sectionKey, sectionFields]: [string, any]) => (
+							<div
+								key={sectionKey}
+								className="group bg-white dark:bg-[#323232] border border-gray-200 dark:border-[#525252] rounded-lg overflow-hidden shadow-sm hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200"
 							>
-								<h3 className="font-semibold text-sm text-gray-900 dark:text-[#e5e5e5] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-									{sectionKey}
-								</h3>
-								{expanded[sectionKey] ? (
-									<ChevronUp
-										size={18}
-										className="text-gray-400 dark:text-[#828282] group-hover:text-gray-600 dark:group-hover:text-[#a0a0a0]"
-									/>
-								) : (
-									<ChevronDown
-										size={18}
-										className="text-gray-400 dark:text-[#828282] group-hover:text-gray-600 dark:group-hover:text-[#a0a0a0]"
-									/>
-								)}
-							</button>
-
-							{expanded[sectionKey] && (
-								<div className="border-t border-gray-200 dark:border-[#424242] p-4 bg-gray-50 dark:bg-[#222222]">
-									<div className="grid grid-cols-2 gap-4">
-										{Array.isArray(sectionFields) &&
-											sectionFields.map(
-												(field: FormField, fieldIndex: number) => {
-													const sectionData = data[sectionKey] || {};
-													const fieldValue = sectionData[field.target || ""];
-
-													return (
-														<div key={`${sectionKey}-${fieldIndex}`}>
-															<label className="block text-xs font-semibold text-gray-700 dark:text-[#929292] mb-2 uppercase tracking-wide">
-																{field.label}
-															</label>
-
-															{field.type === "arrayItems" &&
-																Array.isArray(fieldValue) &&
-																renderArrayItems(
-																	sectionKey,
-																	field.target!,
-																	fieldValue,
-																	field,
-																)}
-
-															{field.type !== "arrayItems" &&
-																field.type !== "tabs" &&
-																renderField(
-																	sectionKey,
-																	field.target || "",
-																	field,
-																	fieldValue,
-																)}
-														</div>
-													);
-												},
-											)}
+								<button
+									onClick={() => toggleExpanded(sectionKey)}
+									className="w-full flex items-center justify-between px-5 py-4 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent dark:hover:from-blue-950/20 dark:hover:to-transparent transition-all duration-200 group/button"
+								>
+									<div className="flex items-center gap-3">
+										<div className="w-1 h-6 bg-blue-500 dark:bg-blue-400 rounded-full opacity-0 group-hover/button:opacity-100 transition-opacity duration-200" />
+										<h3 className="font-semibold text-sm text-gray-900 dark:text-[#e5e5e5] group-hover/button:text-blue-600 dark:group-hover/button:text-blue-400 transition-colors duration-200">
+											{formatSectionTitle(sectionKey)}
+										</h3>
 									</div>
-								</div>
-							)}
-						</div>
-					),
+									<div className="relative">
+										{expanded[sectionKey] ? (
+											<ChevronUp
+												size={20}
+												className="text-gray-500 dark:text-[#929292] group-hover/button:text-blue-600 dark:group-hover/button:text-blue-400 transition-all duration-300 transform"
+											/>
+										) : (
+											<ChevronDown
+												size={20}
+												className="text-gray-500 dark:text-[#929292] group-hover/button:text-blue-600 dark:group-hover/button:text-blue-400 transition-all duration-300 transform"
+											/>
+										)}
+									</div>
+								</button>
+
+								{expanded[sectionKey] && (
+									<div className="border-t border-gray-200 dark:border-[#525252] p-6 bg-gradient-to-br from-gray-50 to-white dark:from-[#222222] dark:to-[#323232] animate-in fade-in duration-200">
+										<div className="grid grid-cols-2 gap-5">
+											{Array.isArray(sectionFields) &&
+												sectionFields.map(
+													(field: FormField, fieldIndex: number) => {
+														const sectionData = data[sectionKey] || {};
+														const fieldValue = sectionData[field.target || ""];
+
+														return (
+															<div
+																key={`${sectionKey}-${fieldIndex}`}
+																className="bg-white dark:bg-[#222222] rounded-lg p-4 border border-gray-200 dark:border-[#424242] hover:border-gray-300 dark:hover:border-[#525252] transition-colors duration-200"
+															>
+																<label className="block text-xs font-semibold text-gray-700 dark:text-[#929292] mb-2.5 uppercase tracking-wide">
+																	{field.label}
+																</label>
+
+																{field.type === "arrayItems" &&
+																	Array.isArray(fieldValue) &&
+																	renderArrayItems(
+																		sectionKey,
+																		field.target!,
+																		fieldValue,
+																		field,
+																	)}
+
+																{field.type !== "arrayItems" &&
+																	field.type !== "tabs" &&
+																	renderField(
+																		sectionKey,
+																		field.target || "",
+																		field,
+																		fieldValue,
+																	)}
+															</div>
+														);
+													},
+												)}
+										</div>
+									</div>
+								)}
+							</div>
+						),
+					)
 				)}
 			</div>
 

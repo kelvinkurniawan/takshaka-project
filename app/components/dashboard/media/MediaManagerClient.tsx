@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2, Download, Copy, X } from "lucide-react";
+import { Trash2, Download, Copy, X, Zap } from "lucide-react";
 
 interface Media {
 	id: number;
@@ -28,6 +28,11 @@ export default function MediaManagerClient({
 	const [error, setError] = useState<string | null>(null);
 	const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
 	const [copiedId, setCopiedId] = useState<number | null>(null);
+	const [compressingId, setCompressingId] = useState<number | null>(null);
+	const [compressionSuccess, setCompressionSuccess] = useState<{
+		id: number;
+		ratio: number;
+	} | null>(null);
 
 	const formatFileSize = (bytes: number) => {
 		if (bytes === 0) return "0 Bytes";
@@ -93,12 +98,76 @@ export default function MediaManagerClient({
 		});
 	};
 
+	const handleCompress = async (id: number) => {
+		if (
+			!confirm(
+				"Compress image ini? File akan di-replace dengan ukuran lebih kecil.",
+			)
+		) {
+			return;
+		}
+
+		setCompressingId(id);
+		setError(null);
+
+		try {
+			const response = await fetch(`/api/media-gallery/compress`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ mediaId: id }),
+			});
+
+			if (!response.ok) {
+				const data = await response.json();
+				throw new Error(data.error || "Failed to compress image");
+			}
+
+			const data = await response.json();
+
+			// Update media item with new file size
+			setMedia(
+				media.map((item) =>
+					item.id === id ? { ...item, fileSize: data.newFileSize } : item,
+				),
+			);
+
+			// Update selected media if viewing it
+			if (selectedMedia?.id === id) {
+				setSelectedMedia({
+					...selectedMedia,
+					fileSize: data.newFileSize,
+				});
+			}
+
+			// Show success message
+			setCompressionSuccess({
+				id,
+				ratio: data.compressionRatio,
+			});
+			setTimeout(() => setCompressionSuccess(null), 3000);
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "An error occurred");
+		} finally {
+			setCompressingId(null);
+		}
+	};
+
 	return (
 		<div>
 			{/* Error Message */}
 			{error && (
 				<div className="mb-6 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-700 text-red-800 dark:text-red-200 px-4 py-3 rounded">
 					{error}
+				</div>
+			)}
+
+			{/* Compression Success Message */}
+			{compressionSuccess && (
+				<div className="mb-6 bg-green-100 dark:bg-green-900/30 border border-green-400 dark:border-green-700 text-green-800 dark:text-green-200 px-4 py-3 rounded">
+					Image berhasil dikompres! Ukuran berkurang{" "}
+					<strong>{compressionSuccess.ratio}%</strong>
 				</div>
 			)}
 
@@ -166,6 +235,22 @@ export default function MediaManagerClient({
 
 									{/* Quick Actions */}
 									<div className="border-t border-gray-200 dark:border-[#424242] p-2 flex gap-2">
+										{item.type === "image" && (
+											<button
+												onClick={(e) => {
+													e.stopPropagation();
+													handleCompress(item.id);
+												}}
+												disabled={compressingId === item.id}
+												className="flex-1 px-2 py-2 bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white text-xs font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-1"
+												title="Compress image"
+											>
+												<Zap className="w-3 h-3" />
+												{compressingId === item.id
+													? "Compressing..."
+													: "Compress"}
+											</button>
+										)}
 										<button
 											onClick={(e) => {
 												e.stopPropagation();
@@ -315,6 +400,18 @@ export default function MediaManagerClient({
 
 							{/* Actions */}
 							<div className="border-t border-gray-200 dark:border-[#424242] pt-6 flex gap-3">
+								{selectedMedia.type === "image" && (
+									<button
+										onClick={() => handleCompress(selectedMedia.id)}
+										disabled={compressingId === selectedMedia.id}
+										className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+									>
+										<Zap className="w-4 h-4" />
+										{compressingId === selectedMedia.id
+											? "Compressing..."
+											: "Compress"}
+									</button>
+								)}
 								<button
 									onClick={() =>
 										downloadMedia(selectedMedia.url, selectedMedia.originalName)

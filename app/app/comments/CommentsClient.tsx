@@ -331,7 +331,7 @@ export default function CommentsClient() {
 													setShowDetailModal(true);
 													fetchContentDetails(comment.contentId);
 												}}
-												className="btn btn-icon btn-icon-primary"
+												className="btn-icon btn-icon-primary"
 												title="Lihat detail"
 											>
 												<Eye className="w-4 h-4" />
@@ -341,7 +341,7 @@ export default function CommentsClient() {
 												<button
 													onClick={() => handleApprove(comment.id)}
 													disabled={actionLoading === comment.id}
-													className="btn btn-icon btn-icon-primary"
+													className="btn-icon btn-icon-primary"
 													title="Setujui komentar"
 												>
 													{actionLoading === comment.id ? (
@@ -356,7 +356,7 @@ export default function CommentsClient() {
 												<button
 													onClick={() => handleReject(comment.id)}
 													disabled={actionLoading === comment.id}
-													className="btn btn-icon btn-icon-danger"
+													className="btn-icon btn-icon-danger"
 													title="Tolak komentar"
 												>
 													{actionLoading === comment.id ? (
@@ -370,7 +370,7 @@ export default function CommentsClient() {
 											<button
 												onClick={() => handleDelete(comment.id)}
 												disabled={actionLoading === comment.id}
-												className="btn btn-icon btn-icon-danger"
+												className="btn-icon btn-icon-danger"
 												title="Hapus komentar"
 											>
 												{actionLoading === comment.id ? (

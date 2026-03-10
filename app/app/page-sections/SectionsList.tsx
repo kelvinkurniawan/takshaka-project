@@ -62,19 +62,23 @@ export default function SectionsList() {
 
 	return (
 		<div className="space-y-6">
-			{/* Search Bar */}
-			<div className="relative">
-				<Search
-					className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-[#828282]"
-					size={20}
-				/>
-				<input
-					type="text"
-					placeholder="Search page sections by name or slug..."
-					value={searchQuery}
-					onChange={(e) => setSearchQuery(e.target.value)}
-					className="w-full pl-10 pr-4 py-3 text-sm border border-gray-300 dark:border-[#525252] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-400 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-				/>
+			{/* Search and Filter Section */}
+			<div className="flex flex-col gap-3">
+				<div className="flex-1 relative">
+					<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-secondary dark:text-[#929292]" />
+					<input
+						type="text"
+						placeholder="Search by page name or slug..."
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+						className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-[#e5e5e5] placeholder-secondary dark:placeholder-[#929292] focus:outline-none focus:ring-2 focus:ring-blue-500"
+					/>
+				</div>
+
+				{/* Results Info */}
+				<div className="text-sm text-secondary dark:text-[#929292]">
+					Showing {filteredSections.length} of {sections.length} page sections
+				</div>
 			</div>
 
 			{/* Error Alert */}

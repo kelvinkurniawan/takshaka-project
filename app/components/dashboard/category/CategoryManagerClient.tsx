@@ -201,7 +201,9 @@ export default function CategoryManagerClient({
 			{/* Header Section */}
 			<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 				<div>
-					<h1 className="text-3xl font-bold text-gray-900">Categories</h1>
+					<h1 className="text-3xl font-bold text-gray-900 dark:text-[#e5e5e5]">
+						Categories
+					</h1>
 					<p className="text-secondary text-sm font-medium mt-1">
 						Manage your content categories here
 					</p>
@@ -260,7 +262,7 @@ export default function CategoryManagerClient({
 											{category.name}
 										</td>
 										<td>
-											<code className="bg-secondary px-2 py-1 rounded text-xs text-gray-900">
+											<code className="bg-secondary px-2 py-1 rounded text-xs text-gray-900 dark:text-[#e5e5e5]">
 												{category.slug}
 											</code>
 										</td>

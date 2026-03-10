@@ -15,12 +15,56 @@ export function getDB() {
 		);
 	}
 
-	// Buat koneksi PostgreSQL
+	// Buat koneksi PostgreSQL dengan optimized pool configuration
 	const pool = new Pool({
 		connectionString: databaseUrl,
+		max: 20, // Maximum number of clients in the pool
+		idleTimeoutMillis: 30000, // 30 seconds
+		connectionTimeoutMillis: 10000, // 10 seconds
+	});
+
+	// Add event listeners untuk debugging
+	pool.on("error", (err) => {
+		console.error("Unexpected error on idle client", err);
+	});
+
+	pool.on("connect", () => {
+		// Execute initial setup queries when connection is established
+		const client = pool;
+		// Optionally set session parameters
 	});
 
 	db = drizzle(pool, { schema });
 
 	return db;
+}
+
+// Helper function untuk reconnect dengan retry logic
+export async function withRetry<T>(
+	fn: () => Promise<T>,
+	maxAttempts = 3,
+	delayMs = 500,
+): Promise<T> {
+	let lastError: any;
+
+	for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+		try {
+			return await fn();
+		} catch (error) {
+			lastError = error;
+			console.warn(
+				`Database operation failed (attempt ${attempt}/${maxAttempts}):`,
+				error,
+			);
+
+			if (attempt < maxAttempts) {
+				// Exponential backoff
+				await new Promise((resolve) =>
+					setTimeout(resolve, delayMs * Math.pow(1.5, attempt - 1)),
+				);
+			}
+		}
+	}
+
+	throw lastError;
 }
