@@ -3,6 +3,7 @@ import { contents } from "@/lib/schema";
 import { isNull, eq, desc } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuth } from "@/lib/rbac";
+import { logAudit, extractMetadata } from "@/lib/audit-log";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,12 @@ const createContentSchema = z.object({
 			z.string().transform((val) => (val ? new Date(val) : null)),
 		])
 		.optional(),
+	scheduledAt: z
+		.union([
+			z.date(),
+			z.string().transform((val) => (val ? new Date(val) : null)),
+		])
+		.optional(), // untuk scheduled publishing
 	metaTitle: z.string().max(255).optional(),
 	metaDescription: z.string().max(500).optional(),
 	metaKeywords: z.string().optional(),
@@ -64,7 +71,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
 	try {
-		await requireAuth();
+		const user = await requireAuth();
 		const db = getDB();
 		const body = await request.json();
 
@@ -93,7 +100,25 @@ export async function POST(request: Request) {
 			})
 			.returning();
 
-		return Response.json(result[0], { status: 201 });
+		const newContent = result[0];
+
+		// Log audit
+		await logAudit(db, {
+			userId: user.id,
+			action: "create",
+			entityType: "contents",
+			entityId: newContent.id,
+			entityName: newContent.title,
+			newValues: {
+				title: newContent.title,
+				slug: newContent.slug,
+				status: newContent.status,
+				type: newContent.type,
+			},
+			metadata: extractMetadata(request),
+		});
+
+		return Response.json(newContent, { status: 201 });
 	} catch (error) {
 		if (error instanceof Error && error.message.includes("Unauthorized")) {
 			return Response.json({ error: "Unauthorized" }, { status: 401 });

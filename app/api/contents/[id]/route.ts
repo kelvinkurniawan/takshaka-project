@@ -3,6 +3,7 @@ import { contents } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuth } from "@/lib/rbac";
+import { logAudit, detectChanges, extractMetadata } from "@/lib/audit-log";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,12 @@ const updateContentSchema = z.object({
 	featuredImage: z.string().optional(),
 	status: z.string().optional(),
 	publishedAt: z
+		.union([
+			z.date(),
+			z.string().transform((val) => (val ? new Date(val) : null)),
+		])
+		.optional(),
+	scheduledAt: z
 		.union([
 			z.date(),
 			z.string().transform((val) => (val ? new Date(val) : null)),
@@ -68,7 +75,7 @@ export async function PUT(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
-		await requireAuth();
+		const user = await requireAuth();
 
 		const { id } = await params;
 		const db = getDB();
@@ -119,7 +126,49 @@ export async function PUT(
 			.where(eq(contents.id, contentId))
 			.returning();
 
-		return Response.json(result[0]);
+		const updatedContent = result[0];
+
+		// Log audit - track changes
+		const changes = detectChanges(
+			{
+				title: existing.title,
+				slug: existing.slug,
+				status: existing.status,
+				publishedAt: existing.publishedAt,
+				scheduledAt: existing.scheduledAt,
+			},
+			{
+				title: updatedContent.title,
+				slug: updatedContent.slug,
+				status: updatedContent.status,
+				publishedAt: updatedContent.publishedAt,
+				scheduledAt: updatedContent.scheduledAt,
+			},
+		);
+
+		if (Object.keys(changes).length > 0) {
+			await logAudit(db, {
+				userId: user.id,
+				action: "update",
+				entityType: "contents",
+				entityId: contentId,
+				entityName: updatedContent.title,
+				changes,
+				oldValues: {
+					title: existing.title,
+					slug: existing.slug,
+					status: existing.status,
+				},
+				newValues: {
+					title: updatedContent.title,
+					slug: updatedContent.slug,
+					status: updatedContent.status,
+				},
+				metadata: extractMetadata(request),
+			});
+		}
+
+		return Response.json(updatedContent);
 	} catch (error) {
 		if (error instanceof Error && error.message.includes("Unauthorized")) {
 			return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -144,7 +193,7 @@ export async function DELETE(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
-		await requireAuth();
+		const user = await requireAuth();
 
 		const { id } = await params;
 		const db = getDB();
@@ -172,6 +221,20 @@ export async function DELETE(
 			.set({ deletedAt })
 			.where(eq(contents.id, contentId))
 			.returning();
+
+		// Log audit
+		await logAudit(db, {
+			userId: user.id,
+			action: "delete",
+			entityType: "contents",
+			entityId: contentId,
+			entityName: existing.title,
+			oldValues: {
+				title: existing.title,
+				status: existing.status,
+			},
+			metadata: extractMetadata(request),
+		});
 
 		return Response.json({
 			message: "Content deleted successfully",

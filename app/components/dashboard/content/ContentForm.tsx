@@ -23,6 +23,7 @@ interface ContentFormProps {
 		featuredImage?: string;
 		status?: string;
 		publishedAt?: Date;
+		scheduledAt?: Date;
 		metaTitle?: string;
 		metaDescription?: string;
 		metaKeywords?: string;
@@ -58,6 +59,7 @@ export default function ContentForm({
 		featuredImage: initialContent?.featuredImage || "",
 		status: initialContent?.status || "draft",
 		publishedAt: initialContent?.publishedAt || null,
+		scheduledAt: initialContent?.scheduledAt || null,
 		metaTitle: initialContent?.metaTitle || "",
 		metaDescription: initialContent?.metaDescription || "",
 		metaKeywords: initialContent?.metaKeywords || "",
@@ -112,6 +114,7 @@ export default function ContentForm({
 				featuredImage: formData.featuredImage || undefined,
 				status: formData.status,
 				publishedAt: formData.publishedAt || undefined,
+				scheduledAt: formData.scheduledAt || undefined,
 				metaTitle: formData.metaTitle || undefined,
 				metaDescription: formData.metaDescription || undefined,
 				metaKeywords: formData.metaKeywords || undefined,
@@ -330,6 +333,36 @@ export default function ContentForm({
 									}
 									className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-blue-500"
 								/>
+							</div>
+
+							{/* Scheduled At */}
+							<div>
+								<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
+									Scheduled Publication Date (Optional)
+								</label>
+								<input
+									type="datetime-local"
+									value={
+										formData.scheduledAt
+											? new Date(formData.scheduledAt)
+													.toISOString()
+													.slice(0, 16)
+											: ""
+									}
+									onChange={(e) =>
+										setFormData((prev) => ({
+											...prev,
+											scheduledAt: e.target.value
+												? new Date(e.target.value)
+												: null,
+										}))
+									}
+									className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-blue-500"
+								/>
+								<p className="text-xs text-secondary mt-1">
+									Set a future date to automatically publish this content at the
+									scheduled time
+								</p>
 							</div>
 
 							{/* Featured Image */}

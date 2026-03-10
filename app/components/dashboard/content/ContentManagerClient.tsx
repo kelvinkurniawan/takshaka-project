@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { Edit2, Trash2, Search, Eye } from "lucide-react";
+import { Edit2, Trash2, Search, Eye, Clock, History } from "lucide-react";
 
 interface Content {
 	id: number;
@@ -23,6 +23,8 @@ interface Content {
 	ogTitle: string | null;
 	ogDescription: string | null;
 	ogImage: string | null;
+	publishedAt?: Date | null;
+	scheduledAt?: Date | null;
 	category?: { id: number; name: string } | null;
 	creator?: { id: number; name: string };
 }
@@ -61,6 +63,10 @@ export default function ContentManagerClient({
 	const [searchQuery, setSearchQuery] = useState("");
 	const [statusFilter, setStatusFilter] = useState("all");
 	const [typeFilter, setTypeFilter] = useState("all");
+	const [dateFrom, setDateFrom] = useState("");
+	const [dateTo, setDateTo] = useState("");
+	const [categoryFilter, setCategoryFilter] = useState("all");
+	const [showAuditModal, setShowAuditModal] = useState<number | null>(null);
 
 	useEffect(() => {
 		const fetchCommentCounts = async () => {
@@ -103,9 +109,42 @@ export default function ContentManagerClient({
 			// Type filter
 			const matchesType = typeFilter === "all" || content.type === typeFilter;
 
-			return matchesSearch && matchesStatus && matchesType;
+			// Category filter
+			const matchesCategory =
+				categoryFilter === "all" ||
+				content.categoryId === parseInt(categoryFilter);
+
+			// Date range filter
+			let matchesDateRange = true;
+			if (dateFrom || dateTo) {
+				const createdDate = new Date(content.createdAt);
+				if (dateFrom) {
+					matchesDateRange = createdDate >= new Date(dateFrom);
+				}
+				if (dateTo) {
+					const toDate = new Date(dateTo);
+					toDate.setDate(toDate.getDate() + 1);
+					matchesDateRange = matchesDateRange && createdDate <= toDate;
+				}
+			}
+
+			return (
+				matchesSearch &&
+				matchesStatus &&
+				matchesType &&
+				matchesCategory &&
+				matchesDateRange
+			);
 		});
-	}, [contents, searchQuery, statusFilter, typeFilter]);
+	}, [
+		contents,
+		searchQuery,
+		statusFilter,
+		typeFilter,
+		categoryFilter,
+		dateFrom,
+		dateTo,
+	]);
 
 	// Get unique types for filter dropdown
 	const uniqueTypes = useMemo(() => {
@@ -172,26 +211,28 @@ export default function ContentManagerClient({
 				{/* Contents List */}
 				<div className="space-y-4 mt-4">
 					<div className="flex flex-col gap-4">
-						<div className="flex flex-col md:flex-row items-start md:items-end gap-4">
-							<div className="flex-1">
-								<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
-									Search Content
-								</label>
-								<div className="relative">
-									<Search className="absolute left-3 top-3 w-5 h-5 text-gray-400 dark:text-gray-600" />
-									<input
-										type="text"
-										placeholder="Search by title or slug..."
-										value={searchQuery}
-										onChange={(e) => setSearchQuery(e.target.value)}
-										className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
-									/>
-								</div>
+						{/* Search Bar */}
+						<div className="flex-1">
+							<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
+								Search Content
+							</label>
+							<div className="relative">
+								<Search className="absolute left-3 top-3 w-5 h-5 text-gray-400 dark:text-gray-600" />
+								<input
+									type="text"
+									placeholder="Search by title or slug..."
+									value={searchQuery}
+									onChange={(e) => setSearchQuery(e.target.value)}
+									className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
+								/>
 							</div>
+						</div>
 
-							<div className="w-full md:w-48">
+						{/* Filter Row 1 */}
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+							<div>
 								<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
-									Filter by Status
+									Status
 								</label>
 								<select
 									value={statusFilter}
@@ -201,12 +242,14 @@ export default function ContentManagerClient({
 									<option value="all">All Status</option>
 									<option value="draft">Draft</option>
 									<option value="published">Published</option>
+									<option value="scheduled">Scheduled</option>
+									<option value="archived">Archived</option>
 								</select>
 							</div>
 
-							<div className="w-full md:w-48">
+							<div>
 								<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
-									Filter by Type
+									Type
 								</label>
 								<select
 									value={typeFilter}
@@ -214,14 +257,85 @@ export default function ContentManagerClient({
 									className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-blue-500"
 								>
 									<option value="all">All Types</option>
-									{uniqueTypes.map((type) => (
-										<option key={type} value={type}>
-											{type.charAt(0).toUpperCase() + type.slice(1)}
+									{[...new Set(contents.map((c) => c.type))]
+										.sort()
+										.map((type) => (
+											<option key={type} value={type}>
+												{type.charAt(0).toUpperCase() + type.slice(1)}
+											</option>
+										))}
+								</select>
+							</div>
+
+							<div>
+								<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
+									Category
+								</label>
+								<select
+									value={categoryFilter}
+									onChange={(e) => setCategoryFilter(e.target.value)}
+									className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-blue-500"
+								>
+									<option value="all">All Categories</option>
+									{initialCategories.map((cat) => (
+										<option key={cat.id} value={cat.id}>
+											{cat.name}
 										</option>
 									))}
 								</select>
 							</div>
 						</div>
+
+						{/* Filter Row 2 - Date Range */}
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<div>
+								<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
+									Date From
+								</label>
+								<input
+									type="date"
+									value={dateFrom}
+									onChange={(e) => setDateFrom(e.target.value)}
+									className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-blue-500"
+								/>
+							</div>
+
+							<div>
+								<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
+									Date To
+								</label>
+								<input
+									type="date"
+									value={dateTo}
+									onChange={(e) => setDateTo(e.target.value)}
+									className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-blue-500"
+								/>
+							</div>
+						</div>
+
+						{/* Reset Filters Button */}
+						{(searchQuery ||
+							statusFilter !== "all" ||
+							typeFilter !== "all" ||
+							categoryFilter !== "all" ||
+							dateFrom ||
+							dateTo) && (
+							<div>
+								<button
+									onClick={() => {
+										setSearchQuery("");
+										setStatusFilter("all");
+										setTypeFilter("all");
+										setCategoryFilter("all");
+										setDateFrom("");
+										setDateTo("");
+									}}
+									className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+								>
+									Reset Filters
+								</button>
+							</div>
+						)}
 
 						{/* Results info */}
 						<div className="text-sm text-secondary dark:text-[#929292]">
@@ -250,6 +364,7 @@ export default function ContentManagerClient({
 											<th>Status</th>
 											<th>Category</th>
 											<th>Type</th>
+											<th>Scheduled</th>
 											<th>Created By</th>
 											<th>Created</th>
 											<th className="text-center">Comments</th>
@@ -302,6 +417,18 @@ export default function ContentManagerClient({
 												<td className="capitalize text-secondary">
 													{content.type}
 												</td>
+												<td className="text-secondary text-sm">
+													{content.scheduledAt ? (
+														<div className="flex items-center gap-1">
+															<Clock className="w-4 h-4" />
+															{new Date(content.scheduledAt).toLocaleDateString(
+																"id-ID",
+															)}
+														</div>
+													) : (
+														<span className="text-gray-400">-</span>
+													)}
+												</td>
 												<td className="text-secondary">
 													{content.creator?.name || "Unknown"}
 												</td>
@@ -334,6 +461,13 @@ export default function ContentManagerClient({
 															<Edit2 className="w-4 h-4" />
 														</Link>
 														<button
+															onClick={() => setShowAuditModal(content.id)}
+															className="btn-icon btn-icon-info"
+															title="Audit Logs"
+														>
+															<History className="w-4 h-4" />
+														</button>
+														<button
 															onClick={() => handleDelete(content.id)}
 															disabled={loading}
 															className="btn-icon btn-icon-danger"
@@ -348,6 +482,121 @@ export default function ContentManagerClient({
 									</tbody>
 								</table>
 							</div>
+						</div>
+					)}
+				</div>
+
+				{/* Audit Logs Modal */}
+				{showAuditModal && (
+					<AuditLogsModal
+						contentId={showAuditModal}
+						onClose={() => setShowAuditModal(null)}
+					/>
+				)}
+			</div>
+		</div>
+	);
+}
+
+// Audit Logs Modal Component
+function AuditLogsModal({
+	contentId,
+	onClose,
+}: {
+	contentId: number;
+	onClose: () => void;
+}) {
+	const [logs, setLogs] = useState<any[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		const fetchLogs = async () => {
+			try {
+				const response = await fetch(
+					`/api/audit-logs?entityType=contents&entityId=${contentId}`,
+				);
+				if (!response.ok) throw new Error("Failed to fetch logs");
+				const data = await response.json();
+				setLogs(data.data || []);
+			} catch (err) {
+				setError(err instanceof Error ? err.message : "An error occurred");
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchLogs();
+	}, [contentId]);
+
+	return (
+		<div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50">
+			<div className="bg-white dark:bg-[#2a2a2a] rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+				<div className="sticky top-0 bg-white dark:bg-[#2a2a2a] border-b border-gray-200 dark:border-[#424242] p-6 flex justify-between items-center">
+					<h2 className="text-xl font-bold text-gray-900 dark:text-[#e5e5e5]">
+						Audit Logs - Content #{contentId}
+					</h2>
+					<button
+						onClick={onClose}
+						className="text-gray-500 hover:text-gray-700 dark:text-[#929292] dark:hover:text-[#e5e5e5]"
+					>
+						✕
+					</button>
+				</div>
+
+				<div className="p-6">
+					{loading ? (
+						<p className="text-center text-secondary">Loading...</p>
+					) : error ? (
+						<p className="text-center text-red-600 dark:text-red-400">
+							{error}
+						</p>
+					) : logs.length === 0 ? (
+						<p className="text-center text-secondary">No audit logs found</p>
+					) : (
+						<div className="space-y-4">
+							{logs.map((log) => (
+								<div
+									key={log.id}
+									className="border border-gray-200 dark:border-[#424242] rounded-lg p-4"
+								>
+									<div className="flex justify-between items-start mb-2">
+										<div>
+											<p className="font-semibold text-gray-900 dark:text-[#e5e5e5]">
+												{log.action.toUpperCase()} - {log.entityType}
+											</p>
+											<p className="text-sm text-secondary">
+												by {log.user?.name || "System"} ({log.user?.email})
+											</p>
+										</div>
+										<p className="text-xs text-secondary">
+											{new Date(log.createdAt).toLocaleString("id-ID")}
+										</p>
+									</div>
+
+									{log.changes && Object.keys(log.changes).length > 0 && (
+										<div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded text-sm mt-2">
+											<p className="font-medium text-blue-900 dark:text-blue-200 mb-1">
+												Changes:
+											</p>
+											{Object.entries(log.changes).map(([key, change]: any) => (
+												<p
+													key={key}
+													className="text-blue-800 dark:text-blue-300"
+												>
+													<strong>{key}</strong>: {change.from} → {change.to}
+												</p>
+											))}
+										</div>
+									)}
+
+									{log.metadata && (
+										<div className="text-xs text-secondary mt-2 space-y-1">
+											{log.metadata.ip && <p>IP: {log.metadata.ip}</p>}
+										</div>
+									)}
+								</div>
+							))}
 						</div>
 					)}
 				</div>

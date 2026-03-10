@@ -63,6 +63,7 @@ export const contents = pgTable(
 		featuredImage: text("featured_image"),
 		status: text("status").notNull().default("draft"), // draft, published, archived
 		publishedAt: timestamp("published_at", { mode: "date" }),
+		scheduledAt: timestamp("scheduled_at", { mode: "date" }), // untuk scheduled publishing
 		metaTitle: text("meta_title"),
 		metaDescription: text("meta_description"),
 		metaKeywords: text("meta_keywords"),
@@ -115,6 +116,8 @@ export const pages = pgTable(
 		slug: text("slug").notNull(),
 		content: text("content").notNull(), // JSON string containing blocks structure
 		status: text("status").notNull().default("draft"), // draft, published
+		publishedAt: timestamp("published_at", { mode: "date" }),
+		scheduledAt: timestamp("scheduled_at", { mode: "date" }), // untuk scheduled publishing
 		metaTitle: text("meta_title"),
 		metaDescription: text("meta_description"),
 		createdBy: integer("created_by").notNull(),
@@ -225,3 +228,30 @@ export const faqs = pgTable("faqs", {
 	updatedAt: timestamp("updated_at", { mode: "date" }).notNull(),
 	deletedAt: timestamp("deleted_at", { mode: "date" }),
 });
+
+// Audit logs untuk tracking semua perubahan
+export const auditLogs = pgTable(
+	"audit_logs",
+	{
+		id: serial("id").primaryKey(),
+		userId: integer("user_id").notNull(), // user yang melakukan aksi
+		action: text("action").notNull(), // create, update, delete, publish, schedule
+		entityType: text("entity_type").notNull(), // contents, pages, categories, etc
+		entityId: integer("entity_id").notNull(), // ID dari entity yang diubah
+		entityName: text("entity_name"), // title/name untuk reference
+		changes: text("changes"), // JSON string - perubahan apa saja
+		oldValues: text("old_values"), // JSON string - nilai sebelumnya
+		newValues: text("new_values"), // JSON string - nilai baru
+		metadata: text("metadata"), // JSON string - info tambahan (IP, user agent, dll)
+		createdAt: timestamp("created_at", { mode: "date" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+	},
+	(table) => {
+		return {
+			userIdIdx: sql`CREATE INDEX idx_audit_logs_user_id ON ${table} (${table.userId})`,
+			entityIdx: sql`CREATE INDEX idx_audit_logs_entity ON ${table} (${table.entityType}, ${table.entityId})`,
+			createdAtIdx: sql`CREATE INDEX idx_audit_logs_created_at ON ${table} (${table.createdAt})`,
+		};
+	},
+);
