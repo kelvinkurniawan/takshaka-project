@@ -5,6 +5,7 @@ import { pageSections } from "@/lib/schema";
 import { eq, isNull } from "drizzle-orm";
 import { getSessionUserId } from "@/lib/session";
 
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const createPageSectionSchema = z.object({

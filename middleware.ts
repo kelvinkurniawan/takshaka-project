@@ -1,47 +1,38 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { cookies } from "next/headers";
 
 const SESSION_COOKIE_NAME = "auth_session";
 
 export async function middleware(request: NextRequest) {
-  // Check if user is trying to access protected routes
-  const { pathname } = request.nextUrl;
+	// Check if user is trying to access protected /app/* routes
+	const { pathname } = request.nextUrl;
 
-  // Protected routes that require authentication
-  const protectedRoutes = [
-    "/app/dashboard",
-    "/app/categories",
-    "/app/content",
-    "/app/users",
-    "/app/settings",
-  ];
+	const isAppRoute = pathname.startsWith("/app");
 
-  // Check if current path is protected
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route),
-  );
+	// Exclude API under /app/api/* and the login page itself
+	const isAppApi = pathname.startsWith("/app/api");
+	const isLoginPage =
+		pathname === "/app/secure-access" || pathname === "/app/secure-access/";
 
-  if (isProtectedRoute) {
-    // Get session cookie
-    const cookieStore = await cookies();
-    const session = cookieStore.get(SESSION_COOKIE_NAME);
+	if (isAppRoute && !isAppApi && !isLoginPage) {
+		// Read session cookie from the incoming request
+		const sessionValue = request.cookies.get(SESSION_COOKIE_NAME)?.value;
 
-    if (!session?.value) {
-      // Redirect to login page if not authenticated
-      const loginUrl = new URL("/secure-access", request.url);
-      return NextResponse.redirect(loginUrl);
-    }
-  }
+		// Basic validation of session cookie (expects numeric user id)
+		if (!sessionValue || Number.isNaN(parseInt(sessionValue, 10))) {
+			const loginUrl = new URL("/app/secure-access", request.url);
+			return NextResponse.redirect(loginUrl);
+		}
+	}
 
-  // Allow access to public routes or authenticated users
-  return NextResponse.next();
+	// Allow access to public routes or authenticated users
+	return NextResponse.next();
 }
 
 // Configure which routes to run middleware on
 export const config = {
-  matcher: [
-    // Run middleware on all routes
-    "/((?!_next/static|_next/image|favicon.ico).*)",
-  ],
+	matcher: [
+		// Run middleware on all routes
+		"/((?!_next/static|_next/image|favicon.ico).*)",
+	],
 };

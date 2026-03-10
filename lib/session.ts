@@ -11,8 +11,15 @@ export async function setSessionCookie(userId: number): Promise<void> {
 	cookieStore.set(SESSION_COOKIE_NAME, String(userId), {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
-		sameSite: "lax",
+		sameSite: "lax", // More permissive for dev/cross-origin requests
 		maxAge: SESSION_DURATION / 1000, // Convert to seconds
+		path: "/", // Root path so all endpoints can access the cookie
+	});
+	console.log(`[Auth] Session cookie set for user ${userId}`, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+		sameSite: "lax",
+		maxAge: SESSION_DURATION / 1000,
 		path: "/",
 	});
 }
@@ -22,7 +29,7 @@ export async function setSessionCookie(userId: number): Promise<void> {
  */
 export async function clearSessionCookie(): Promise<void> {
 	const cookieStore = await cookies();
-	cookieStore.delete(SESSION_COOKIE_NAME);
+	cookieStore.delete(SESSION_COOKIE_NAME, { path: "/" });
 }
 
 /**
@@ -32,13 +39,24 @@ export async function getSessionUserId(): Promise<number | null> {
 	const cookieStore = await cookies();
 	const session = cookieStore.get(SESSION_COOKIE_NAME);
 
+	console.log(
+		`[Auth] getSessionUserId - cookie value:`,
+		session?.value,
+		"- all cookies:",
+		cookieStore.getAll(),
+	);
+
 	if (!session?.value) {
+		console.log(`[Auth] No session cookie found`);
 		return null;
 	}
 
 	try {
-		return parseInt(session.value, 10);
+		const userId = parseInt(session.value, 10);
+		console.log(`[Auth] Parsed userId from cookie:`, userId);
+		return userId;
 	} catch {
+		console.error(`[Auth] Failed to parse session value:`, session.value);
 		return null;
 	}
 }

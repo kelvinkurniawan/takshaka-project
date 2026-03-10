@@ -1,11 +1,16 @@
 import { z } from "zod";
 import { verifyPassword } from "@/lib/auth";
-import { setSessionCookie } from "@/lib/session";
 import { getDB } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
+import {
+	checkRateLimit,
+	resetRateLimit,
+	getClientIP,
+} from "@/lib/rate-limiter-supabase";
 
-// Use nodejs runtime to support better-sqlite3 in development and D1 in production
+// Use nodejs runtime to support PostgreSQL database
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const loginSchema = z.object({
@@ -16,11 +21,40 @@ const loginSchema = z.object({
 export async function POST(request: Request) {
 	try {
 		const body = await request.json();
+		const clientIP = getClientIP(request);
+		const emailCandidate = body?.email || "";
 
-		// Validate input
+		// ===== RATE LIMITING (Dual check: IP + Email) =====
+		const [ipLimitResult, emailLimitResult] = await Promise.all([
+			checkRateLimit(`login_ip:${clientIP}`),
+			checkRateLimit(`login_email:${emailCandidate}`),
+		]);
+
+		if (ipLimitResult.isLimited || emailLimitResult.isLimited) {
+			const resetTime = Math.min(
+				ipLimitResult.resetTime,
+				emailLimitResult.resetTime,
+			);
+			const retryAfter = Math.ceil((resetTime - Date.now()) / 1000);
+
+			return Response.json(
+				{
+					error: "Terlalu banyak percobaan. Coba lagi nanti.",
+					retryAfter,
+				},
+				{
+					status: 429,
+					headers: {
+						"Retry-After": String(retryAfter),
+					},
+				},
+			);
+		}
+
+		// ===== INPUT VALIDATION =====
 		const validatedData = loginSchema.parse(body);
 
-		// Get database instance with proper environment handling
+		// ===== DATABASE LOOKUP =====
 		const db = getDB();
 
 		try {
@@ -58,19 +92,45 @@ export async function POST(request: Request) {
 				);
 			}
 
-			// Set session cookie
-			await setSessionCookie(user.id);
+			// ===== SUCCESS: Set session cookie via Response headers =====
+			console.log(
+				`[Auth] Login successful for user ${user.id} (${user.email})`,
+			);
 
-			return Response.json(
-				{
+			// Calculate cookie expiration
+			const maxAge = 24 * 60 * 60; // 24 hours in seconds
+			const isProduction = process.env.NODE_ENV === "production";
+
+			// Build Set-Cookie header
+			const cookieValue = String(user.id);
+			const setCookieHeader = `auth_session=${cookieValue}; Path=/; Max-Age=${maxAge}; HttpOnly; SameSite=Lax${
+				isProduction ? "; Secure" : ""
+			}`;
+
+			console.log(`[Auth] Setting cookie with header:`, setCookieHeader);
+
+			// Clear rate limit counters on successful login
+			await Promise.all([
+				resetRateLimit(`login_ip:${clientIP}`),
+				resetRateLimit(`login_email:${validatedData.email}`),
+			]);
+
+			return new Response(
+				JSON.stringify({
 					success: true,
 					user: {
 						id: user.id,
 						name: user.name,
 						email: user.email,
 					},
+				}),
+				{
+					status: 200,
+					headers: {
+						"Content-Type": "application/json",
+						"Set-Cookie": setCookieHeader,
+					},
 				},
-				{ status: 200 },
 			);
 		} catch (error) {
 			console.error("Database error:", error);

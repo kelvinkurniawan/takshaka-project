@@ -60,17 +60,11 @@ export default function SecureAccessPage() {
 			<div className="relative z-10 max-w-md w-full space-y-8 px-8 sm:px-6 lg:px-8 text-white py-8 rounded-lg bg-white/50 backdrop-blur-sm">
 				{/* Header */}
 				<div className="text-center space-y-3">
-					<div className="flex items-center justify-center">
-						<div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg shadow-blue-500/20">
-							<Lock className="w-6 h-6 text-white" />
-						</div>
-					</div>
-					<h2 className="text-5xl md:text-7xl font-bold leading-tight">
-						Takshaka
-					</h2>
-					<p className="text-lg md:text-2xl font-light">
-						Masukkan kredensial Anda untuk mengakses dashboard
-					</p>
+					<img
+						src="/images/logo.png"
+						alt="Logo"
+						className="mx-auto w-60 h-auto"
+					/>
 				</div>
 
 				{/* Form */}

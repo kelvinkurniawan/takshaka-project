@@ -255,3 +255,9 @@ export const auditLogs = pgTable(
 		};
 	},
 );
+
+export const loginAttempts = pgTable("login_attempts", {
+	id: serial("id").primaryKey(),
+	identifier: text("identifier").notNull(),
+	attemptedAt: timestamp("attempted_at", { mode: "date" }).notNull(),
+});
