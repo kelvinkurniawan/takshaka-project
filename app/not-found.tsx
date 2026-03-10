@@ -17,14 +17,14 @@ export default function NotFound() {
 					<div className="w-full max-w-3xl text-center">
 						{/* 404 Number */}
 						<div className="mb-8">
-							<h1 className="text-7xl sm:text-8xl md:text-9xl font-light text-gray-200 mb-4">
+							<h1 className="text-7xl sm:text-8xl md:text-9xl font-light text-gray-900 mb-4">
 								404
 							</h1>
 							<div className="h-1 w-24 bg-gradient-to-r from-amber-600 to-amber-400 mx-auto mb-8"></div>
 						</div>
 
 						{/* Error Message */}
-						<h2 className="text-2xl sm:text-3xl md:text-4xl font-light tracking-wider mb-6 text-gray-900">
+						<h2 className="text-2xl sm:text-3xl md:text-4xl font-light tracking-wider mb-6">
 							Page Not Found
 						</h2>
 

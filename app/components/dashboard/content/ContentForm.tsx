@@ -6,6 +6,7 @@ import Select from "react-select";
 import type { CSSObjectWithLabel } from "react-select";
 import RichTextEditor from "@/app/components/RichTextEditor";
 import FileUploadInput from "@/app/components/FileUploadInput";
+import { LucideSave, LucideX } from "lucide-react";
 
 interface ContentFormProps {
 	initialCategories: Array<{ id: number; name: string }>;
@@ -542,28 +543,29 @@ export default function ContentForm({
 									</div>
 								</div>
 							)}
-						</div>
-					</div>
-				</div>
 
-				{/* Buttons */}
-				<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4 border-t border-gray-200 dark:border-[#424242]">
-					<div className="lg:col-span-2"></div>
-					<div className="lg:col-span-1 flex gap-3">
-						<button
-							type="submit"
-							disabled={loading}
-							className="flex-1 px-6 py-2 bg-blue-600 dark:bg-blue-700 text-white font-medium rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-						>
-							{loading ? "Saving..." : isEditing ? "Update" : "Create"}
-						</button>
-						<button
-							type="button"
-							onClick={() => router.back()}
-							className="flex-1 px-6 py-2 bg-gray-300 dark:bg-[#424242] text-gray-900 dark:text-[#e5e5e5] font-medium rounded-lg hover:bg-gray-400 dark:hover:bg-[#525252] transition-colors"
-						>
-							Batal
-						</button>
+							{/* Buttons */}
+							<div className="grid pt-4 border-t border-gray-200 dark:border-[#424242]">
+								<div className="flex gap-3">
+									<button
+										type="submit"
+										disabled={loading}
+										className="flex-1 items-center flex justify-center px-6 py-2 bg-blue-600 dark:bg-blue-700 text-white font-medium rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+									>
+										<LucideSave className="inline-block mr-2" size={16} />
+										{loading ? "Saving..." : isEditing ? "Update" : "Create"}
+									</button>
+									<button
+										type="button"
+										onClick={() => router.back()}
+										className="flex-1 items-center flex justify-center px-6 py-2 bg-gray-300 dark:bg-[#424242] text-gray-900 dark:text-[#e5e5e5] font-medium rounded-lg hover:bg-gray-400 dark:hover:bg-[#525252] transition-colors"
+									>
+										<LucideX className="inline-block mr-2" size={16} />
+										Batal
+									</button>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</form>
