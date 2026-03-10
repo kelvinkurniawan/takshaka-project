@@ -32,7 +32,7 @@ export default function Error({ error, reset }: ErrorProps) {
 						</Link>
 						<Link
 							href="/"
-							className="text-foreground hover:text-primary transition-colors uppercase tracking-wider text-sm font-medium hidden sm:block"
+							className="text-foreground hover:text-gray-900 transition-colors uppercase tracking-wider text-sm font-medium hidden sm:block"
 						>
 							Home
 						</Link>

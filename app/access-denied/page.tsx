@@ -25,7 +25,7 @@ export default function AccessDeniedPage() {
 
         {/* Heading */}
         <div className="text-center space-y-2 mb-8">
-          <h1 className="text-4xl font-bold text-primary">Akses Ditolak</h1>
+          <h1 className="text-4xl font-bold text-gray-900">Akses Ditolak</h1>
           <p className="text-secondary text-sm">
             Anda tidak memiliki izin untuk mengakses halaman ini
           </p>
@@ -42,7 +42,7 @@ export default function AccessDeniedPage() {
         <div className="flex gap-3">
           <button
             onClick={() => router.back()}
-            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-secondary text-primary font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-200 border border-primary"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-secondary text-gray-900 font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-200 border border-primary"
           >
             <ChevronLeft className="w-4 h-4" />
             Kembali

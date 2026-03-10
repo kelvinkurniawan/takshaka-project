@@ -15,7 +15,12 @@ const createContentSchema = z.object({
 	categoryId: z.number().optional(),
 	featuredImage: z.string().optional(),
 	status: z.string().default("draft").optional(),
-	publishedAt: z.date().optional(),
+	publishedAt: z
+		.union([
+			z.date(),
+			z.string().transform((val) => (val ? new Date(val) : null)),
+		])
+		.optional(),
 	metaTitle: z.string().max(255).optional(),
 	metaDescription: z.string().max(500).optional(),
 	metaKeywords: z.string().optional(),

@@ -242,7 +242,7 @@ export default function SettingsManagerClient({
 			<div className="flex items-center justify-center min-h-[400px]">
 				<div className="text-center">
 					<AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-					<h2 className="text-xl font-semibold text-primary mb-2">
+					<h2 className="text-xl font-semibold text-gray-900 mb-2">
 						Access Denied
 					</h2>
 					<p className="text-secondary">
@@ -258,7 +258,7 @@ export default function SettingsManagerClient({
 			{/* Header */}
 			<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 				<div>
-					<h1 className="text-3xl font-bold text-primary flex items-center gap-3">
+					<h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
 						<SettingsIcon className="w-8 h-8" />
 						Settings
 					</h1>
@@ -287,7 +287,7 @@ export default function SettingsManagerClient({
 			<div className="card-modern">
 				<div className="flex items-center justify-between p-6 border-b border-primary">
 					<div>
-						<h2 className="text-xl font-semibold text-primary">
+						<h2 className="text-xl font-semibold text-gray-900">
 							General Settings
 						</h2>
 						<p className="text-secondary text-sm mt-1">
@@ -307,7 +307,7 @@ export default function SettingsManagerClient({
 				<div className="p-6 space-y-6">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-sm font-medium text-primary mb-2">
+							<label className="block text-sm font-medium text-gray-900 mb-2">
 								Site Name *
 							</label>
 							<input
@@ -325,7 +325,7 @@ export default function SettingsManagerClient({
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-primary mb-2">
+							<label className="block text-sm font-medium text-gray-900 mb-2">
 								Admin Email
 							</label>
 							<input
@@ -344,7 +344,7 @@ export default function SettingsManagerClient({
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-primary mb-2">
+						<label className="block text-sm font-medium text-gray-900 mb-2">
 							Site Description
 						</label>
 						<textarea
@@ -362,7 +362,7 @@ export default function SettingsManagerClient({
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-primary mb-2">
+						<label className="block text-sm font-medium text-gray-900 mb-2">
 							Site URL
 						</label>
 						<input
@@ -385,7 +385,7 @@ export default function SettingsManagerClient({
 			<div className="card-modern">
 				<div className="flex items-center justify-between p-6 border-b border-primary">
 					<div>
-						<h2 className="text-xl font-semibold text-primary">
+						<h2 className="text-xl font-semibold text-gray-900">
 							Index Page Settings
 						</h2>
 						<p className="text-secondary text-sm mt-1">
@@ -404,7 +404,7 @@ export default function SettingsManagerClient({
 
 				<div className="p-6 space-y-6">
 					<div>
-						<label className="block text-sm font-medium text-primary mb-2">
+						<label className="block text-sm font-medium text-gray-900 mb-2">
 							Landing Page *
 						</label>
 						<Select
@@ -463,7 +463,7 @@ export default function SettingsManagerClient({
 			<div className="card-modern">
 				<div className="flex items-center justify-between p-6 border-b border-primary">
 					<div>
-						<h2 className="text-xl font-semibold text-primary">
+						<h2 className="text-xl font-semibold text-gray-900">
 							Maintenance Mode
 						</h2>
 						<p className="text-secondary text-sm mt-1">
@@ -496,14 +496,14 @@ export default function SettingsManagerClient({
 						/>
 						<label
 							htmlFor="maintenance_mode"
-							className="text-primary font-medium"
+							className="text-gray-900 font-medium"
 						>
 							Enable Maintenance Mode
 						</label>
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-primary mb-2">
+						<label className="block text-sm font-medium text-gray-900 mb-2">
 							Maintenance Message
 						</label>
 						<textarea
@@ -526,7 +526,7 @@ export default function SettingsManagerClient({
 			<div className="card-modern">
 				<div className="flex items-center justify-between p-6 border-b border-primary">
 					<div>
-						<h2 className="text-xl font-semibold text-primary">SEO Settings</h2>
+						<h2 className="text-xl font-semibold text-gray-900">SEO Settings</h2>
 						<p className="text-secondary text-sm mt-1">
 							Default meta tags and SEO configuration
 						</p>
@@ -543,7 +543,7 @@ export default function SettingsManagerClient({
 
 				<div className="p-6 space-y-6">
 					<div>
-						<label className="block text-sm font-medium text-primary mb-2">
+						<label className="block text-sm font-medium text-gray-900 mb-2">
 							Default Meta Title
 						</label>
 						<input
@@ -561,7 +561,7 @@ export default function SettingsManagerClient({
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-primary mb-2">
+						<label className="block text-sm font-medium text-gray-900 mb-2">
 							Default Meta Description
 						</label>
 						<textarea
@@ -579,7 +579,7 @@ export default function SettingsManagerClient({
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-primary mb-2">
+						<label className="block text-sm font-medium text-gray-900 mb-2">
 							Default Meta Keywords
 						</label>
 						<input
@@ -602,7 +602,7 @@ export default function SettingsManagerClient({
 			<div className="card-modern">
 				<div className="flex items-center justify-between p-6 border-b border-primary">
 					<div>
-						<h2 className="text-xl font-semibold text-primary">
+						<h2 className="text-xl font-semibold text-gray-900">
 							Navigation Settings
 						</h2>
 						<p className="text-secondary text-sm mt-1">
@@ -635,7 +635,7 @@ export default function SettingsManagerClient({
 						/>
 						<label
 							htmlFor="enable_navigation_menu"
-							className="text-primary font-medium"
+							className="text-gray-900 font-medium"
 						>
 							Enable Navigation Menu
 						</label>
@@ -651,7 +651,7 @@ export default function SettingsManagerClient({
 			<div className="card-modern">
 				<div className="flex items-center justify-between p-6 border-b border-primary">
 					<div>
-						<h2 className="text-xl font-semibold text-primary">
+						<h2 className="text-xl font-semibold text-gray-900">
 							Logo Settings
 						</h2>
 						<p className="text-secondary text-sm mt-1">
@@ -670,7 +670,7 @@ export default function SettingsManagerClient({
 
 				<div className="p-6 space-y-6">
 					<div>
-						<label className="block text-sm font-medium text-primary mb-4">
+						<label className="block text-sm font-medium text-gray-900 mb-4">
 							Site Logo
 						</label>
 						<FileUploadInput
@@ -691,7 +691,7 @@ export default function SettingsManagerClient({
 			{/* All Settings List */}
 			<div className="card-modern">
 				<div className="p-6 border-b border-primary">
-					<h2 className="text-xl font-semibold text-primary">All Settings</h2>
+					<h2 className="text-xl font-semibold text-gray-900">All Settings</h2>
 					<p className="text-secondary text-sm mt-1">
 						Raw view of all stored settings
 					</p>
@@ -717,7 +717,7 @@ export default function SettingsManagerClient({
 								<tbody>
 									{settings.map((setting) => (
 										<tr key={setting.key}>
-											<td className="font-medium text-primary font-mono text-sm">
+											<td className="font-medium text-gray-900 font-mono text-sm">
 												{setting.key}
 											</td>
 											<td className="text-secondary max-w-xs truncate">

@@ -13,6 +13,13 @@ const updateContentSchema = z.object({
 	type: z.string().optional(),
 	categoryId: z.number().optional().nullable(),
 	featuredImage: z.string().optional(),
+	status: z.string().optional(),
+	publishedAt: z
+		.union([
+			z.date(),
+			z.string().transform((val) => (val ? new Date(val) : null)),
+		])
+		.optional(),
 	metaTitle: z.string().max(255).optional(),
 	metaDescription: z.string().max(500).optional(),
 	metaKeywords: z.string().optional(),

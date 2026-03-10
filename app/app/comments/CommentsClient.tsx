@@ -232,15 +232,45 @@ export default function CommentsClient() {
 
 			{/* Comments Table */}
 			{loading ? (
-				<div className="flex justify-center py-12">
-					<div className="text-center">
-						<div className="animate-spin mb-4">
-							<Loader2 className="w-8 h-8 text-blue-600" />
-						</div>
-						<p className="text-gray-600 dark:text-gray-400">
-							Memuat komentar...
-						</p>
-					</div>
+				<div className="comments-table-wrapper">
+					<table className="table-modern">
+						<thead>
+							<tr>
+								<th>Nama</th>
+								<th>Email</th>
+								<th>Status</th>
+								<th>Spam</th>
+								<th>Waktu</th>
+								<th className="text-right">Aksi</th>
+							</tr>
+						</thead>
+						<tbody>
+							{[1, 2, 3, 4, 5].map((i) => (
+								<tr key={i} className="opacity-50">
+									<td>
+										<div className="h-4 bg-gray-200 dark:bg-[#424242] rounded w-24 animate-pulse" />
+									</td>
+									<td>
+										<div className="h-4 bg-gray-200 dark:bg-[#424242] rounded w-32 animate-pulse" />
+									</td>
+									<td>
+										<div className="h-4 bg-gray-200 dark:bg-[#424242] rounded w-16 animate-pulse" />
+									</td>
+									<td>
+										<div className="h-4 bg-gray-200 dark:bg-[#424242] rounded w-12 animate-pulse" />
+									</td>
+									<td>
+										<div className="h-4 bg-gray-200 dark:bg-[#424242] rounded w-28 animate-pulse" />
+									</td>
+									<td className="flex justify-end gap-2">
+										<div className="h-8 w-8 bg-gray-200 dark:bg-[#424242] rounded animate-pulse" />
+										<div className="h-8 w-8 bg-gray-200 dark:bg-[#424242] rounded animate-pulse" />
+										<div className="h-8 w-8 bg-gray-200 dark:bg-[#424242] rounded animate-pulse" />
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
 				</div>
 			) : comments.length === 0 ? (
 				<div className="bg-white dark:bg-[#1e1e1e] rounded-lg border border-gray-200 dark:border-gray-700 p-12 text-center">
