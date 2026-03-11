@@ -21,6 +21,7 @@ import {
 	MessageSquare,
 	Layers,
 	HelpCircle,
+	BarChart3,
 } from "lucide-react";
 
 type Theme = "light" | "dark";
@@ -48,6 +49,10 @@ export default function Sidebar({
 		{
 			title: "Dashboard",
 			items: [{ icon: Home, label: "Dashboard", href: "/app/dashboard" }],
+		},
+		{
+			title: "Analytics",
+			items: [{ icon: BarChart3, label: "Analytics", href: "/app/analytics" }],
 		},
 		{
 			title: "Content Management",

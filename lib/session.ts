@@ -29,7 +29,7 @@ export async function setSessionCookie(userId: number): Promise<void> {
  */
 export async function clearSessionCookie(): Promise<void> {
 	const cookieStore = await cookies();
-	cookieStore.delete(SESSION_COOKIE_NAME, { path: "/" });
+	cookieStore.delete(SESSION_COOKIE_NAME);
 }
 
 /**

@@ -20,8 +20,9 @@ const updateFAQSchema = z.object({
  */
 export async function PUT(
 	request: Request,
-	{ params }: { params: { id: string } },
+	context: { params: Promise<{ id: string }> },
 ) {
+	const params = await context.params;
 	try {
 		// Verify authentication
 		await requireAuth();
@@ -74,8 +75,9 @@ export async function PUT(
  */
 export async function DELETE(
 	request: Request,
-	{ params }: { params: { id: string } },
+	context: { params: Promise<{ id: string }> },
 ) {
+	const params = await context.params;
 	try {
 		// Verify authentication
 		await requireAuth();

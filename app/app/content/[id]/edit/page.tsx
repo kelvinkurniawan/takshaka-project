@@ -140,6 +140,7 @@ export default async function EditContentPage({
 						featuredImage: content.featuredImage || undefined,
 						status: content.status || undefined,
 						publishedAt: content.publishedAt || undefined,
+						scheduledAt: content.scheduledAt || undefined,
 						metaTitle: content.metaTitle || undefined,
 						metaDescription: content.metaDescription || undefined,
 						metaKeywords: content.metaKeywords || undefined,

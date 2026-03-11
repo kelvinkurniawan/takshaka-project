@@ -261,3 +261,57 @@ export const loginAttempts = pgTable("login_attempts", {
 	identifier: text("identifier").notNull(),
 	attemptedAt: timestamp("attempted_at", { mode: "date" }).notNull(),
 });
+// Analytics tables
+export const pageViews = pgTable("page_views", {
+	id: serial("id").primaryKey(),
+	pageSlug: text("page_slug").notNull(),
+	pageTitle: text("page_title"),
+	visitorId: text("visitor_id").notNull(),
+	referrer: text("referrer"),
+	userAgent: text("user_agent"),
+	ipAddress: text("ip_address"),
+	createdAt: timestamp("created_at", { mode: "date" })
+		.notNull()
+		.$defaultFn(() => new Date()),
+});
+
+export const visitors = pgTable("visitors", {
+	id: serial("id").primaryKey(),
+	visitorId: text("visitor_id").notNull().unique(),
+	refererDomain: text("referer_domain"),
+	country: text("country"),
+	city: text("city"),
+	userAgent: text("user_agent"),
+	ipAddress: text("ip_address"),
+	firstVisit: timestamp("first_visit", { mode: "date" })
+		.notNull()
+		.$defaultFn(() => new Date()),
+	lastVisit: timestamp("last_visit", { mode: "date" })
+		.notNull()
+		.$defaultFn(() => new Date()),
+	pageViewsCount: integer("page_views_count").default(1),
+});
+
+export const analyticsDaily = pgTable(
+	"analytics_daily",
+	{
+		id: serial("id").primaryKey(),
+		date: text("date").notNull(), // YYYY-MM-DD format
+		pageSlug: text("page_slug").notNull(),
+		totalViews: integer("total_views").default(0),
+		uniqueVisitors: integer("unique_visitors").default(0),
+		bounceRate: text("bounce_rate"),
+		avgTimeOnPage: integer("avg_time_on_page"),
+		createdAt: timestamp("created_at", { mode: "date" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+	},
+	(table) => {
+		return {
+			dateSlugIdx: uniqueIndex("analytics_daily_date_slug_idx").on(
+				table.date,
+				table.pageSlug,
+			),
+		};
+	},
+);

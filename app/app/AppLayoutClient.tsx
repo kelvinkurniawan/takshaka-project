@@ -173,10 +173,18 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
 						>
 							{theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
 						</button>
-						<button className="p-2 text-gray-600 dark:text-[#929292] hover:text-gray-900 dark:hover:text-[#e5e5e5] hover:bg-gray-100 dark:hover:bg-[#323232] rounded-md transition-colors">
+						<button
+							onClick={() => router.push("/app/notifications")}
+							className="p-2 text-gray-600 dark:text-[#929292] hover:text-gray-900 dark:hover:text-[#e5e5e5] hover:bg-gray-100 dark:hover:bg-[#323232] rounded-md transition-colors"
+							title="View notifications"
+						>
 							<Bell size={20} />
 						</button>
-						<button className="p-2 text-gray-600 dark:text-[#929292] hover:text-gray-900 dark:hover:text-[#e5e5e5] hover:bg-gray-100 dark:hover:bg-[#323232] rounded-md transition-colors">
+						<button
+							onClick={() => router.push("/app/profile")}
+							className="p-2 text-gray-600 dark:text-[#929292] hover:text-gray-900 dark:hover:text-[#e5e5e5] hover:bg-gray-100 dark:hover:bg-[#323232] rounded-md transition-colors"
+							title="View profile"
+						>
 							<User size={20} />
 						</button>
 						<button

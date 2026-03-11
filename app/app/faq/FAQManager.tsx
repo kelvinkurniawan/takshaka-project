@@ -35,7 +35,7 @@ async function fetchFAQs(): Promise<FAQ[]> {
 			.from(faqs)
 			.where(isNull(faqs.deletedAt));
 
-		return faqsData.map((faq) => ({
+		return faqsData.map((faq: (typeof faqsData)[0]) => ({
 			...faq,
 			created_at:
 				faq.created_at instanceof Date
