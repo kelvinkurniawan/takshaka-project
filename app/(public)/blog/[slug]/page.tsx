@@ -74,6 +74,7 @@ export default async function BlogDetailPage({
 						alt={content.title}
 						fill
 						className="object-cover"
+						unoptimized
 					/>
 				</div>
 			)}

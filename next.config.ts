@@ -19,6 +19,8 @@ const nextConfig: NextConfig = {
 					: "pub-326b3cc59f484d4fa165e65b5c4836c1.r2.dev",
 			},
 		],
+		// Disable optimization for R2 to avoid timeout issues
+		unoptimized: process.env.NODE_ENV === "production",
 	},
 };
 

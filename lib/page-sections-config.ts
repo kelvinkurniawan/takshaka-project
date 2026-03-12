@@ -334,41 +334,35 @@ export const pageSectionsConfig = {
 		],
 		heroContent: [
 			{
-				type: "image",
-				label: "Background Image",
-				target: "backgroundImage",
-			},
-			{
-				type: "string",
-				label: "Alt Text",
-				target: "alt",
-			},
-			{
-				type: "string",
-				label: "Badge",
-				target: "badge",
-			},
-			{
-				type: "string",
-				label: "Heading",
-				target: "heading",
-				multiline: true,
-			},
-			{
-				type: "string",
-				label: "Description",
-				target: "description",
-				multiline: true,
-			},
-			{
 				type: "arrayItems",
-				label: "Paragraphs",
-				target: "paragraphs",
+				label: "Hero Content Slides",
+				target: "slides",
 				fields: [
 					{
+						type: "image",
+						label: "Background Image",
+						target: "backgroundImage",
+					},
+					{
 						type: "string",
-						label: "Text",
-						target: "text",
+						label: "Alt Text",
+						target: "alt",
+					},
+					{
+						type: "string",
+						label: "Badge",
+						target: "badge",
+					},
+					{
+						type: "string",
+						label: "Heading",
+						target: "heading",
+						multiline: true,
+					},
+					{
+						type: "string",
+						label: "Description",
+						target: "description",
 						multiline: true,
 					},
 				],
@@ -422,6 +416,47 @@ export const pageSectionsConfig = {
 						type: "string",
 						label: "Alt Text",
 						target: "alt",
+					},
+					{
+						type: "string",
+						label: "Caption",
+						target: "caption",
+						multiline: true,
+					},
+					{
+						type: "string",
+						label: "Link URL",
+						target: "link",
+					},
+					{
+						type: "string",
+						label: "Link Text",
+						target: "linkText",
+					},
+				],
+			},
+		],
+		whatMakesUsDifferent: [
+			{
+				type: "string",
+				label: "Section Title",
+				target: "title",
+			},
+			{
+				type: "arrayItems",
+				label: "Items",
+				target: "items",
+				fields: [
+					{
+						type: "string",
+						label: "Item Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Description",
+						target: "description",
+						multiline: true,
 					},
 				],
 			},

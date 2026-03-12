@@ -65,6 +65,7 @@ export default function BrandStorySection({
 											width={500}
 											height={500}
 											className="w-full h-auto object-cover"
+											unoptimized
 										/>
 									</div>
 

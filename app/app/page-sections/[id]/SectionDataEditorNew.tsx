@@ -656,7 +656,7 @@ export default function SectionDataEditor({
 
 								{expanded[sectionKey] && (
 									<div className="border-t border-gray-200 dark:border-[#525252] p-6 bg-gradient-to-br from-gray-50 to-white dark:from-[#222222] dark:to-[#323232] animate-in fade-in duration-200">
-										<div className="grid grid-cols-2 gap-5">
+										<div className="grid grid-cols-1 w-3/4 gap-5">
 											{Array.isArray(sectionFields) &&
 												sectionFields.map(
 													(field: FormField, fieldIndex: number) => {
@@ -673,11 +673,10 @@ export default function SectionDataEditor({
 																</label>
 
 																{field.type === "arrayItems" &&
-																	Array.isArray(fieldValue) &&
 																	renderArrayItems(
 																		sectionKey,
 																		field.target!,
-																		fieldValue,
+																		Array.isArray(fieldValue) ? fieldValue : [],
 																		field,
 																	)}
 

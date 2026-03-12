@@ -315,3 +315,59 @@ export const analyticsDaily = pgTable(
 		};
 	},
 );
+
+// Gallery of Works Tables
+export const galleryCategories = pgTable(
+	"gallery_categories",
+	{
+		id: serial("id").primaryKey(),
+		name: text("name").notNull(),
+		slug: text("slug").notNull(),
+		displayOrder: integer("display_order").default(0),
+		createdAt: timestamp("created_at", { mode: "date" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+		updatedAt: timestamp("updated_at", { mode: "date" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+		deletedAt: timestamp("deleted_at", { mode: "date" }),
+	},
+	(table) => {
+		return {
+			slugIdx: uniqueIndex("gallery_categories_slug_idx")
+				.on(table.slug)
+				.where(sql`${table.deletedAt} is null`),
+		};
+	},
+);
+
+export const galleryOfWorks = pgTable(
+	"gallery_of_works",
+	{
+		id: serial("id").primaryKey(),
+		categoryId: integer("category_id")
+			.notNull()
+			.references(() => galleryCategories.id),
+		title: text("title").notNull(),
+		subtitle: text("subtitle"),
+		description: text("description"),
+		imageUrl: text("image_url").notNull(),
+		slug: text("slug").notNull(),
+		displayOrder: integer("display_order").default(0),
+		createdBy: integer("created_by").notNull(),
+		createdAt: timestamp("created_at", { mode: "date" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+		updatedAt: timestamp("updated_at", { mode: "date" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+		deletedAt: timestamp("deleted_at", { mode: "date" }),
+	},
+	(table) => {
+		return {
+			categoryIdx: uniqueIndex("gallery_of_works_category_idx").on(
+				table.categoryId,
+			),
+		};
+	},
+);

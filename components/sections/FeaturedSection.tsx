@@ -53,6 +53,7 @@ export default function FeaturedSection({ items }: FeaturedSectionProps) {
 										alt={item.title}
 										fill
 										className="object-cover group-hover:scale-110 transition-transform duration-700"
+										unoptimized
 									/>
 								)}
 

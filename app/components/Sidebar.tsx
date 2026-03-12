@@ -72,6 +72,16 @@ export default function Sidebar({
 			],
 		},
 		{
+			title: "Gallery & Portfolio",
+			items: [
+				{
+					icon: Image,
+					label: "Gallery of Works",
+					href: "/app/gallery-of-works",
+				},
+			],
+		},
+		{
 			title: "User Management",
 			items: [{ icon: Users, label: "Users", href: "/app/users" }],
 		},

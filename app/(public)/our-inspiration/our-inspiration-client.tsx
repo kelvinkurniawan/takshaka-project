@@ -56,6 +56,7 @@ export default function OurInspirationClient({
 							fill
 							className="object-cover"
 							priority
+							unoptimized
 						/>
 					</div>
 				</section>

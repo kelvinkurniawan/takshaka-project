@@ -583,11 +583,10 @@ export default function SectionDataEditor({
 														</label>
 
 														{field.type === "arrayItems" &&
-															Array.isArray(fieldValue) &&
 															renderArrayItems(
 																sectionKey,
 																field.target!,
-																fieldValue,
+																Array.isArray(fieldValue) ? fieldValue : [],
 																field,
 															)}
 
