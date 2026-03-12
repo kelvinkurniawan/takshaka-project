@@ -38,7 +38,7 @@ export default function OurInspirationClient({
 
 			{/* Board Letter Content Section */}
 			{inspirationSections.boardLetter && (
-				<div data-aos="fade-up" data-aos-duration="800">
+				<div id="letter-from-board" data-aos="fade-up" data-aos-duration="800">
 					<BoardLetterSection
 						imageUrl={inspirationSections.boardLetter.imageUrl}
 						paragraphs={inspirationSections.boardLetter.paragraphs}
@@ -64,7 +64,12 @@ export default function OurInspirationClient({
 
 			{/* Taksaka Way Section */}
 			{inspirationSections.takskaWay && (
-				<div data-aos="fade-right" data-aos-delay="100" data-aos-duration="800">
+				<div
+					id="takshaka-ways"
+					data-aos="fade-right"
+					data-aos-delay="100"
+					data-aos-duration="800"
+				>
 					<TakskaWaySection
 						sectionTitle={inspirationSections.takskaWay.sectionTitle}
 						items={inspirationSections.takskaWay.items}
@@ -74,7 +79,12 @@ export default function OurInspirationClient({
 
 			{/* Brand Story Section */}
 			{inspirationSections.brandStory && (
-				<div data-aos="fade-left" data-aos-delay="200" data-aos-duration="800">
+				<div
+					id="brand-stories"
+					data-aos="fade-left"
+					data-aos-delay="200"
+					data-aos-duration="800"
+				>
 					<BrandStorySection
 						backgroundImage={inspirationSections.brandStory.backgroundImage}
 						sectionTitle={inspirationSections.brandStory.sectionTitle}

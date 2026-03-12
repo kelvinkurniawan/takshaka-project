@@ -393,41 +393,44 @@ export function getFooterSections() {
 		{
 			title: "Our Inspiration",
 			links: [
-				{ label: "Letter from Our Board", href: "#" },
-				{ label: "Takshaka Ways", href: "#" },
-				{ label: "Brand Stories", href: "#" },
+				{
+					label: "Letter from Our Board",
+					href: "/our-inspiration#letter-from-board",
+				},
+				{ label: "Takshaka Ways", href: "/our-inspiration#takshaka-ways" },
+				{ label: "Brand Stories", href: "/our-inspiration#brand-stories" },
 			],
 		},
 		{
 			title: "Prestige Events",
 			links: [
-				{ label: "Signature Voyage", href: "#" },
-				{ label: "Wellness Escape", href: "#" },
-				{ label: "Curated Experiences", href: "#" },
+				{ label: "Signature Voyage", href: "/signature-voyage" },
+				{ label: "Wellness Escape", href: "/wellness-escape" },
+				{ label: "Curated Experiences", href: "/curated-experiences" },
 			],
 		},
 		{
 			title: "Indonesia Journal",
 			links: [
-				{ label: "Insights", href: "#" },
-				{ label: "News & Events", href: "#" },
-				{ label: "Side Projects", href: "#" },
+				{ label: "Insights", href: "/indonesia-journal/insights" },
+				{ label: "News & Events", href: "/indonesia-journal/news-events" },
+				{ label: "Side Projects", href: "/indonesia-journal/side-projects" },
 			],
 		},
 		{
 			title: "Portfolio",
 			links: [
-				{ label: "Milestone", href: "#" },
-				{ label: "Gallery Events", href: "#" },
-				{ label: "Sustainable Impact", href: "#" },
-				{ label: "Community Impact", href: "#" },
+				{ label: "Milestone", href: "/portfolio/milestone" },
+				{ label: "Gallery Events", href: "/portfolio/gallery-events" },
+				{ label: "Sustainable Impact", href: "/portfolio/sustainable-impact" },
+				{ label: "Community Impact", href: "/portfolio/community-impact" },
 			],
 		},
 		{
-			title: "Let's Connected",
+			title: "Let's Connect",
 			links: [
-				{ label: "INQUIRY", href: "#" },
-				{ label: "CAREER", href: "#" },
+				{ label: "INQUIRY", href: "/connect/inquiry" },
+				{ label: "CAREER", href: "/connect/career" },
 			],
 		},
 	];

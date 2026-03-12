@@ -28,12 +28,9 @@ export default function Footer({ sections, copyright }: FooterProps) {
 	};
 
 	return (
-		<footer className="w-full">
+		<footer className="w-full" style={{ backgroundColor: "#1a1f3a" }}>
 			{/* Subscribe Section */}
-			<section
-				className="w-full py-8 md:py-16 px-4 sm:px-6 lg:px-8"
-				style={{ backgroundColor: "#1a1f3a" }}
-			>
+			<section className="w-full py-8 md:py-16 px-4 sm:px-6 lg:px-8">
 				<div className="mx-auto max-w-7xl">
 					<div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6 md:gap-0">
 						{/* Get Inspired */}
@@ -46,17 +43,9 @@ export default function Footer({ sections, copyright }: FooterProps) {
 							onSubmit={handleSubscribe}
 							className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto"
 						>
-							<input
-								type="email"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								placeholder="Enter your email"
-								className="px-3 sm:px-4 py-2 bg-transparent border-b border-white text-white placeholder-gray-400 focus:outline-none focus:border-amber-600 transition-colors text-sm w-full sm:w-auto"
-								required
-							/>
 							<button
 								type="submit"
-								className="px-6 py-2 text-white font-semibold text-sm tracking-wider hover:text-amber-600 transition-colors"
+								className="px-6 py-2 text-white font-semibold text-sm tracking-wider bg-[#A27C34] hover:text-amber-600 transition-colors"
 							>
 								SUBSCRIBE
 							</button>
@@ -67,10 +56,11 @@ export default function Footer({ sections, copyright }: FooterProps) {
 
 			{/* Footer Links Section */}
 			<section
-				className="w-full py-8 md:py-16 px-4 sm:px-6 lg:px-8 border-t border-gray-700"
+				className="w-full px-4 sm:px-6 lg:px-8"
 				style={{ backgroundColor: "#1a1f3a" }}
 			>
 				<div className="mx-auto max-w-7xl">
+					<div className="border-t border-[#A27C34] py-8"></div>
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 md:gap-12 mb-8 md:mb-12">
 						{sections.map((section, idx) => (
 							<div key={idx}>
@@ -94,7 +84,7 @@ export default function Footer({ sections, copyright }: FooterProps) {
 					</div>
 
 					{/* Divider */}
-					<div className="border-t border-gray-700 pt-6 md:pt-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0">
+					<div className="border-t border-[#A27C34] pt-6 md:pt-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0">
 						{/* Logo */}
 						<div className="mb-0">
 							<img
