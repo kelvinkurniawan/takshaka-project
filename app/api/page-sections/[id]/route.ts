@@ -3,6 +3,7 @@ import { requireAuth, canEdit } from "@/lib/rbac";
 import { getDB } from "@/lib/db";
 import { pageSections } from "@/lib/schema";
 import { eq, and, isNull } from "drizzle-orm";
+import { revalidatePageBySlug } from "@/lib/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -145,6 +146,10 @@ export async function PUT(
 			})
 			.where(eq(pageSections.id, pageSectionId));
 
+		// Revalidate cache for this page
+		const pageSlug = validatedData.pageSlug || existingPageSection[0].pageSlug;
+		await revalidatePageBySlug(pageSlug);
+
 		return Response.json({
 			success: true,
 			message: "Page section berhasil diubah",
@@ -215,6 +220,9 @@ export async function DELETE(
 			.update(pageSections)
 			.set({ deletedAt: new Date() })
 			.where(eq(pageSections.id, pageSectionId));
+
+		// Revalidate cache for this page
+		await revalidatePageBySlug(existingPageSection[0].pageSlug);
 
 		return Response.json({
 			success: true,

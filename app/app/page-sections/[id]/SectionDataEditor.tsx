@@ -110,10 +110,17 @@ export default function SectionDataEditor({
 			const formData = new FormData();
 			formData.append("file", file);
 
+			// Create abort controller for timeout
+			const controller = new AbortController();
+			const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
+
 			const response = await fetch("/api/upload", {
 				method: "POST",
 				body: formData,
+				signal: controller.signal,
 			});
+
+			clearTimeout(timeoutId);
 
 			if (!response.ok) {
 				throw new Error("Upload failed");
@@ -128,7 +135,13 @@ export default function SectionDataEditor({
 			}
 		} catch (err) {
 			console.error("Error uploading file:", err);
-			setError("Failed to upload file. Please try again.");
+			if (err instanceof Error && err.name === "AbortError") {
+				setError(
+					"Upload timed out. File may be too large or connection too slow. Please try again.",
+				);
+			} else {
+				setError("Failed to upload file. Please try again.");
+			}
 		} finally {
 			setUploading(false);
 		}
@@ -273,6 +286,64 @@ export default function SectionDataEditor({
 								<input
 									type="file"
 									accept="video/*"
+									onChange={(e) => handleFileUpload(e, sectionKey, fieldKey)}
+									disabled={uploading}
+									className="hidden"
+								/>
+							</label>
+						</div>
+					</div>
+				);
+			}
+
+			// Handle image/video combined type
+			if (isImageUrl(value) || isVideoUrl(value)) {
+				const isImage = isImageUrl(value);
+				return (
+					<div className="space-y-2">
+						<div className="relative w-full h-48 bg-gray-100 dark:bg-[#222222] rounded-lg overflow-hidden border border-gray-300 dark:border-[#525252]">
+							{isImage ? (
+								<img
+									src={value}
+									alt={fieldKey}
+									className="w-full h-full object-cover"
+									onError={(e) => {
+										(e.target as HTMLImageElement).src =
+											"/images/placeholder.png";
+									}}
+								/>
+							) : (
+								<video
+									src={value}
+									controls
+									className="w-full h-full"
+									style={{ objectFit: "cover" }}
+								>
+									Your browser does not support the video tag.
+								</video>
+							)}
+						</div>
+						<div className="space-y-2">
+							<input
+								type="text"
+								value={value}
+								onChange={(e) =>
+									handleFieldChange(sectionKey, fieldKey, e.target.value)
+								}
+								className="w-full px-3 py-2 border border-gray-300 dark:border-[#525252] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+								placeholder="Image or Video URL"
+							/>
+							<label className="flex items-center justify-center gap-2 px-3 py-2 border border-dashed border-gray-300 dark:border-[#525252] rounded-lg bg-gray-50 dark:bg-[#222222] cursor-pointer hover:bg-gray-100 dark:hover:bg-[#323232] transition-colors">
+								<Upload
+									size={16}
+									className="text-gray-600 dark:text-[#929292]"
+								/>
+								<span className="text-sm text-gray-600 dark:text-[#929292]">
+									{uploading ? "Uploading..." : "Upload Media"}
+								</span>
+								<input
+									type="file"
+									accept="image/*,video/*"
 									onChange={(e) => handleFileUpload(e, sectionKey, fieldKey)}
 									disabled={uploading}
 									className="hidden"

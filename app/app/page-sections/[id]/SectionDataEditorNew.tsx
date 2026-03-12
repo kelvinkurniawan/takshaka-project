@@ -58,6 +58,8 @@ export default function SectionDataEditor({
 	const [searchQuery, setSearchQuery] = useState("");
 	const [saving, setSaving] = useState(false);
 	const [uploading, setUploading] = useState(false);
+	const [uploadingFields, setUploadingFields] = useState<Set<string>>(new Set());
+	const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState(false);
 	const [imagePreviews, setImagePreviews] = useState<Record<string, string>>(
@@ -193,10 +195,20 @@ export default function SectionDataEditor({
 		const file = e.target.files?.[0];
 		if (!file) return;
 
+		const previewKey = `${sectionKey}-${fieldKey}-${itemIndex ?? 0}`;
+
 		try {
+			// Clear previous error and add to uploading fields
+			setImageErrors((prev) => {
+				const updated = { ...prev };
+				delete updated[previewKey];
+				return updated;
+			});
+			setUploadingFields((prev) => new Set(prev).add(previewKey));
+			setUploadProgress((prev) => ({ ...prev, [previewKey]: 0 }));
+
 			// Show preview
 			const reader = new FileReader();
-			const previewKey = `${sectionKey}-${fieldKey}-${itemIndex ?? 0}`;
 			reader.onload = (event) => {
 				setImagePreviews((prev) => ({
 					...prev,
@@ -206,21 +218,85 @@ export default function SectionDataEditor({
 			reader.readAsDataURL(file);
 
 			setUploading(true);
-			const formData = new FormData();
-			formData.append("file", file);
-			formData.append("type", fieldConfig.type);
 
-			const response = await fetch("/api/upload", {
-				method: "POST",
-				body: formData,
-			});
+			// Simulate progress for better UX
+			const progressInterval = setInterval(() => {
+				setUploadProgress((prev) => {
+					const current = prev[previewKey] || 0;
+					return {
+						...prev,
+						[previewKey]: Math.min(current + Math.random() * 30, 90),
+					};
+				});
+			}, 200);
 
-			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(errorData.error || "Upload failed");
+			// Create abort controller for timeout
+			const controller = new AbortController();
+			const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
+
+			// Step 1: Request presigned URL from API
+			const presignedResponse = await fetch(
+				`/api/upload?fileName=${encodeURIComponent(file.name)}&fileSize=${file.size}&fileType=${encodeURIComponent(file.type)}`,
+				{
+					method: "GET",
+					signal: controller.signal,
+				},
+			);
+
+			if (!presignedResponse.ok) {
+				clearInterval(progressInterval);
+				const errorData = await presignedResponse.json();
+				throw new Error(errorData.error || "Failed to get upload URL");
 			}
 
-			const { url } = await response.json();
+			const { presignedUrl, publicUrl, s3Key, type } =
+				await presignedResponse.json();
+
+			setUploadProgress((prev) => ({ ...prev, [previewKey]: 50 }));
+
+			// Step 2: Upload file directly to R2 using presigned URL
+			// Convert File to ArrayBuffer for proper cross-origin handling
+			const fileBuffer = await file.arrayBuffer();
+			const uploadResponse = await fetch(presignedUrl, {
+				method: "PUT",
+				body: new Uint8Array(fileBuffer),
+			});
+
+			if (!uploadResponse.ok) {
+				clearInterval(progressInterval);
+				throw new Error(`R2 upload failed: ${uploadResponse.status}`);
+			}
+
+			setUploadProgress((prev) => ({ ...prev, [previewKey]: 80 }));
+
+			// Step 3: Save metadata to database
+			const metadataResponse = await fetch("/api/upload", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					publicUrl,
+					s3Key,
+					type,
+					fileName: file.name,
+					fileSize: file.size,
+					fileType: file.type,
+				}),
+				signal: controller.signal,
+			});
+
+			clearInterval(progressInterval);
+			clearTimeout(timeoutId);
+
+			if (!metadataResponse.ok) {
+				const errorData = await metadataResponse.json();
+				throw new Error(errorData.error || "Failed to save file metadata");
+			}
+
+			setUploadProgress((prev) => ({ ...prev, [previewKey]: 100 }));
+
+			const { url } = await metadataResponse.json();
 
 			if (itemIndex !== undefined && fieldTarget) {
 				handleNestedFieldChange(
@@ -234,26 +310,51 @@ export default function SectionDataEditor({
 				handleFieldChange(sectionKey, fieldTarget || fieldKey, url);
 			}
 
-			// Clear preview after successful upload
-			setImagePreviews((prev) => {
+			// Clear preview and uploading state after successful upload
+			setTimeout(() => {
+				setImagePreviews((prev) => {
+					const updated = { ...prev };
+					delete updated[previewKey];
+					return updated;
+				});
+				setUploadingFields((prev) => {
+					const updated = new Set(prev);
+					updated.delete(previewKey);
+					return updated;
+				});
+				setUploadProgress((prev) => {
+					const updated = { ...prev };
+					delete updated[previewKey];
+					return updated;
+				});
+			}, 500);
+		} catch (err) {
+			console.error("Error uploading file:", err);
+
+			// Clear progress and mark as finished uploading
+			setUploadingFields((prev) => {
+				const updated = new Set(prev);
+				updated.delete(previewKey);
+				return updated;
+			});
+			setUploadProgress((prev) => {
 				const updated = { ...prev };
 				delete updated[previewKey];
 				return updated;
 			});
 
-			// Clear error state for this key
-			setImageErrors((prev) => {
-				const updated = { ...prev };
-				delete updated[previewKey];
-				return updated;
-			});
-		} catch (err) {
-			console.error("Error uploading file:", err);
-			setError(
-				err instanceof Error
-					? err.message
-					: "Failed to upload file. Please try again.",
-			);
+			// Handle abort/timeout
+			if (err instanceof Error && err.name === "AbortError") {
+				setError(
+					"Upload timed out. File may be too large or connection too slow. Please try again.",
+				);
+			} else {
+				setError(
+					err instanceof Error
+						? err.message
+						: "Failed to upload file. Please try again.",
+				);
+			}
 		} finally {
 			setUploading(false);
 		}
@@ -342,10 +443,12 @@ export default function SectionDataEditor({
 			const preview = imagePreviews[previewKey];
 			const hasValue = preview || (value && typeof value === "string");
 			const hasError = imageErrors[previewKey];
+			const isUploading = uploadingFields.has(previewKey);
+			const progress = uploadProgress[previewKey] || 0;
 
 			return (
 				<div className="space-y-2">
-					{hasValue && !hasError && (
+					{hasValue && !hasError && !isUploading && (
 						<div className="relative w-full bg-gray-100 dark:bg-[#222222] rounded-md overflow-hidden border border-gray-300 dark:border-[#525252]">
 							<div className="relative w-full pb-[66.666%]">
 								<img
@@ -370,7 +473,26 @@ export default function SectionDataEditor({
 							</div>
 						</div>
 					)}
-					{hasError && (
+					{isUploading && (
+						<div className="w-full bg-blue-50 dark:bg-blue-900/20 rounded-md overflow-hidden border border-blue-200 dark:border-blue-800 p-4 min-h-[150px] flex flex-col items-center justify-center gap-3">
+							<div className="w-8 h-8 border-4 border-blue-200 dark:border-blue-900 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin" />
+							<div className="w-full">
+								<p className="text-blue-600 dark:text-blue-400 text-sm font-medium mb-2 text-center">
+									Uploading...
+								</p>
+								<div className="w-full bg-blue-200 dark:bg-blue-900 rounded-full h-2 overflow-hidden">
+									<div
+										className="bg-blue-600 dark:bg-blue-400 h-full transition-all duration-200"
+										style={{ width: `${Math.min(progress, 100)}%` }}
+									/>
+								</div>
+								<p className="text-blue-600 dark:text-blue-400 text-xs mt-1 text-center">
+									{Math.round(progress)}%
+								</p>
+							</div>
+						</div>
+					)}
+					{hasError && !isUploading && (
 						<div className="w-full bg-red-50 dark:bg-red-900/20 rounded-md overflow-hidden border border-red-200 dark:border-red-800 p-4 flex items-center justify-center min-h-[150px]">
 							<div className="text-center">
 								<p className="text-red-600 dark:text-red-400 text-sm font-medium mb-1">
@@ -487,6 +609,146 @@ export default function SectionDataEditor({
 							<input
 								type="file"
 								accept="video/*"
+								onChange={(e) =>
+									itemIndex !== undefined
+										? handleFileUpload(
+												e,
+												sectionKey,
+												fieldKey,
+												fieldConfig,
+												itemIndex,
+												fieldConfig.target,
+											)
+										: handleFileUpload(e, sectionKey, fieldKey, fieldConfig)
+								}
+								className="hidden"
+							/>
+						</label>
+					</div>
+				</div>
+			);
+		}
+
+		if (fieldConfig.type === "image/video") {
+			const previewKey = `${sectionKey}-${fieldKey}-${itemIndex ?? 0}`;
+			const preview = imagePreviews[previewKey];
+			const hasValue = preview || (value && typeof value === "string");
+			const hasError = imageErrors[previewKey];
+			const isUploading = uploadingFields.has(previewKey);
+			const progress = uploadProgress[previewKey] || 0;
+			const isImage = hasValue && isImageUrl(value);
+			const isVideo = hasValue && isVideoUrl(value);
+
+			return (
+				<div className="space-y-2">
+					{hasValue && !hasError && !isUploading && (
+						<div className="relative w-full bg-gray-100 dark:bg-[#222222] rounded-md overflow-hidden border border-gray-300 dark:border-[#525252]">
+							<div
+								className="relative w-full"
+								style={{ paddingBottom: isImage ? "66.666%" : "56.25%" }}
+							>
+								{isImage ? (
+									<img
+										src={preview || value}
+										alt={fieldConfig.label}
+										className="absolute inset-0 w-full h-full object-cover"
+										onError={(e) => {
+											const key = `${sectionKey}-${fieldKey}-${itemIndex ?? 0}`;
+											setImageErrors((prev) => ({
+												...prev,
+												[key]: true,
+											}));
+										}}
+									/>
+								) : (
+									<video
+										className="absolute inset-0 w-full h-full object-cover"
+										controls
+									>
+										<source src={preview || value} type="video/mp4" />
+									</video>
+								)}
+								{preview && (
+									<div className="absolute inset-0 bg-green-500/20 border-2 border-green-500 flex items-center justify-center">
+										<span className="text-white text-xs font-medium">
+											Preview
+										</span>
+									</div>
+								)}
+							</div>
+						</div>
+					)}
+					{isUploading && (
+						<div className="w-full bg-blue-50 dark:bg-blue-900/20 rounded-md overflow-hidden border border-blue-200 dark:border-blue-800 p-4 min-h-[150px] flex flex-col items-center justify-center gap-3">
+							<div className="w-8 h-8 border-4 border-blue-200 dark:border-blue-900 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin" />
+							<div className="w-full">
+								<p className="text-blue-600 dark:text-blue-400 text-sm font-medium mb-2 text-center">
+									Uploading...
+								</p>
+								<div className="w-full bg-blue-200 dark:bg-blue-900 rounded-full h-2 overflow-hidden">
+									<div
+										className="bg-blue-600 dark:bg-blue-400 h-full transition-all duration-200"
+										style={{ width: `${Math.min(progress, 100)}%` }}
+									/>
+								</div>
+								<p className="text-blue-600 dark:text-blue-400 text-xs mt-1 text-center">
+									{Math.round(progress)}%
+								</p>
+							</div>
+						</div>
+					)}
+					{hasError && !isUploading && (
+						<div className="w-full bg-red-50 dark:bg-red-900/20 rounded-md overflow-hidden border border-red-200 dark:border-red-800 p-4 flex items-center justify-center min-h-[150px]">
+							<div className="text-center">
+								<p className="text-red-600 dark:text-red-400 text-sm font-medium mb-1">
+									Failed to load media
+								</p>
+								<p className="text-red-600 dark:text-red-400 text-xs break-all">
+									{value}
+								</p>
+							</div>
+						</div>
+					)}
+					<div className="flex gap-2">
+						<input
+							type="text"
+							value={value || ""}
+							onChange={(e) => {
+								const newValue = e.target.value;
+								if (itemIndex !== undefined) {
+									handleNestedFieldChange(
+										sectionKey,
+										fieldKey,
+										itemIndex,
+										fieldConfig.target!,
+										newValue,
+									);
+								} else {
+									handleFieldChange(
+										sectionKey,
+										fieldConfig.target || fieldKey,
+										newValue,
+									);
+								}
+								// Reset error state when URL changes
+								const key = `${sectionKey}-${fieldKey}-${itemIndex ?? 0}`;
+								setImageErrors((prev) => {
+									const updated = { ...prev };
+									delete updated[key];
+									return updated;
+								});
+							}}
+							className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-[#525252] rounded-md bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+							placeholder="URL atau upload"
+						/>
+						<label className="flex items-center justify-center gap-1.5 px-3 py-2 border border-dashed border-gray-300 dark:border-[#525252] rounded-md bg-gray-50 dark:bg-[#222222] cursor-pointer hover:bg-gray-100 dark:hover:bg-[#323232] transition-colors whitespace-nowrap">
+							<Upload size={14} className="text-gray-600 dark:text-[#929292]" />
+							<span className="text-xs font-medium text-gray-600 dark:text-[#929292]">
+								{uploading ? "..." : "Upload"}
+							</span>
+							<input
+								type="file"
+								accept="image/*,video/*"
 								onChange={(e) =>
 									itemIndex !== undefined
 										? handleFileUpload(

@@ -12,7 +12,7 @@ export const pageSectionsConfig = {
 				target: "subtitle",
 			},
 			{
-				type: "image",
+				type: "image/video",
 				label: "Background Image",
 				target: "background",
 			},

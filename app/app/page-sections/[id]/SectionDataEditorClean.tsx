@@ -179,10 +179,17 @@ export default function SectionDataEditor({
 			const formData = new FormData();
 			formData.append("file", file);
 
+			// Create abort controller for timeout
+			const controller = new AbortController();
+			const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
+
 			const response = await fetch("/api/upload", {
 				method: "POST",
 				body: formData,
+				signal: controller.signal,
 			});
+
+			clearTimeout(timeoutId);
 
 			if (!response.ok) {
 				throw new Error("Upload failed");
@@ -210,7 +217,13 @@ export default function SectionDataEditor({
 			});
 		} catch (err) {
 			console.error("Error uploading file:", err);
-			setError("Failed to upload file. Please try again.");
+			if (err instanceof Error && err.name === "AbortError") {
+				setError(
+					"Upload timed out. File may be too large or connection too slow. Please try again.",
+				);
+			} else {
+				setError("Failed to upload file. Please try again.");
+			}
 		} finally {
 			setUploading(false);
 		}
@@ -435,6 +448,94 @@ export default function SectionDataEditor({
 							<input
 								type="file"
 								accept="video/*"
+								onChange={(e) =>
+									itemIndex !== undefined
+										? handleFileUpload(
+												e,
+												sectionKey,
+												fieldKey,
+												itemIndex,
+												fieldConfig.target,
+											)
+										: handleFileUpload(e, sectionKey, fieldKey)
+								}
+								className="hidden"
+							/>
+						</label>
+					</div>
+				</div>
+			);
+		}
+
+		if (fieldConfig.type === "image/video") {
+			const previewKey = `${sectionKey}-${fieldKey}-${itemIndex ?? 0}`;
+			const preview = imagePreviews[previewKey];
+			const isImage = isImageUrl(value);
+			const isVideo = isVideoUrl(value);
+
+			return (
+				<div className="space-y-1.5">
+					{(preview || isImage || isVideo) && (
+						<div className="relative w-full h-24 bg-gray-100 dark:bg-[#222222] rounded overflow-hidden border border-gray-300 dark:border-[#525252]">
+							{isImage || (preview && !value?.includes("mp4")) ? (
+								<img
+									src={preview || value}
+									alt={fieldConfig.label}
+									className="w-full h-full object-cover"
+									onError={(e) => {
+										(e.target as HTMLImageElement).src =
+											"/images/placeholder.png";
+									}}
+								/>
+							) : (
+								<video
+									width="100%"
+									height="100%"
+									controls
+									className="w-full h-full object-cover"
+								>
+									<source src={preview || value} type="video/mp4" />
+								</video>
+							)}
+							{preview && (
+								<div className="absolute inset-0 bg-green-500/20 border-2 border-green-500 flex items-center justify-center">
+									<span className="text-white text-xs font-medium">
+										Preview
+									</span>
+								</div>
+							)}
+						</div>
+					)}
+					<div className="flex gap-2">
+						<input
+							type="text"
+							value={value || ""}
+							onChange={(e) =>
+								itemIndex !== undefined
+									? handleNestedFieldChange(
+											sectionKey,
+											fieldKey,
+											itemIndex,
+											fieldConfig.target!,
+											e.target.value,
+										)
+									: handleFieldChange(
+											sectionKey,
+											fieldConfig.target || fieldKey,
+											e.target.value,
+										)
+							}
+							className="flex-1 px-2 py-1.5 text-sm border border-gray-300 dark:border-[#525252] rounded bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+							placeholder="URL atau upload"
+						/>
+						<label className="flex items-center justify-center gap-1 px-2.5 py-1.5 border border-dashed border-gray-300 dark:border-[#525252] rounded bg-gray-50 dark:bg-[#222222] cursor-pointer hover:bg-gray-100 dark:hover:bg-[#323232] transition-colors whitespace-nowrap">
+							<Upload size={14} className="text-gray-600 dark:text-[#929292]" />
+							<span className="text-xs text-gray-600 dark:text-[#929292]">
+								{uploading ? "..." : "Upload"}
+							</span>
+							<input
+								type="file"
+								accept="image/*,video/*"
 								onChange={(e) =>
 									itemIndex !== undefined
 										? handleFileUpload(

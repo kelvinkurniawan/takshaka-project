@@ -12,6 +12,13 @@ export interface HeroSectionProps {
 	backgroundScale?: number;
 }
 
+// Helper function to detect if URL is a video
+const isVideoUrl = (url?: string): boolean => {
+	if (!url) return false;
+	const videoExtensions = [".mp4", ".webm", ".ogg", ".mov", ".avi", ".mkv"];
+	return videoExtensions.some((ext) => url.toLowerCase().includes(ext));
+};
+
 // Collection of beautiful Unsplash images for slideshow
 const SLIDESHOW_IMAGES = [
 	"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80", // Mountains and nature
@@ -31,18 +38,24 @@ export default function HeroSection({
 	const [currentImageIndex, setCurrentImageIndex] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 
-	const images = backgroundImage ? [backgroundImage] : SLIDESHOW_IMAGES;
+	const isVideo = isVideoUrl(backgroundImage);
+	const images =
+		backgroundImage && !isVideo
+			? [backgroundImage]
+			: isVideo
+				? []
+				: SLIDESHOW_IMAGES;
 
-	// Auto-advance slideshow
+	// Auto-advance slideshow (only for images)
 	useEffect(() => {
-		if (images.length <= 1) return;
+		if (isVideo || images.length <= 1) return;
 
 		const interval = setInterval(() => {
 			setCurrentImageIndex((prev) => (prev + 1) % images.length);
 		}, 5000); // Change image every 5 seconds
 
 		return () => clearInterval(interval);
-	}, [images.length]);
+	}, [images.length, isVideo]);
 
 	// Handle dot navigation
 	const goToSlide = (index: number) => {
@@ -58,34 +71,51 @@ export default function HeroSection({
 						<img src="/images/logo.png" alt="Logo" className="h-24 w-auto" />
 					}
 				/>
-				{/* Background Image Slideshow */}
-				<div
-					className="absolute inset-0"
-					style={{
-						transform: `scale(${backgroundScale})`,
-						transformOrigin: "center",
-						transition: "transform 0.05s linear",
-					}}
-				>
-					{images.map((image, index) => (
-						<div
-							key={index}
-							className={`absolute inset-0 transition-opacity duration-1000 ${
-								index === currentImageIndex ? "opacity-100" : "opacity-0"
-							}`}
-						>
-							<Image
-								src={image}
-								alt={`Slide ${index + 1}`}
-								fill
-								className="object-cover"
-								priority={index === 0}
-								unoptimized
-								onLoadingComplete={() => setIsLoading(false)}
-							/>
-						</div>
-					))}
-				</div>
+
+				{/* Background Video or Image Slideshow */}
+				{isVideo ? (
+					// Video Background
+					<div className="absolute inset-0 overflow-hidden">
+						<video
+							src={backgroundImage}
+							autoPlay
+							muted
+							loop
+							playsInline
+							className="w-full h-full object-cover"
+							onLoadedData={() => setIsLoading(false)}
+						/>
+					</div>
+				) : (
+					// Image Slideshow Background
+					<div
+						className="absolute inset-0"
+						style={{
+							transform: `scale(${backgroundScale})`,
+							transformOrigin: "center",
+							transition: "transform 0.05s linear",
+						}}
+					>
+						{images.map((image, index) => (
+							<div
+								key={index}
+								className={`absolute inset-0 transition-opacity duration-1000 ${
+									index === currentImageIndex ? "opacity-100" : "opacity-0"
+								}`}
+							>
+								<Image
+									src={image}
+									alt={`Slide ${index + 1}`}
+									fill
+									className="object-cover"
+									priority={index === 0}
+									unoptimized
+									onLoadingComplete={() => setIsLoading(false)}
+								/>
+							</div>
+						))}
+					</div>
+				)}
 
 				{/* Overlay with gradient */}
 				<div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40"></div>
@@ -125,8 +155,8 @@ export default function HeroSection({
 					</svg>
 				</div>
 
-				{/* Carousel Dots */}
-				{images.length > 1 && (
+				{/* Carousel Dots (only for image slideshow) */}
+				{!isVideo && images.length > 1 && (
 					<div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-20">
 						{images.map((_, index) => (
 							<button

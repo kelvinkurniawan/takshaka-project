@@ -22,6 +22,11 @@ const nextConfig: NextConfig = {
 		// Disable optimization for R2 to avoid timeout issues
 		unoptimized: process.env.NODE_ENV === "production",
 	},
+	// Support larger file uploads (100MB)
+	onDemandEntries: {
+		maxInactiveAge: 60 * 1000,
+		pagesBufferLength: 5,
+	},
 };
 
 export default nextConfig;

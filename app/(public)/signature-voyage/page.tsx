@@ -4,6 +4,10 @@ import { getDB } from "@/lib/db";
 import { galleryCategories, galleryOfWorks } from "@/lib/schema";
 import { isNull } from "drizzle-orm";
 
+// Revalidate every 60 seconds for ISR (Incremental Static Regeneration)
+// This keeps the page fresh when database content changes
+export const revalidate = 60;
+
 export const metadata = {
 	title: "Signature Voyage",
 	description:

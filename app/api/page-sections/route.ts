@@ -4,6 +4,7 @@ import { getDB } from "@/lib/db";
 import { pageSections } from "@/lib/schema";
 import { eq, isNull } from "drizzle-orm";
 import { getSessionUserId } from "@/lib/session";
+import { revalidatePageBySlug } from "@/lib/revalidate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -115,6 +116,9 @@ export async function POST(request: Request) {
 			createdAt: now,
 			updatedAt: now,
 		});
+
+		// Revalidate cache for this page
+		await revalidatePageBySlug(validatedData.pageSlug);
 
 		return Response.json(
 			{ success: true, message: "Page section berhasil dibuat" },

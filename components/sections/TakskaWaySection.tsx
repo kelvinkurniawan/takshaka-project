@@ -47,7 +47,7 @@ const DEFAULT_ITEMS: TakskaWayItem[] = [
 ];
 
 export default function TakskaWaySection({
-	sectionTitle = "TAKSAKA WAY",
+	sectionTitle = "TAKSHAKA WAY",
 	items = DEFAULT_ITEMS,
 }: TakskaWaySectionProps) {
 	return (

@@ -19,6 +19,10 @@ import {
 } from "@/lib/page-helpers";
 import HomePageClient from "./home-client";
 
+// Revalidate every 60 seconds for ISR (Incremental Static Regeneration)
+// This keeps the page fresh when database content changes
+export const revalidate = 60;
+
 export default async function Home() {
 	const [settings, homeSections] = await Promise.all([
 		getSettingsFromDB(),

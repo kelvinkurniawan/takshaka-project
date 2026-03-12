@@ -78,25 +78,80 @@ export default function FileUploadInput({
 		setUploading(true);
 
 		try {
-			const formData = new FormData();
-			formData.append("file", file);
-			formData.append("type", type);
+			// Create abort controller for timeout
+			const controller = new AbortController();
+			const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
 
-			const response = await fetch("/api/upload", {
-				method: "POST",
-				body: formData,
-				credentials: "include",
-			});
+			// Step 1: Request presigned URL from API
+			const presignedResponse = await fetch(
+				`/api/upload?fileName=${encodeURIComponent(file.name)}&fileSize=${file.size}&fileType=${encodeURIComponent(file.type)}`,
+				{
+					method: "GET",
+					credentials: "include",
+					signal: controller.signal,
+				},
+			);
 
-			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(errorData.error || "Upload failed");
+			if (!presignedResponse.ok) {
+				const errorData = await presignedResponse.json();
+				throw new Error(errorData.error || "Failed to get upload URL");
 			}
 
-			const data = await response.json();
+			const {
+				presignedUrl,
+				publicUrl,
+				s3Key,
+				type: uploadType,
+			} = await presignedResponse.json();
+
+			// Step 2: Upload file directly to R2 using presigned URL
+			// Convert File to ArrayBuffer for proper cross-origin handling
+			const fileBuffer = await file.arrayBuffer();
+			const uploadResponse = await fetch(presignedUrl, {
+				method: "PUT",
+				body: new Uint8Array(fileBuffer),
+				signal: controller.signal,
+			});
+
+			if (!uploadResponse.ok) {
+				throw new Error(`R2 upload failed: ${uploadResponse.status}`);
+			}
+
+			// Step 3: Save metadata to database
+			const metadataResponse = await fetch("/api/upload", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				credentials: "include",
+				body: JSON.stringify({
+					publicUrl,
+					s3Key,
+					type: uploadType,
+					fileName: file.name,
+					fileSize: file.size,
+					fileType: file.type,
+				}),
+				signal: controller.signal,
+			});
+
+			clearTimeout(timeoutId);
+
+			if (!metadataResponse.ok) {
+				const errorData = await metadataResponse.json();
+				throw new Error(errorData.error || "Failed to save file metadata");
+			}
+
+			const data = await metadataResponse.json();
 			onChange(data.url);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "Upload failed");
+			if (err instanceof Error && err.name === "AbortError") {
+				setError(
+					"Upload timed out. File may be too large or connection too slow.",
+				);
+			} else {
+				setError(err instanceof Error ? err.message : "Upload failed");
+			}
 		} finally {
 			setUploading(false);
 		}

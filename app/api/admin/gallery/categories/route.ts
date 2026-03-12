@@ -3,6 +3,7 @@ import { galleryCategories } from "@/lib/schema";
 import { eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { NextResponse } from "next/server";
+import { revalidateAllPages } from "@/lib/revalidate";
 
 const categorySchema = z.object({
 	name: z.string().min(1, "Name is required"),
@@ -64,6 +65,9 @@ export async function POST(request: Request, context: any) {
 			})
 			.returning();
 
+		// Revalidate pages that use gallery data
+		await revalidateAllPages();
+
 		return NextResponse.json(result[0]);
 	} catch (error) {
 		if (error instanceof z.ZodError) {
@@ -99,6 +103,9 @@ export async function DELETE(request: Request, context: any) {
 			.update(galleryCategories)
 			.set({ deletedAt: new Date() })
 			.where(eq(galleryCategories.id, id));
+
+		// Revalidate pages that use gallery data
+		await revalidateAllPages();
 
 		return NextResponse.json({ success: true });
 	} catch (error) {
