@@ -67,6 +67,7 @@ export default function SectionDataEditor({
 
 	const config = useMemo(() => {
 		const configMap = pageSectionsConfig as Record<string, any>;
+		console.log("Loaded config for page sections:", Object.keys(configMap));
 		return configMap[section.pageSlug as keyof typeof pageSectionsConfig] || {};
 	}, [section.pageSlug]);
 
