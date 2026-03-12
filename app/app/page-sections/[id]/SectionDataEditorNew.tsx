@@ -58,8 +58,12 @@ export default function SectionDataEditor({
 	const [searchQuery, setSearchQuery] = useState("");
 	const [saving, setSaving] = useState(false);
 	const [uploading, setUploading] = useState(false);
-	const [uploadingFields, setUploadingFields] = useState<Set<string>>(new Set());
-	const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+	const [uploadingFields, setUploadingFields] = useState<Set<string>>(
+		new Set(),
+	);
+	const [uploadProgress, setUploadProgress] = useState<Record<string, number>>(
+		{},
+	);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState(false);
 	const [imagePreviews, setImagePreviews] = useState<Record<string, string>>(
