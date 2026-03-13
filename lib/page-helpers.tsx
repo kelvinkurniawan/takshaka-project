@@ -546,6 +546,14 @@ export function getFooterSections() {
 			],
 		},
 		{
+			title: "Sustainable Impact",
+			mobileOnly: true,
+			links: [
+				{ label: "Environtment Impact", href: "/portfolio/environment-impact" },
+				{ label: "Community Impact", href: "/portfolio/community-impact" },
+			],
+		},
+		{
 			title: "Let's Connect",
 			links: [
 				{ label: "INQUIRY", href: "/connect/inquiry", type: "button" },

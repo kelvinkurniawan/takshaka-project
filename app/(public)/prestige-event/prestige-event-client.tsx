@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { ParallaxHero, Footer } from "@/components/sections";
+import { HeroSection, Footer } from "@/components/sections";
 import Image from "next/image";
 import { trackPageView } from "@/lib/analytics-client";
 import type { InferSelectModel } from "drizzle-orm";
@@ -54,10 +54,12 @@ export default function PrestigeEventClient({
 		<>
 			{/* Hero Section */}
 			{prestigeEvents.hero && (
-				<ParallaxHero
-					title={prestigeEvents.hero.title}
-					description={prestigeEvents.hero.description}
-					backgroundImage={prestigeEvents.hero.background}
+			<HeroSection
+						: {
+								title: prestigeEvents.hero.title,
+								description: prestigeEvents.hero.description,
+								backgroundImage: prestigeEvents.hero.background,
+							})}
 				/>
 			)}
 

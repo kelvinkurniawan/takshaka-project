@@ -19,6 +19,7 @@ interface NavigationItem {
 	icon: string | null;
 	target: string;
 	isActive: boolean;
+	platform: string;
 	children?: NavigationItem[];
 }
 
@@ -30,18 +31,25 @@ interface FormData {
 	icon: string;
 	target: "_self" | "_blank" | "_parent" | "_top";
 	isActive: boolean;
+	platform: "desktop" | "mobile";
 }
 
 interface NavigationClientProps {
-	initialItems: NavigationItem[];
+	desktopItems: NavigationItem[];
+	mobileItems: NavigationItem[];
 	isNavEnabled?: boolean;
 }
 
 export default function NavigationClient({
-	initialItems,
+	desktopItems,
+	mobileItems,
 	isNavEnabled = true,
 }: NavigationClientProps) {
-	const [items, setItems] = useState<NavigationItem[]>(initialItems);
+	const [currentTab, setCurrentTab] = useState<"desktop" | "mobile">("desktop");
+	const [desktopNavItems, setDesktopNavItems] =
+		useState<NavigationItem[]>(desktopItems);
+	const [mobileNavItems, setMobileNavItems] =
+		useState<NavigationItem[]>(mobileItems);
 	const [editingId, setEditingId] = useState<number | null>(null);
 	const [showForm, setShowForm] = useState(false);
 	const [formData, setFormData] = useState<FormData>({
@@ -52,11 +60,16 @@ export default function NavigationClient({
 		icon: "",
 		target: "_self",
 		isActive: true,
+		platform: "desktop",
 	});
+
+	const items = currentTab === "desktop" ? desktopNavItems : mobileNavItems;
+	const setItems =
+		currentTab === "desktop" ? setDesktopNavItems : setMobileNavItems;
 
 	const refreshNavigation = async () => {
 		try {
-			const response = await fetch("/api/navigation");
+			const response = await fetch(`/api/navigation?platform=${currentTab}`);
 			if (!response.ok) {
 				throw new Error(`API error: ${response.status}`);
 			}
@@ -78,7 +91,12 @@ export default function NavigationClient({
 			const response = await fetch("/api/navigation/reorder", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ id, direction, parentId }),
+				body: JSON.stringify({
+					id,
+					direction,
+					parentId,
+					platform: currentTab,
+				}),
 			});
 
 			if (!response.ok) {
@@ -101,10 +119,15 @@ export default function NavigationClient({
 				: "/api/navigation";
 			const method = editingId ? "PUT" : "POST";
 
+			const submitData = {
+				...formData,
+				platform: currentTab,
+			};
+
 			const response = await fetch(url, {
 				method,
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(formData),
+				body: JSON.stringify(submitData),
 			});
 
 			if (!response.ok) {
@@ -129,6 +152,7 @@ export default function NavigationClient({
 			target:
 				(item.target as "_self" | "_blank" | "_parent" | "_top") || "_self",
 			isActive: item.isActive,
+			platform: (item.platform as "desktop" | "mobile") || "desktop",
 		});
 		setEditingId(item.id);
 		setShowForm(true);
@@ -162,6 +186,7 @@ export default function NavigationClient({
 			icon: "",
 			target: "_self",
 			isActive: true,
+			platform: currentTab,
 		});
 		setEditingId(null);
 		setShowForm(false);
@@ -240,11 +265,15 @@ export default function NavigationClient({
 						Navigation
 					</h1>
 					<p className="text-gray-600 dark:text-[#929292] mt-1">
-						Manage the website navigation menu
+						Manage the website navigation menu for desktop and mobile
 					</p>
 				</div>
 				<button
 					onClick={() => {
+						setFormData({
+							...formData,
+							platform: currentTab,
+						});
 						resetForm();
 						setShowForm(true);
 					}}
@@ -253,6 +282,32 @@ export default function NavigationClient({
 					<Plus size={20} />
 					Add Menu Item
 				</button>
+			</div>
+
+			{/* Tabs */}
+			<div className="border-b border-gray-200 dark:border-[#3a3a3a]">
+				<div className="flex space-x-8">
+					<button
+						onClick={() => setCurrentTab("desktop")}
+						className={`py-3 px-1 border-b-2 font-medium text-sm transition ${
+							currentTab === "desktop"
+								? "border-blue-600 text-blue-600 dark:text-blue-400"
+								: "border-transparent text-gray-600 dark:text-[#929292] hover:text-gray-900 dark:hover:text-white"
+						}`}
+					>
+						Desktop
+					</button>
+					<button
+						onClick={() => setCurrentTab("mobile")}
+						className={`py-3 px-1 border-b-2 font-medium text-sm transition ${
+							currentTab === "mobile"
+								? "border-blue-600 text-blue-600 dark:text-blue-400"
+								: "border-transparent text-gray-600 dark:text-[#929292] hover:text-gray-900 dark:hover:text-white"
+						}`}
+					>
+						Mobile
+					</button>
+				</div>
 			</div>
 
 			{/* Navigation Disabled Notification */}
@@ -432,12 +487,12 @@ export default function NavigationClient({
 			{/* Navigation List */}
 			<div className="bg-white dark:bg-[#282828] border border-gray-200 dark:border-[#3a3a3a] rounded-lg p-6">
 				<h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-					Menu Items
+					{currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} Menu Items
 				</h2>
 
 				{items.length === 0 ? (
 					<p className="text-gray-600 dark:text-[#929292] text-center py-8">
-						No menu items yet. Create your first one!
+						No menu items for {currentTab} yet. Create your first one!
 					</p>
 				) : (
 					renderItemTree(items)

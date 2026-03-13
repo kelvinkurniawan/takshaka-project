@@ -49,7 +49,7 @@ export default function HeroNavigation({
 					</a>
 
 					{/* Desktop Navigation - Hidden on mobile */}
-					<div className="flex-wrap flex justify-center items-center md:mt-2">
+					<div className="flex-wrap md:flex justify-center items-center md:mt-2  hidden ">
 						{links.map(({ label, link }, idx) => (
 							<Link
 								key={idx}

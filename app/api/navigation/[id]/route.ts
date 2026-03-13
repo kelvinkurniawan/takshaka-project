@@ -13,6 +13,7 @@ const updateNavigationSchema = z.object({
 	icon: z.string().optional().nullable(),
 	target: z.enum(["_self", "_blank", "_parent", "_top"]).optional(),
 	isActive: z.boolean().optional(),
+	platform: z.enum(["desktop", "mobile"]).optional(),
 });
 
 export async function PUT(

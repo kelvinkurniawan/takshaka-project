@@ -6,6 +6,7 @@ module.exports = {
 		extend: {
 			fontFamily: {
 				elegance: ['"Noto Serif Display"', "serif"],
+				"work-sans": ['"Work Sans"', "sans-serif"],
 			},
 			colors: {
 				primary: "rgb(59, 130, 246)", // Blue-500 as primary
@@ -24,6 +25,15 @@ module.exports = {
 					900: "var(--gray-900)",
 					850: "var(--gray-850)",
 					750: "var(--gray-750)",
+				},
+			},
+			animation: {
+				"fade-in": "fadeIn 0.5s ease-in-out",
+			},
+			keyframes: {
+				fadeIn: {
+					"0%": { opacity: "0", transform: "translateY(10px)" },
+					"100%": { opacity: "1", transform: "translateY(0)" },
 				},
 			},
 		},

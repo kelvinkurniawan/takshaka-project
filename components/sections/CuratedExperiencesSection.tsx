@@ -41,12 +41,12 @@ export default function CuratedExperiencesSection({
 		<section className="w-full py-12 md:py-24 px-4 sm:px-6 lg:px-8">
 			<div className="mx-auto">
 				{/* Title */}
-				<h2 className="text-center text-2xl md:text-3xl font-light tracking-widest mb-8 md:mb-12">
+				<h2 className="text-center text-lg md:text-3xl font-light tracking-widest mb-8 md:mb-12">
 					CURATED EXPERIENCES
 				</h2>
 
 				{/* Tabs */}
-				<div className="flex flex-wrap justify-center gap-3 md:gap-6 mb-4 md:mb-4 border-b border-gray-200 overflow-x-auto">
+				<div className="flex  justify-center gap-3 md:gap-6 mb-4 md:mb-4 border-b border-gray-200 overflow-x-auto">
 					{tabs.map((tab) => (
 						<button
 							key={tab.id}
@@ -64,7 +64,7 @@ export default function CuratedExperiencesSection({
 
 				{/* Tab Content - Grid of Images */}
 				{activeTabContent && (
-					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 max-w-100 mx-auto">
+					<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 max-w-100 mx-auto">
 						{activeTabContent.items.map((item) => {
 							const hasError = imageErrors[item.id];
 							const imageUrl = hasError ? PLACEHOLDER_IMAGE : item.image;
@@ -72,7 +72,7 @@ export default function CuratedExperiencesSection({
 							return (
 								<div
 									key={item.id}
-									className="relative h-64 sm:h-80 md:h-96 bg-gray-900 overflow-hidden group"
+									className="relative aspect-[3/4] bg-gray-900 overflow-hidden group ]"
 								>
 									{/* Image */}
 									<img
@@ -86,7 +86,7 @@ export default function CuratedExperiencesSection({
 									<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
 
 									{/* Floating Content */}
-									<div className="absolute top-40 sm:top-48 md:top-60 left-0 right-0 p-4 md:p-6 text-white">
+									<div className="absolute bottom-0 sm:bottom-48 md:bottom-0 left-0 right-0 p-4 md:p-6 text-white">
 										<h3 className="text-xs md:text-sm font-semibold mb-2 md:mb-4 uppercase tracking-widest text-center">
 											{item.title}
 										</h3>

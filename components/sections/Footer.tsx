@@ -6,11 +6,13 @@ import { Instagram, Youtube, Linkedin } from "lucide-react";
 interface FooterLink {
 	label: string;
 	href: string;
+	mobileOnly?: boolean;
 	type?: "button" | "link";
 }
 
 interface FooterSection {
 	title: string;
+	mobileOnly?: boolean;
 	links: FooterLink[];
 }
 
@@ -32,9 +34,9 @@ export default function Footer({ sections, copyright }: FooterProps) {
 	return (
 		<footer className="w-full" style={{ backgroundColor: "#1a1f3a" }}>
 			{/* Subscribe Section */}
-			<section className="w-full pt-16 pb-4 px-4 sm:px-6 lg:px-8">
-				<div className="mx-auto max-w-7xl">
-					<div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6 md:gap-0">
+			<section className="w-full pt-8 md:pt-16 pb-4 px-4 sm:px-6 lg:px-8">
+				<div className="mx-auto max-w-100">
+					<div className="flex flex-row justify-between items-center gap-6 md:gap-0">
 						{/* Get Inspired */}
 						<h3 className="text-white text-lg md:text-2xl font-light tracking-widest mb-0">
 							Get Inspired
@@ -43,7 +45,7 @@ export default function Footer({ sections, copyright }: FooterProps) {
 						{/* Subscribe Form */}
 						<form
 							onSubmit={handleSubscribe}
-							className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto"
+							className="flex flex-col sm:flex-row items-center gap-2 md:w-auto"
 						>
 							<button
 								type="submit"
@@ -61,11 +63,24 @@ export default function Footer({ sections, copyright }: FooterProps) {
 				className="w-full px-4 sm:px-6 lg:px-8"
 				style={{ backgroundColor: "#1a1f3a" }}
 			>
-				<div className="mx-auto max-w-7xl">
+				<div className="mx-auto max-w-100">
 					<div className="border-t border-[#A27C34] pt-8"></div>
-					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 md:gap-12 mb-8 md:mb-12">
+
+					<div className="mb-4  md:hidden">
+						<a
+							href="/contact-us"
+							className="text-white hover:text-gray-400 text-sm leading-relaxed transition-colors duration-300 titlecase border px-2 py-2 border-[#A27C34] w-[120px] text-center tracking-widest"
+						>
+							CONTACT US
+						</a>
+					</div>
+
+					<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-6 md:gap-12 mb-8 md:mb-12">
 						{sections.map((section, idx) => (
-							<div key={idx}>
+							<div
+								key={idx}
+								className={`${section.mobileOnly ? "md:hidden" : ""}`}
+							>
 								<h4 className="text-white font-bold mb-2 text-sm titlecase">
 									{section.title}
 								</h4>
@@ -88,7 +103,7 @@ export default function Footer({ sections, copyright }: FooterProps) {
 						))}
 					</div>
 
-					<div className="mb-4">
+					<div className="mb-4 hidden md:flex">
 						<a
 							href="/contact-us"
 							className="text-white hover:text-gray-400 text-sm leading-relaxed transition-colors duration-300 titlecase border px-2 py-2 border-[#A27C34] w-[120px] text-center tracking-widest"

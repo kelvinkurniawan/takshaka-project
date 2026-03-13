@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { ParallaxHero, Footer } from "@/components/sections";
+import { Footer } from "@/components/sections";
 import Link from "next/link";
 import Image from "next/image";
 import { trackPageView } from "@/lib/analytics-client";

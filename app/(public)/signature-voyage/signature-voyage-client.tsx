@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { ParallaxHero, Footer } from "@/components/sections";
+import { HeroSection, Footer } from "@/components/sections";
 import Image from "next/image";
 import { trackPageView } from "@/lib/analytics-client";
 import type { InferSelectModel } from "drizzle-orm";
@@ -72,10 +72,14 @@ export default function SignatureVoyageClient({
 		<>
 			{/* Hero Section */}
 			{signatureVoyage.hero && (
-				<ParallaxHero
-					title={signatureVoyage.hero.title}
-					description={signatureVoyage.hero.description}
-					backgroundImage={signatureVoyage.hero.background}
+				<HeroSection
+					{...(signatureVoyage.hero.contents
+						? { contents: signatureVoyage.hero.contents }
+						: {
+								title: signatureVoyage.hero.title,
+								description: signatureVoyage.hero.description,
+								backgroundImage: signatureVoyage.hero.background,
+							})}
 				/>
 			)}
 			{/* Top Destinations Section */}

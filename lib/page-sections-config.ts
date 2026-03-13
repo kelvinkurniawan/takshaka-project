@@ -2,19 +2,27 @@ export const pageSectionsConfig = {
 	home: {
 		hero: [
 			{
-				type: "string",
-				label: "Title",
-				target: "title",
-			},
-			{
-				type: "string",
-				label: "Subtitle",
-				target: "subtitle",
-			},
-			{
-				type: "image/video",
-				label: "Background Image",
-				target: "background",
+				type: "arrayItems",
+				label: "Hero Content Slides",
+				target: "contents",
+				fields: [
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Description",
+						target: "description",
+						multiline: true,
+					},
+					{
+						type: "image/video",
+						label: "Background (Image or Video)",
+						target: "background",
+					},
+				],
 			},
 		],
 		threeItemSection: [
@@ -120,19 +128,27 @@ export const pageSectionsConfig = {
 	"our-inspiration": {
 		hero: [
 			{
-				type: "string",
-				label: "Title",
-				target: "title",
-			},
-			{
-				type: "string",
-				label: "Description",
-				target: "description",
-			},
-			{
-				type: "image",
-				label: "Background Image",
-				target: "background",
+				type: "arrayItems",
+				label: "Hero Content Slides",
+				target: "contents",
+				fields: [
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Description",
+						target: "description",
+						multiline: true,
+					},
+					{
+						type: "image/video",
+						label: "Background (Image or Video)",
+						target: "background",
+					},
+				],
 			},
 		],
 		boardLetter: [
@@ -279,19 +295,27 @@ export const pageSectionsConfig = {
 	"prestige-events": {
 		hero: [
 			{
-				type: "string",
-				label: "Title",
-				target: "title",
-			},
-			{
-				type: "string",
-				label: "Description",
-				target: "description",
-			},
-			{
-				type: "image",
-				label: "Background Image",
-				target: "background",
+				type: "arrayItems",
+				label: "Hero Content Slides",
+				target: "contents",
+				fields: [
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Description",
+						target: "description",
+						multiline: true,
+					},
+					{
+						type: "image/video",
+						label: "Background (Image or Video)",
+						target: "background",
+					},
+				],
 			},
 		],
 		heroContent: [
@@ -427,19 +451,27 @@ export const pageSectionsConfig = {
 	"signature-voyage": {
 		hero: [
 			{
-				type: "string",
-				label: "Title",
-				target: "title",
-			},
-			{
-				type: "string",
-				label: "Description",
-				target: "description",
-			},
-			{
-				type: "image",
-				label: "Background Image",
-				target: "background",
+				type: "arrayItems",
+				label: "Hero Content Slides",
+				target: "contents",
+				fields: [
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Description",
+						target: "description",
+						multiline: true,
+					},
+					{
+						type: "image/video",
+						label: "Background (Image or Video)",
+						target: "background",
+					},
+				],
 			},
 		],
 		topDestinations: [

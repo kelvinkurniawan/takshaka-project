@@ -2,13 +2,14 @@ export const dynamic = "force-dynamic";
 
 import { getDB } from "@/lib/db";
 import { navigation } from "@/lib/schema";
-import { eq, isNull, asc } from "drizzle-orm";
+import { eq, isNull, asc, and } from "drizzle-orm";
 import { z } from "zod";
 
 const reorderSchema = z.object({
 	id: z.number(),
 	direction: z.enum(["up", "down"]),
 	parentId: z.number().nullable().optional(),
+	platform: z.enum(["desktop", "mobile"]).default("desktop"),
 });
 
 export async function POST(request: Request) {
@@ -16,7 +17,7 @@ export async function POST(request: Request) {
 		const db = getDB();
 		const body = await request.json();
 
-		const { id, direction, parentId } = reorderSchema.parse(body);
+		const { id, direction, parentId, platform } = reorderSchema.parse(body);
 
 		// Get the item being moved
 		const movingItem = await db
@@ -32,16 +33,19 @@ export async function POST(request: Request) {
 			);
 		}
 
-		// Get all siblings (same parent, not deleted)
+		// Get all siblings (same parent, same platform, not deleted)
 		const siblings = await db
 			.select()
 			.from(navigation)
 			.where(
-				parentId === null || parentId === undefined
-					? isNull(navigation.parentId)
-					: eq(navigation.parentId, parentId || movingItem[0].parentId),
+				and(
+					parentId === null || parentId === undefined
+						? isNull(navigation.parentId)
+						: eq(navigation.parentId, parentId || movingItem[0].parentId),
+					isNull(navigation.deletedAt),
+					eq(navigation.platform, platform),
+				),
 			)
-			.where(isNull(navigation.deletedAt))
 			.orderBy(asc(navigation.order));
 
 		const currentItem = movingItem[0];

@@ -38,7 +38,7 @@ export default function ImagesSection({
 			</div>
 
 			{/* Description section */}
-			<div className="bg-[#f5f0e6] py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+			<div className="bg-[#f5f0e6] py-16 md:py-24 px-4 sm:px-6 lg:px-8">
 				<div className="mx-auto max-w-4xl">
 					<p className="text-center text-gray-700 text-base md:text-xl leading-relaxed">
 						{description}

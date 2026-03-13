@@ -18,7 +18,7 @@ export default function ExperiencesSharedSection({
 		<section className="w-full py-12 md:py-24 px-4 sm:px-6 lg:px-8 bg-[#f5f0e6]">
 			<div className="mx-auto max-w-7xl">
 				{/* Title */}
-				<h2 className="text-center text-2xl md:text-3xl font-light tracking-widest mb-8 md:mb-12">
+				<h2 className="text-center text-lg md:text-3xl font-light tracking-widest mb-8 md:mb-20">
 					EXPERIENCES SHARED
 				</h2>
 
@@ -28,7 +28,7 @@ export default function ExperiencesSharedSection({
 						<div
 							key={experience.id}
 							data-aos={index % 2 === 0 ? "fade-right" : "fade-left"}
-							data-aos-duration="800"
+							data-aos-duration="400"
 							className={`grid grid-cols-1 md:grid-cols-2 gap-12 items-center ${
 								index % 2 === 1 ? "md:grid-flow-dense" : ""
 							}`}
@@ -48,10 +48,10 @@ export default function ExperiencesSharedSection({
 							<div
 								className={`${index % 2 === 1 ? "md:col-start-1 md:row-start-1" : ""} max-w-sm mx-auto`}
 							>
-								<h3 className="text-2xl md:text-2xl uppercase tracking-widest mb-6 text-gray-900">
+								<h3 className="text-lg md:text-2xl uppercase tracking-widest mb-6 text-gray-900">
 									{experience.title}
 								</h3>
-								<p className="leading-relaxed text-lg italic">
+								<p className="leading-relaxed text-base md:text-lg italic">
 									{experience.description}
 								</p>
 							</div>

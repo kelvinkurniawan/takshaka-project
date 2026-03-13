@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import {
-	ParallaxHero,
+	HeroSection,
 	BoardLetterSection,
 	TakskaWaySection,
 	BrandStorySection,
@@ -29,10 +29,14 @@ export default function OurInspirationClient({
 		<>
 			{/* Hero Section */}
 			{inspirationSections.hero && (
-				<ParallaxHero
-					title={inspirationSections.hero.title}
-					description={inspirationSections.hero.description}
-					backgroundImage={inspirationSections.hero.background}
+				<HeroSection
+					{...(inspirationSections.hero.contents
+						? { contents: inspirationSections.hero.contents }
+						: {
+								title: inspirationSections.hero.title,
+								description: inspirationSections.hero.description,
+								backgroundImage: inspirationSections.hero.background,
+							})}
 				/>
 			)}
 

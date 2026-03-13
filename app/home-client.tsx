@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import {
-	ParallaxHero,
+	HeroSection,
 	ThreeItemSection,
 	ImagesSection,
 	CuratedExperiencesSection,
@@ -15,9 +15,10 @@ import { trackPageView } from "@/lib/analytics-client";
 
 interface HomeSections {
 	hero?: {
-		title: string;
-		subtitle: string;
-		background: string;
+		title?: string;
+		subtitle?: string;
+		background?: string;
+		contents?: any;
 	};
 	threeItemSection?: any;
 	imagesSection?: any;
@@ -51,10 +52,14 @@ export default function HomePageClient({
 			<main className="flex-1">
 				{/* Hero Section */}
 				{homeSections.hero && (
-					<ParallaxHero
-						title={homeSections.hero.title}
-						description={homeSections.hero.subtitle}
-						backgroundImage={homeSections.hero.background}
+					<HeroSection
+						{...(homeSections.hero.contents
+							? { contents: homeSections.hero.contents }
+							: {
+									title: homeSections.hero.title,
+									description: homeSections.hero.subtitle,
+									backgroundImage: homeSections.hero.background,
+								})}
 					/>
 				)}
 

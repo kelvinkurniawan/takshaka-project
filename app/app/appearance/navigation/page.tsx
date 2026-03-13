@@ -1,6 +1,6 @@
 import { getDB } from "@/lib/db";
 import { navigation, settings } from "@/lib/schema";
-import { isNull, asc, eq } from "drizzle-orm";
+import { isNull, asc, eq, and } from "drizzle-orm";
 import NavigationClient from "./NavigationClient";
 
 interface NavigationItem {
@@ -12,16 +12,21 @@ interface NavigationItem {
 	icon: string | null;
 	target: string;
 	isActive: boolean;
+	platform: string;
 	children?: NavigationItem[];
 }
 
-async function fetchNavigation(): Promise<NavigationItem[]> {
+async function fetchNavigation(
+	platform: "desktop" | "mobile",
+): Promise<NavigationItem[]> {
 	try {
 		const db = getDB();
 		const items = await db
 			.select()
 			.from(navigation)
-			.where(isNull(navigation.deletedAt))
+			.where(
+				and(isNull(navigation.deletedAt), eq(navigation.platform, platform)),
+			)
 			.orderBy(asc(navigation.order), asc(navigation.id));
 
 		// Build nested structure
@@ -65,8 +70,15 @@ async function fetchNavigationSetting(): Promise<boolean> {
 }
 
 export default async function NavigationPage() {
-	const items = await fetchNavigation();
+	const desktopItems = await fetchNavigation("desktop");
+	const mobileItems = await fetchNavigation("mobile");
 	const isNavEnabled = await fetchNavigationSetting();
 
-	return <NavigationClient initialItems={items} isNavEnabled={isNavEnabled} />;
+	return (
+		<NavigationClient
+			desktopItems={desktopItems}
+			mobileItems={mobileItems}
+			isNavEnabled={isNavEnabled}
+		/>
+	);
 }

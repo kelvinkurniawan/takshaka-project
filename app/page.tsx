@@ -1,6 +1,5 @@
 import PublicHeader from "@/components/PublicHeader";
 import {
-	ParallaxHero,
 	ThreeItemSection,
 	ImagesSection,
 	CuratedExperiencesSection,

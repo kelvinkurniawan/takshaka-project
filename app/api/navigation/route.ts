@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { getDB } from "@/lib/db";
 import { navigation } from "@/lib/schema";
-import { isNull, eq, asc } from "drizzle-orm";
+import { isNull, eq, asc, and } from "drizzle-orm";
 import { z } from "zod";
 
 const createNavigationSchema = z.object({
@@ -13,17 +13,25 @@ const createNavigationSchema = z.object({
 	icon: z.string().optional().nullable(),
 	target: z.enum(["_self", "_blank", "_parent", "_top"]).default("_self"),
 	isActive: z.boolean().default(true),
+	platform: z.enum(["desktop", "mobile"]).default("desktop"),
 });
 
 export async function GET(request: Request) {
 	try {
 		const db = getDB();
+		const url = new URL(request.url);
+		const platform = url.searchParams.get("platform") || "desktop"; // default to desktop
 
-		// Get all active navigation items
+		// Get all active navigation items for the specified platform
 		const items = await db
 			.select()
 			.from(navigation)
-			.where(isNull(navigation.deletedAt))
+			.where(
+				and(
+					isNull(navigation.deletedAt),
+					eq(navigation.platform, platform as "desktop" | "mobile"),
+				),
+			)
 			.orderBy(asc(navigation.order), asc(navigation.id));
 
 		// Build nested structure

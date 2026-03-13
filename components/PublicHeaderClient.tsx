@@ -3,7 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useLayoutEffect } from "react";
-import { Sun, Moon, ChevronDown, Search, Users, Menu, X } from "lucide-react";
+import {
+	Sun,
+	Moon,
+	ChevronDown,
+	Search,
+	Users,
+	Menu,
+	X,
+	Phone,
+} from "lucide-react";
 
 interface NavigationItem {
 	id: number;
@@ -18,13 +27,15 @@ interface NavigationItem {
 }
 
 interface PublicHeaderClientProps {
-	navigationItems: NavigationItem[];
+	desktopNavigationItems: NavigationItem[];
+	mobileNavigationItems: NavigationItem[];
 	isNavEnabled: boolean;
 	logo?: string;
 }
 
 export default function PublicHeaderClient({
-	navigationItems,
+	desktopNavigationItems,
+	mobileNavigationItems,
 	isNavEnabled,
 }: PublicHeaderClientProps) {
 	const pathname = usePathname();
@@ -54,72 +65,106 @@ export default function PublicHeaderClient({
 	};
 
 	return (
-		<header className="sticky top-0 z-50 border-b bg-white dark:bg-[#1a1a1a] shadow-sm dark:border-[#3a3a3a]">
-			<nav className="mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="flex items-center justify-between h-16 text-sm">
+		<header className="sticky top-0 z-50  bg-[#E6E6E6] shadow-sm font-work-sans-400">
+			<nav className="mx-auto px-0 sm:px-6 lg:px-8">
+				<div className="items-center justify-between h-12 text-sm px-4 sm:px-0 hidden md:flex">
 					{/* Logo */}
-					<Link href="/" className="flex items-center space-x-2">
+					<Link
+						href="/"
+						className="flex items-center space-x-2 uppercase tracking-widest"
+					>
 						<Users size={18} />
-						<span>CONTACT US | +62 361 123456</span>
+						<span className="text-xs">CONTACT US | +62 361 123456</span>
 					</Link>
 					{/* Desktop Navigation */}
-					{isNavEnabled && navigationItems && navigationItems.length > 0 && (
-						<div className="hidden md:flex items-center space-x-8">
-							{navigationItems.map(
-								(item) =>
-									item.parentId === null &&
-									item.isActive && (
-										<Link
-											key={item.id}
-											href={item.url}
-											className="text-foreground hover:text-primary transition-colors uppercase tracking-wider text-sm font-medium"
-											target={item.target}
-										>
-											{item.label}
-										</Link>
-									),
-							)}
-							<button
-								onClick={() => setSearchOpen(!searchOpen)}
-								className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-								title="Search"
-								aria-label="Search"
-							>
-								<Search size={20} />
-							</button>
+					{isNavEnabled &&
+						desktopNavigationItems &&
+						desktopNavigationItems.length > 0 && (
+							<div className="hidden md:flex items-center space-x-8">
+								{desktopNavigationItems.map(
+									(item) =>
+										item.parentId === null &&
+										item.isActive && (
+											<Link
+												key={item.id}
+												href={item.url}
+												className="text-foreground hover:text-primary transition-colors uppercase tracking-wider text-xs"
+												target={item.target}
+											>
+												{item.label}
+											</Link>
+										),
+								)}
+								<button
+									onClick={() => setSearchOpen(!searchOpen)}
+									className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+									title="Search"
+									aria-label="Search"
+								>
+									<Search size={20} />
+								</button>
+							</div>
+						)}
+				</div>
+
+				<div className="items-center justify-between h-12 text-sm px-4 sm:px-0 flex md:hidden ">
+					{/* Logo */}
+					<Link
+						href="/"
+						className="flex items-center space-x-2 uppercase tracking-widest justify-between"
+					>
+						<img src="images/logo-mob.png" alt="Logo" className="h-6 w-auto" />
+					</Link>
+					{/* Desktop Navigation */}
+
+					<div className="uppercase tracking-widest flex items-center space-x-2 text-[10px]">
+						Let's Connected
+						<div className="border rounded-full border-black text-black w-6 h-6 flex items-center justify-center ms-2">
+							<Phone size={10} className="inline-block " />
 						</div>
-					)}
+					</div>
+				</div>
+
+				<div className="md:hidden flex justify-between bg-black px-4 py-4">
+					<button
+						onClick={() => {
+							setSearchOpen(true);
+							setMobileMenuOpen(false);
+						}}
+						className="text-white"
+						aria-label="Search"
+					>
+						<Search size={14} />
+					</button>
 
 					{/* Mobile Menu Button */}
 					<button
-						className="md:hidden p-2 text-gray-600 hover:text-gray-900 transition-transform duration-300 ease-in-out"
+						className="md:hidden text-white hover:text-gray-900 transition-transform duration-300 ease-in-out"
 						onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
 						aria-label="Toggle menu"
 						style={{
 							transform: mobileMenuOpen ? "rotate(90deg)" : "rotate(0deg)",
 						}}
 					>
-						{mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+						{mobileMenuOpen ? <X size={14} /> : <Menu size={14} />}
 					</button>
 				</div>
 
-				{/* Mobile Menu */}
+				{/* Mobile Menu - Use mobile navigation items */}
 				{mobileMenuOpen && (
-					<div className="md:hidden h-full fixed top-16 left-0 bg-white/50 backdrop-blur-sm w-full z-40 animate-in fade-in slide-in-from-top-2 duration-300 ease-out">
-						<div className="px-4 py-4 space-y-2">
-							{navigationItems.map((item, idx) =>
+					<div className="md:hidden h-full fixed top-22 left-0 bg-[#E6E6E6] backdrop-blur-sm w-full z-40 animate-in fade-in slide-in-from-top-2 duration-300 ease-out max-h-[calc(100vh-4rem)] overflow-y-auto">
+						<div className="py-2">
+							{mobileNavigationItems.map((item, idx) =>
 								item.parentId === null && item.isActive ? (
 									<div
 										key={item.id}
-										className="animate-in fade-in slide-in-from-top-2 duration-300 ease-out"
+										className="animate-in fade-in slide-in-from-top-2 duration-300 ease-out px-4 border-b border-gray-400 py-2"
 										style={{ animationDelay: `${idx * 50}ms` }}
 									>
 										<Link
 											href={item.url}
-											className={`block p-3 font-medium transition-colors ${
-												isActive(item.url)
-													? "text-primary font-semibold"
-													: "text-foreground hover:text-primary"
+											className={`text-xs transition-colors font-minionpro-400 uppercase tracking-wider ${
+												isActive(item.url) ? "text-gray-700" : "text-dark"
 											}`}
 											onClick={() => setMobileMenuOpen(false)}
 											target={item.target}
@@ -127,14 +172,14 @@ export default function PublicHeaderClient({
 											{item.label}
 										</Link>
 										{item.children && item.children.length > 0 && (
-											<div className="ml-4 space-y-1">
+											<div className="ml-0 space-y-0">
 												{item.children
 													.filter((child) => child.isActive)
 													.map((child) => (
 														<Link
 															key={child.id}
 															href={child.url}
-															className={`block py-1 text-xs transition-colors ${
+															className={`block py-2 px-4 ml-4 text-sm transition-colors  border-gray-300 pl-3 ${
 																isActive(child.url)
 																	? "text-primary font-semibold"
 																	: "text-gray-600 hover:text-primary"
@@ -150,18 +195,6 @@ export default function PublicHeaderClient({
 									</div>
 								) : null,
 							)}
-							<hr />
-							<button
-								onClick={() => {
-									setSearchOpen(true);
-									setMobileMenuOpen(false);
-								}}
-								className="w-full flex items-center gap-2 font-medium text-gray-600 hover:text-gray-900 transition-colors border-t border-gray-200 mt-2 p-3 bg-white"
-								aria-label="Search"
-							>
-								<Search size={18} />
-								<span>Search</span>
-							</button>
 						</div>
 					</div>
 				)}

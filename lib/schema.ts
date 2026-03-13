@@ -156,6 +156,7 @@ export const navigation = pgTable("navigation", {
 	icon: text("icon"),
 	target: text("target").default("_self"), // _self, _blank, _parent, _top
 	isActive: boolean("is_active").notNull().default(true),
+	platform: text("platform").notNull().default("desktop"), // desktop, mobile
 	createdAt: timestamp("created_at", { mode: "date" }).notNull(),
 	updatedAt: timestamp("updated_at", { mode: "date" }).notNull(),
 	deletedAt: timestamp("deleted_at", { mode: "date" }),
