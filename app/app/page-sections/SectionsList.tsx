@@ -141,7 +141,7 @@ export default function SectionsList() {
 
 								{/* Content */}
 								<div className="relative p-4 h-full flex flex-col justify-between">
-									<div className="space-y-3">
+									<div className="space-y-3 pb-8">
 										<h3 className="font-semibold text-sm text-gray-900 dark:text-[#e5e5e5] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
 											{section.pageName}
 										</h3>
