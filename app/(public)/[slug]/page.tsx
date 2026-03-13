@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getDB } from "@/lib/db";
+import { pages } from "@/lib/schema";
+import { eq, isNull } from "drizzle-orm";
 
 interface Page {
 	id: number;
@@ -12,13 +15,21 @@ interface Page {
 
 async function getPage(slug: string): Promise<Page | null> {
 	try {
-		// Use absolute URL with environment variable
-		const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-		const response = await fetch(`${baseUrl}/api/public/pages/${slug}`, {
-			next: { revalidate: 3600 },
-		});
-		if (!response.ok) return null;
-		return response.json();
+		const db = getDB();
+		const page = await db
+			.select({
+				id: pages.id,
+				title: pages.title,
+				slug: pages.slug,
+				content: pages.content,
+				metaTitle: pages.metaTitle,
+				metaDescription: pages.metaDescription,
+			})
+			.from(pages)
+			.where(eq(pages.slug, slug), isNull(pages.deletedAt))
+			.limit(1);
+
+		return page.length > 0 ? page[0] : null;
 	} catch (error) {
 		console.error("Failed to fetch page:", error);
 		return null;

@@ -1,5 +1,8 @@
 import BlogClient from "./blog-client";
 import { getFooterSections } from "@/lib/page-helpers";
+import { getDB } from "@/lib/db";
+import { contents } from "@/lib/schema";
+import { eq, isNull, desc } from "drizzle-orm";
 
 // Revalidate every 60 seconds for ISR (Incremental Static Regeneration)
 export const revalidate = 60;
@@ -17,12 +20,24 @@ interface Content {
 
 async function getContents(): Promise<Content[]> {
 	try {
-		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/public/contents`,
-			{ next: { revalidate: 60 } },
-		);
-		if (!response.ok) return [];
-		return response.json();
+		const db = getDB();
+		const articles = await db
+			.select({
+				id: contents.id,
+				title: contents.title,
+				slug: contents.slug,
+				excerpt: contents.excerpt,
+				featuredImage: contents.featuredImage,
+				publishedAt: contents.publishedAt,
+				createdAt: contents.createdAt,
+				type: contents.type,
+			})
+			.from(contents)
+			.where(eq(contents.status, "published"), isNull(contents.deletedAt))
+			.orderBy(desc(contents.publishedAt || contents.createdAt))
+			.limit(50);
+
+		return articles;
 	} catch (error) {
 		console.error("Failed to fetch contents:", error);
 		return [];
@@ -36,10 +51,10 @@ export const metadata = {
 };
 
 export default async function BlogPage() {
-	const [contents, footerSections] = await Promise.all([
+	const [articles, footerSections] = await Promise.all([
 		getContents(),
 		getFooterSections(),
 	]);
 
-	return <BlogClient contents={contents} footerSections={footerSections} />;
+	return <BlogClient contents={articles} footerSections={footerSections} />;
 }

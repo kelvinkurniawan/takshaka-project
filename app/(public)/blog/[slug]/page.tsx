@@ -2,6 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CommentsList from "@/components/CommentsList";
+import { getDB } from "@/lib/db";
+import { contents } from "@/lib/schema";
+import { eq, isNull } from "drizzle-orm";
 
 interface Content {
 	id: number;
@@ -20,12 +23,31 @@ interface Content {
 
 async function getContent(slug: string): Promise<Content | null> {
 	try {
-		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/public/contents/${slug}`,
-			{ next: { revalidate: 3600 } },
-		);
-		if (!response.ok) return null;
-		return response.json();
+		const db = getDB();
+		const article = await db
+			.select({
+				id: contents.id,
+				title: contents.title,
+				slug: contents.slug,
+				content: contents.content,
+				excerpt: contents.excerpt,
+				featuredImage: contents.featuredImage,
+				publishedAt: contents.publishedAt,
+				createdAt: contents.createdAt,
+				type: contents.type,
+				metaTitle: contents.metaTitle,
+				metaDescription: contents.metaDescription,
+				metaKeywords: contents.metaKeywords,
+			})
+			.from(contents)
+			.where(
+				eq(contents.slug, slug),
+				eq(contents.status, "published"),
+				isNull(contents.deletedAt),
+			)
+			.limit(1);
+
+		return article.length > 0 ? article[0] : null;
 	} catch (error) {
 		console.error("Failed to fetch content:", error);
 		return null;
