@@ -39,6 +39,10 @@ export default function DashboardClient({
 	stats,
 	hasError,
 }: DashboardClientProps) {
+	// Feature flag
+	const enableDashboardAnalytics =
+		process.env.NEXT_PUBLIC_ENABLE_DASHBOARD_ANALYTICS === "true";
+
 	// Find max value for scaling chart
 	const maxHourlyVisitors = Math.max(
 		1,
@@ -114,112 +118,118 @@ export default function DashboardClient({
 			</div>
 
 			{/* Today's Visitors Card */}
-			<div className="stat-card mt-6">
-				<div className="stat-card-content">
-					<div className="w-full">
-						<div className="flex items-center justify-between mb-4">
-							<div>
-								<div className="stat-card-label">Pengunjung Hari Ini</div>
-								<div className="stat-card-value">
-									{stats.today.uniqueVisitors}
-								</div>
-								<div className="text-muted text-sm mt-1">
-									{stats.today.totalPageViews} page views
-								</div>
-							</div>
-							<div className="stat-card-icon-wrapper stat-card-icon-wrapper-green">
-								<TrendingUp className="stat-card-icon stat-card-icon-green" />
-							</div>
-						</div>
-
-						{/* Hourly Breakdown Chart */}
-						<div className="mt-6">
-							<h4 className="text-sm font-semibold text-gray-700 dark:text-[#e5e5e5] mb-3">
-								Breakdown Per Jam
-							</h4>
-							<div className="flex items-end justify-between gap-1">
-								{stats.today.hourlyBreakdown.map((hour) => (
-									<div
-										key={hour.hour}
-										className="flex-1 flex flex-col items-center gap-1"
-									>
-										<div
-											className="w-full bg-gradient-to-t from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 rounded-t transition-colors"
-											style={{
-												height: Math.max(
-													4,
-													(hour.visitors / maxHourlyVisitors) * 100,
-												),
-												minHeight: hour.visitors > 0 ? "4px" : "2px",
-											}}
-											title={`${hour.hour}:00 - ${hour.visitors} visitors`}
-										/>
-										<span className="text-xs text-gray-500 dark:text-[#929292]">
-											{hour.hour}
-										</span>
-									</div>
-								))}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			{/* Recent Logins Card */}
-			<div className="stat-card mt-6">
-				<div className="stat-card-content">
-					<div className="w-full">
-						<div className="flex items-center justify-between mb-4">
-							<div>
-								<div className="stat-card-label">Login Hari Ini</div>
-								<div className="stat-card-value">
-									{stats.today.successfulLogins}
-								</div>
-								<div className="text-muted text-sm mt-1">Successful logins</div>
-							</div>
-							<div className="stat-card-icon-wrapper stat-card-icon-wrapper-orange">
-								<LogIn className="stat-card-icon stat-card-icon-orange" />
-							</div>
-						</div>
-
-						{/* Recent Login List */}
-						{stats.recentLogins.length > 0 ? (
-							<div className="mt-4 space-y-2">
-								<h4 className="text-sm font-semibold text-gray-700 dark:text-[#e5e5e5]">
-									Recent Logins
-								</h4>
-								<div className="space-y-2 max-h-48 overflow-y-auto">
-									{stats.recentLogins.map((login) => (
-										<div
-											key={login.id}
-											className="flex items-center justify-between p-2 bg-gray-50 dark:bg-[#323232] rounded text-sm"
-										>
-											<div className="flex-1">
-												<div className="text-gray-900 dark:text-[#e5e5e5] font-medium truncate">
-													{login.email}
-												</div>
-												<div className="text-xs text-gray-500 dark:text-[#929292]">
-													{new Date(login.time).toLocaleTimeString("id-ID")}
-												</div>
-											</div>
+			{enableDashboardAnalytics && (
+				<>
+					<div className="stat-card mt-6">
+						<div className="stat-card-content">
+							<div className="w-full">
+								<div className="flex items-center justify-between mb-4">
+									<div>
+										<div className="stat-card-label">Pengunjung Hari Ini</div>
+										<div className="stat-card-value">
+											{stats.today.uniqueVisitors}
 										</div>
-									))}
+										<div className="text-muted text-sm mt-1">
+											{stats.today.totalPageViews} page views
+										</div>
+									</div>
+									<div className="stat-card-icon-wrapper stat-card-icon-wrapper-green">
+										<TrendingUp className="stat-card-icon stat-card-icon-green" />
+									</div>
 								</div>
-								<Link
-									href="/app/audit/login-logs"
-									className="inline-block mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
-								>
-									Lihat semua login →
-								</Link>
+
+								{/* Hourly Breakdown Chart */}
+								<div className="mt-6">
+									<h4 className="text-sm font-semibold text-gray-700 dark:text-[#e5e5e5] mb-3">
+										Breakdown Per Jam
+									</h4>
+									<div className="flex items-end justify-between gap-1">
+										{stats.today.hourlyBreakdown.map((hour) => (
+											<div
+												key={hour.hour}
+												className="flex-1 flex flex-col items-center gap-1"
+											>
+												<div
+													className="w-full bg-gradient-to-t from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 rounded-t transition-colors"
+													style={{
+														height: Math.max(
+															4,
+															(hour.visitors / maxHourlyVisitors) * 100,
+														),
+														minHeight: hour.visitors > 0 ? "4px" : "2px",
+													}}
+													title={`${hour.hour}:00 - ${hour.visitors} visitors`}
+												/>
+												<span className="text-xs text-gray-500 dark:text-[#929292]">
+													{hour.hour}
+												</span>
+											</div>
+										))}
+									</div>
+								</div>
 							</div>
-						) : (
-							<div className="mt-4 p-4 text-center text-gray-500 dark:text-[#929292]">
-								Belum ada login hari ini
-							</div>
-						)}
+						</div>
 					</div>
-				</div>
-			</div>
+
+					{/* Recent Logins Card */}
+					<div className="stat-card mt-6">
+						<div className="stat-card-content">
+							<div className="w-full">
+								<div className="flex items-center justify-between mb-4">
+									<div>
+										<div className="stat-card-label">Login Hari Ini</div>
+										<div className="stat-card-value">
+											{stats.today.successfulLogins}
+										</div>
+										<div className="text-muted text-sm mt-1">
+											Successful logins
+										</div>
+									</div>
+									<div className="stat-card-icon-wrapper stat-card-icon-wrapper-orange">
+										<LogIn className="stat-card-icon stat-card-icon-orange" />
+									</div>
+								</div>
+
+								{/* Recent Login List */}
+								{stats.recentLogins.length > 0 ? (
+									<div className="mt-4 space-y-2">
+										<h4 className="text-sm font-semibold text-gray-700 dark:text-[#e5e5e5]">
+											Recent Logins
+										</h4>
+										<div className="space-y-2 max-h-48 overflow-y-auto">
+											{stats.recentLogins.map((login) => (
+												<div
+													key={login.id}
+													className="flex items-center justify-between p-2 bg-gray-50 dark:bg-[#323232] rounded text-sm"
+												>
+													<div className="flex-1">
+														<div className="text-gray-900 dark:text-[#e5e5e5] font-medium truncate">
+															{login.email}
+														</div>
+														<div className="text-xs text-gray-500 dark:text-[#929292]">
+															{new Date(login.time).toLocaleTimeString("id-ID")}
+														</div>
+													</div>
+												</div>
+											))}
+										</div>
+										<Link
+											href="/app/audit/login-logs"
+											className="inline-block mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+										>
+											Lihat semua login →
+										</Link>
+									</div>
+								) : (
+									<div className="mt-4 p-4 text-center text-gray-500 dark:text-[#929292]">
+										Belum ada login hari ini
+									</div>
+								)}
+							</div>
+						</div>
+					</div>
+				</>
+			)}
 
 			{/* Quick Actions (use existing feature styles from globals.css) */}
 			<div className="features-grid mt-6">

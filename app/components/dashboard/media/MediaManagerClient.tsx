@@ -34,6 +34,10 @@ export default function MediaManagerClient({
 		ratio: number;
 	} | null>(null);
 
+	// Feature flag
+	const enableImageCompress =
+		process.env.NEXT_PUBLIC_ENABLE_IMAGE_COMPRESS === "true";
+
 	const formatFileSize = (bytes: number) => {
 		if (bytes === 0) return "0 Bytes";
 		const k = 1024;
@@ -235,7 +239,7 @@ export default function MediaManagerClient({
 
 									{/* Quick Actions */}
 									<div className="border-t border-gray-200 dark:border-[#424242] p-2 flex gap-2">
-										{item.type === "image" && (
+										{item.type === "image" && enableImageCompress && (
 											<button
 												onClick={(e) => {
 													e.stopPropagation();

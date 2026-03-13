@@ -41,7 +41,7 @@ export default function CuratedExperiencesSection({
 		<section className="w-full py-12 md:py-24 px-4 sm:px-6 lg:px-8">
 			<div className="mx-auto">
 				{/* Title */}
-				<h2 className="text-center text-2xl md:text-3xl font-light tracking-wider mb-8 md:mb-12">
+				<h2 className="text-center text-2xl md:text-3xl font-light tracking-widest mb-8 md:mb-12">
 					CURATED EXPERIENCES
 				</h2>
 

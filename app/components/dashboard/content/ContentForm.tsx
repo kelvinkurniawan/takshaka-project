@@ -45,8 +45,10 @@ export default function ContentForm({
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const enableSEOSection =
+		process.env.NEXT_PUBLIC_ENABLE_SEO_SECTION === "true";
 	const [showSEO, setShowSEO] = useState(
-		isEditing && initialContent?.metaTitle ? true : false,
+		enableSEOSection && isEditing && initialContent?.metaTitle ? true : false,
 	);
 
 	const [formData, setFormData] = useState({
@@ -392,189 +394,194 @@ export default function ContentForm({
 							</div>
 
 							{/* SEO Section Toggle */}
-							<div className="border-t border-gray-200 dark:border-[#424242] pt-6">
-								<button
-									type="button"
-									onClick={() => setShowSEO(!showSEO)}
-									className="flex items-center gap-2 text-gray-900 dark:text-[#e5e5e5] font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-								>
-									<span
-										className={`transform transition-transform ${showSEO ? "rotate-90" : ""}`}
-									>
-										►
-									</span>
-									SEO & Open Graph
-								</button>
-							</div>
-
-							{/* SEO Fields */}
-							{showSEO && (
-								<div className="space-y-4 pt-4 border-l-4 border-blue-500 pl-4">
-									{/* Meta Title */}
-									<div>
-										<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
-											Meta Title
-										</label>
-										<input
-											type="text"
-											value={formData.metaTitle}
-											onChange={(e) =>
-												setFormData((prev) => ({
-													...prev,
-													metaTitle: e.target.value,
-												}))
-											}
-											placeholder="Title for search engines"
-											maxLength={255}
-											className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
-										/>
-										<p className="text-xs text-secondary dark:text-[#929292] mt-1">
-											{formData.metaTitle.length}/255
-										</p>
+							{enableSEOSection && (
+								<>
+									<div className="border-t border-gray-200 dark:border-[#424242] pt-6">
+										<button
+											type="button"
+											onClick={() => setShowSEO(!showSEO)}
+											className="flex items-center gap-2 text-gray-900 dark:text-[#e5e5e5] font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+										>
+											<span
+												className={`transform transition-transform ${showSEO ? "rotate-90" : ""}`}
+											>
+												►
+											</span>
+											SEO & Open Graph
+										</button>
 									</div>
 
-									{/* Meta Description */}
-									<div>
-										<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
-											Meta Description
-										</label>
-										<textarea
-											value={formData.metaDescription}
-											onChange={(e) =>
-												setFormData((prev) => ({
-													...prev,
-													metaDescription: e.target.value,
-												}))
-											}
-											placeholder="Description for search engines"
-											maxLength={500}
-											rows={2}
-											className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
-										/>
-										<p className="text-xs text-secondary dark:text-[#929292] mt-1">
-											{formData.metaDescription.length}/500
-										</p>
-									</div>
+									{/* SEO Fields */}
+									{showSEO && (
+										<div className="space-y-4 pt-4 border-l-4 border-blue-500 pl-4">
+											{/* Meta Title */}
+											<div>
+												<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
+													Meta Title
+												</label>
+												<input
+													type="text"
+													value={formData.metaTitle}
+													onChange={(e) =>
+														setFormData((prev) => ({
+															...prev,
+															metaTitle: e.target.value,
+														}))
+													}
+													placeholder="Title for search engines"
+													maxLength={255}
+													className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
+												/>
+												<p className="text-xs text-secondary dark:text-[#929292] mt-1">
+													{formData.metaTitle.length}/255
+												</p>
+											</div>
 
-									{/* Meta Keywords */}
-									<div>
-										<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
-											Meta Keywords
-										</label>
-										<input
-											type="text"
-											value={formData.metaKeywords}
-											onChange={(e) =>
-												setFormData((prev) => ({
-													...prev,
-													metaKeywords: e.target.value,
-												}))
-											}
-											placeholder="Keywords (separated by comma)"
-											className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
-										/>
-									</div>
+											{/* Meta Description */}
+											<div>
+												<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
+													Meta Description
+												</label>
+												<textarea
+													value={formData.metaDescription}
+													onChange={(e) =>
+														setFormData((prev) => ({
+															...prev,
+															metaDescription: e.target.value,
+														}))
+													}
+													placeholder="Description for search engines"
+													maxLength={500}
+													rows={2}
+													className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
+												/>
+												<p className="text-xs text-secondary dark:text-[#929292] mt-1">
+													{formData.metaDescription.length}/500
+												</p>
+											</div>
 
-									{/* Canonical URL */}
-									<div>
-										<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
-											Canonical URL
-										</label>
-										<input
-											type="url"
-											value={formData.canonicalUrl}
-											onChange={(e) =>
-												setFormData((prev) => ({
-													...prev,
-													canonicalUrl: e.target.value,
-												}))
-											}
-											placeholder="https://example.com/article"
-											className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
-										/>
-									</div>
+											{/* Meta Keywords */}
+											<div>
+												<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
+													Meta Keywords
+												</label>
+												<input
+													type="text"
+													value={formData.metaKeywords}
+													onChange={(e) =>
+														setFormData((prev) => ({
+															...prev,
+															metaKeywords: e.target.value,
+														}))
+													}
+													placeholder="Keywords (separated by comma)"
+													className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
+												/>
+											</div>
 
-									{/* Robots */}
-									<div>
-										<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
-											Robots Meta
-										</label>
-										<input
-											type="text"
-											value={formData.robots}
-											onChange={(e) =>
-												setFormData((prev) => ({
-													...prev,
-													robots: e.target.value,
-												}))
-											}
-											placeholder="index, follow"
-											className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
-										/>
-										<p className="text-xs text-secondary dark:text-[#929292] mt-1">
-											Example: index,follow / noindex,follow / noindex,nofollow
-										</p>
-									</div>
+											{/* Canonical URL */}
+											<div>
+												<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
+													Canonical URL
+												</label>
+												<input
+													type="url"
+													value={formData.canonicalUrl}
+													onChange={(e) =>
+														setFormData((prev) => ({
+															...prev,
+															canonicalUrl: e.target.value,
+														}))
+													}
+													placeholder="https://example.com/article"
+													className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
+												/>
+											</div>
 
-									{/* OG Title */}
-									<div>
-										<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
-											OG Title
-										</label>
-										<input
-											type="text"
-											value={formData.ogTitle}
-											onChange={(e) =>
-												setFormData((prev) => ({
-													...prev,
-													ogTitle: e.target.value,
-												}))
-											}
-											placeholder="Title for social media"
-											maxLength={255}
-											className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
-										/>
-									</div>
+											{/* Robots */}
+											<div>
+												<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
+													Robots Meta
+												</label>
+												<input
+													type="text"
+													value={formData.robots}
+													onChange={(e) =>
+														setFormData((prev) => ({
+															...prev,
+															robots: e.target.value,
+														}))
+													}
+													placeholder="index, follow"
+													className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
+												/>
+												<p className="text-xs text-secondary dark:text-[#929292] mt-1">
+													Example: index,follow / noindex,follow /
+													noindex,nofollow
+												</p>
+											</div>
 
-									{/* OG Description */}
-									<div>
-										<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
-											OG Description
-										</label>
-										<textarea
-											value={formData.ogDescription}
-											onChange={(e) =>
-												setFormData((prev) => ({
-													...prev,
-													ogDescription: e.target.value,
-												}))
-											}
-											placeholder="Description for social media"
-											maxLength={500}
-											rows={2}
-											className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
-										/>
-									</div>
+											{/* OG Title */}
+											<div>
+												<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
+													OG Title
+												</label>
+												<input
+													type="text"
+													value={formData.ogTitle}
+													onChange={(e) =>
+														setFormData((prev) => ({
+															...prev,
+															ogTitle: e.target.value,
+														}))
+													}
+													placeholder="Title for social media"
+													maxLength={255}
+													className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
+												/>
+											</div>
 
-									{/* OG Image */}
-									<div>
-										<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
-											OG Image URL
-										</label>
-										<input
-											type="url"
-											value={formData.ogImage}
-											onChange={(e) =>
-												setFormData((prev) => ({
-													...prev,
-													ogImage: e.target.value,
-												}))
-											}
-											placeholder="https://example.com/image.jpg"
-											className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
-										/>
-									</div>
-								</div>
+											{/* OG Description */}
+											<div>
+												<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
+													OG Description
+												</label>
+												<textarea
+													value={formData.ogDescription}
+													onChange={(e) =>
+														setFormData((prev) => ({
+															...prev,
+															ogDescription: e.target.value,
+														}))
+													}
+													placeholder="Description for social media"
+													maxLength={500}
+													rows={2}
+													className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
+												/>
+											</div>
+
+											{/* OG Image */}
+											<div>
+												<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
+													OG Image URL
+												</label>
+												<input
+													type="url"
+													value={formData.ogImage}
+													onChange={(e) =>
+														setFormData((prev) => ({
+															...prev,
+															ogImage: e.target.value,
+														}))
+													}
+													placeholder="https://example.com/image.jpg"
+													className="w-full px-4 py-2 border border-gray-300 dark:border-[#424242] rounded-lg bg-white dark:bg-[#222222] text-gray-900 dark:text-[#e5e5e5] placeholder-gray-500 dark:placeholder-[#828282] focus:outline-none focus:ring-2 focus:ring-blue-500"
+												/>
+											</div>
+										</div>
+									)}
+								</>
 							)}
 
 							{/* Buttons */}

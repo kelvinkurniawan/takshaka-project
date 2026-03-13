@@ -65,15 +65,30 @@ export default function Sidebar({
 			.slice(0, 2);
 	};
 
+	// Feature flags
+	const enableAnalytics =
+		process.env.NEXT_PUBLIC_ENABLE_ANALYTICS_MENU === "true";
+	const enableAuditLogs = process.env.NEXT_PUBLIC_ENABLE_AUDIT_LOGS === "true";
+	const enableLoginLogs = process.env.NEXT_PUBLIC_ENABLE_LOGIN_LOGS === "true";
+	const enableDashboardAnalytics =
+		process.env.NEXT_PUBLIC_ENABLE_DASHBOARD_ANALYTICS === "true";
+	const enablePagesMenu = process.env.NEXT_PUBLIC_ENABLE_PAGES_MENU === "true";
+
 	const navGroups = [
 		{
 			title: "Dashboard",
 			items: [{ icon: Home, label: "Dashboard", href: "/app/dashboard" }],
 		},
-		{
-			title: "Analytics",
-			items: [{ icon: BarChart3, label: "Analytics", href: "/app/analytics" }],
-		},
+		...(enableAnalytics
+			? [
+					{
+						title: "Analytics",
+						items: [
+							{ icon: BarChart3, label: "Analytics", href: "/app/analytics" },
+						],
+					},
+				]
+			: []),
 		{
 			title: "Content Management",
 			items: [
@@ -81,7 +96,9 @@ export default function Sidebar({
 				{ icon: FileText, label: "All Content", href: "/app/content" },
 				{ icon: FolderOpen, label: "Categories", href: "/app/categories" },
 				{ icon: Image, label: "Media Library", href: "/app/media" },
-				{ icon: File, label: "Pages", href: "/app/pages" },
+				...(enablePagesMenu
+					? [{ icon: File, label: "Pages", href: "/app/pages" }]
+					: []),
 				{
 					icon: Layers,
 					label: "Section Management",
@@ -110,16 +127,33 @@ export default function Sidebar({
 			title: "User Management",
 			items: [{ icon: Users, label: "Users", href: "/app/users" }],
 		},
-		{
-			title: "Audit & Logs",
-			items: [
-				{
-					icon: BarChart3,
-					label: "Login Audit Log",
-					href: "/app/audit/login-logs",
-				},
-			],
-		},
+		...(enableAuditLogs || enableLoginLogs
+			? [
+					{
+						title: "Audit & Logs",
+						items: [
+							...(enableLoginLogs
+								? [
+										{
+											icon: BarChart3,
+											label: "Login Audit Log",
+											href: "/app/audit/login-logs",
+										},
+									]
+								: []),
+							...(enableAuditLogs
+								? [
+										{
+											icon: BarChart3,
+											label: "Content Audit Logs",
+											href: "/app/audit/content-logs",
+										},
+									]
+								: []),
+						],
+					},
+				]
+			: []),
 		{
 			title: "Appearance",
 			items: [
