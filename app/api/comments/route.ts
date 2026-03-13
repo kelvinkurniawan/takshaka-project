@@ -7,6 +7,7 @@ import {
 	getUserIdentifier,
 } from "@/lib/spam-protection/detector";
 import { eq, desc } from "drizzle-orm";
+import { verifyCaptchaToken } from "@/lib/captcha";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,7 @@ const createCommentSchema = z.object({
 	content: z.string().min(2, "Komentar minimal 2 karakter").max(5000),
 	submissionTime: z.number().positive("Submission time harus valid"),
 	honeypot: z.string().optional(), // Anti-bot field
+	recaptchaToken: z.string().min(1, "reCAPTCHA token is required"),
 });
 
 /**
@@ -82,6 +84,24 @@ export async function POST(request: Request) {
 
 		// Validate input
 		const validatedData = createCommentSchema.parse(body);
+
+		// Verify reCAPTCHA token
+		const captchaResult = await verifyCaptchaToken(
+			validatedData.recaptchaToken,
+		);
+
+		if (!captchaResult.success) {
+			console.warn(
+				"reCAPTCHA verification failed for comment:",
+				captchaResult.error,
+				"Score:",
+				captchaResult.score,
+			);
+			return Response.json(
+				{ error: "reCAPTCHA verification failed. Please try again." },
+				{ status: 400 },
+			);
+		}
 
 		const ipAddress =
 			request.headers.get("x-forwarded-for") ||

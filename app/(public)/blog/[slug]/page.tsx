@@ -83,13 +83,6 @@ export default async function BlogDetailPage({
 			<article className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12">
 				{/* Header */}
 				<header className="mb-8">
-					<Link
-						href="/blog"
-						className="text-primary font-semibold hover:underline mb-4 inline-block"
-					>
-						← Kembali ke Blog
-					</Link>
-
 					{content.type && (
 						<div className="mb-4">
 							<span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">
@@ -104,7 +97,7 @@ export default async function BlogDetailPage({
 						<time dateTime={content.publishedAt || content.createdAt}>
 							{new Date(
 								content.publishedAt || content.createdAt,
-							).toLocaleDateString("id-ID", {
+							).toLocaleDateString("en-US", {
 								year: "numeric",
 								month: "long",
 								day: "numeric",
@@ -125,35 +118,7 @@ export default async function BlogDetailPage({
 					className="prose prose-lg max-w-none mb-12"
 					dangerouslySetInnerHTML={{ __html: content.content }}
 				/>
-
-				{/* Footer */}
-				<div className="pt-8 border-t">
-					<Link
-						href="/blog"
-						className="inline-block bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition"
-					>
-						← Kembali ke Blog
-					</Link>
-				</div>
 			</article>
-
-			{/* Related Articles */}
-			<section className="bg-gray-50 py-12 mt-12">
-				<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-					<h2 className="text-3xl font-bold mb-8">Artikel Lainnya</h2>
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-						{/* Placeholder for related articles */}
-						<div className="text-center text-gray-600 col-span-full">
-							<Link
-								href="/blog"
-								className="text-primary font-semibold hover:underline"
-							>
-								Lihat semua artikel
-							</Link>
-						</div>
-					</div>
-				</div>
-			</section>
 
 			{/* Comments Section */}
 			<CommentsList contentId={content.id} />

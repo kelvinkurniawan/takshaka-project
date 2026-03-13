@@ -55,33 +55,31 @@ export default function CommentsList({ contentId }: CommentsListProps) {
 	const hasPrevPage = offset > 0;
 
 	return (
-		<section className="max-w-3xl mx-auto px-4 py-12">
+		<section className="max-w-3xl mx-auto px-4 py-8 border-t">
 			{/* Comments Section Header */}
-			<h2 className="text-3xl font-bold mb-8">Komentar</h2>
+			<h2 className="text-3xl font-bold mb-8">Comments</h2>
 
 			{/* Comment Form */}
 			<div className="bg-gray-50 p-8 rounded-lg mb-12 border border-gray-200">
-				<h3 className="text-lg font-semibold mb-6">Tinggalkan Komentar</h3>
+				<h3 className="text-lg font-semibold mb-6">Leave a Comment</h3>
 				<CommentForm contentId={contentId} onSuccess={handleCommentSuccess} />
 			</div>
 
 			{/* Comments Count */}
 			<div className="mb-8">
 				<p className="text-gray-600">
-					{total === 0 ? "Belum ada komentar" : `${total} komentar`}
+					{total === 0 ? "No comments yet" : `${total} comments`}
 				</p>
 			</div>
 
 			{/* Comments List */}
 			{loading ? (
 				<div className="text-center py-12">
-					<p className="text-gray-500">Memuat komentar...</p>
+					<p className="text-gray-500">Loading comments...</p>
 				</div>
 			) : comments.length === 0 ? (
 				<div className="text-center py-12 bg-gray-50 rounded-lg">
-					<p className="text-gray-500">
-						Jadilah yang pertama memberikan komentar
-					</p>
+					<p className="text-gray-500">Be the first to leave a comment</p>
 				</div>
 			) : (
 				<>
@@ -106,7 +104,7 @@ export default function CommentsList({ contentId }: CommentsListProps) {
 								disabled={!hasPrevPage}
 								className="px-4 py-2 bg-primary text-white rounded-lg disabled:bg-gray-300 hover:bg-primary/90 transition"
 							>
-								← Sebelumnya
+								← Prev
 							</button>
 
 							<span className="text-sm text-gray-600">
@@ -118,7 +116,7 @@ export default function CommentsList({ contentId }: CommentsListProps) {
 								disabled={!hasNextPage}
 								className="px-4 py-2 bg-primary text-white rounded-lg disabled:bg-gray-300 hover:bg-primary/90 transition"
 							>
-								Selanjutnya →
+								Next →
 							</button>
 						</div>
 					)}
@@ -127,13 +125,13 @@ export default function CommentsList({ contentId }: CommentsListProps) {
 
 			{/* Security Notice */}
 			<div className="mt-12 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-				<p className="font-medium mb-2">💡 Catatan Keamanan</p>
+				<p className="font-medium mb-2">💡 Security Notice</p>
 				<ul className="list-disc list-inside space-y-1 text-xs">
-					<li>Komentar Anda akan dimoderasi sebelum ditampilkan</li>
-					<li>Jangan bagikan informasi pribadi atau data sensitif</li>
-					<li>Komentar spam atau tidak pantas akan dihapus</li>
+					<li>Your comments will be moderated before being displayed</li>
+					<li>Do not share personal information or sensitive data</li>
+					<li>Spam or inappropriate comments will be removed</li>
 					<li>
-						Kami menggunakan sistem deteksi spam untuk menjaga kualitas komentar
+						We use a spam detection system to maintain the quality of comments
 					</li>
 				</ul>
 			</div>

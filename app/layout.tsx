@@ -3,6 +3,7 @@ import "./globals.css";
 import AOSInit from "../components/AOSInit";
 import { Footer } from "@/components/sections";
 import { getFooterSections, getAppMetadata } from "@/lib/page-helpers";
+import { RecaptchaProvider } from "@/lib/RecaptchaProvider";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const { name, description } = await getAppMetadata();
@@ -31,9 +32,11 @@ export default function RootLayout({
 				/>
 			</head>
 			<body className="antialiased">
-				{/* client-side initializer for AOS animations */}
-				<AOSInit />
-				{children}
+				<RecaptchaProvider>
+					{/* client-side initializer for AOS animations */}
+					<AOSInit />
+					{children}
+				</RecaptchaProvider>
 			</body>
 		</html>
 	);

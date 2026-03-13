@@ -4,26 +4,109 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+
+interface ValidationErrors {
+	email?: string;
+	password?: string;
+}
 
 export default function SecureAccessPage() {
 	const router = useRouter();
+	const { executeRecaptcha } = useGoogleReCaptcha();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
+	const [errors, setErrors] = useState<ValidationErrors>({});
+	const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+	const validateField = (name: string, value: string): string | undefined => {
+		switch (name) {
+			case "email":
+				if (!value.trim()) return "Email is required";
+				const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+				if (!emailRegex.test(value)) return "Please enter a valid email";
+				return undefined;
+
+			case "password":
+				if (!value.trim()) return "Password is required";
+				if (value.length < 6) return "Password must be at least 6 characters";
+				return undefined;
+
+			default:
+				return undefined;
+		}
+	};
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+
+		if (name === "email") setEmail(value);
+		if (name === "password") setPassword(value);
+
+		// Validate on change if field has been touched
+		if (touched[name]) {
+			const fieldError = validateField(name, value);
+			setErrors((prev) => ({
+				...prev,
+				[name]: fieldError,
+			}));
+		}
+	};
+
+	const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		setTouched((prev) => ({
+			...prev,
+			[name]: true,
+		}));
+
+		const fieldError = validateField(name, value);
+		setErrors((prev) => ({
+			...prev,
+			[name]: fieldError,
+		}));
+	};
+
+	const validateForm = (): boolean => {
+		const newErrors: ValidationErrors = {};
+
+		const emailError = validateField("email", email);
+		if (emailError) newErrors.email = emailError;
+
+		const passwordError = validateField("password", password);
+		if (passwordError) newErrors.password = passwordError;
+
+		setErrors(newErrors);
+		return Object.keys(newErrors).length === 0;
+	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setError("");
+
+		// Validate form
+		if (!validateForm()) {
+			return;
+		}
+
 		setIsLoading(true);
 
 		try {
+			if (!executeRecaptcha) {
+				throw new Error("reCAPTCHA not available");
+			}
+
+			// Get reCAPTCHA token
+			const token = await executeRecaptcha("login");
+
 			const response = await fetch("/api/auth/login", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ email, password }),
+				body: JSON.stringify({ email, password, recaptchaToken: token }),
 			});
 
 			const data = await response.json();
@@ -36,7 +119,11 @@ export default function SecureAccessPage() {
 			// Redirect to dashboard on successful login
 			router.push("/app/dashboard");
 		} catch (err) {
-			setError("Terjadi kesalahan. Silakan coba lagi.");
+			setError(
+				err instanceof Error
+					? err.message
+					: "Terjadi kesalahan. Silakan coba lagi.",
+			);
 			console.error("Login error:", err);
 		} finally {
 			setIsLoading(false);
@@ -57,7 +144,7 @@ export default function SecureAccessPage() {
 			</div>
 			<div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40"></div>
 
-			<div className="relative z-10 max-w-md w-full space-y-8 px-8 sm:px-6 lg:px-8 text-white py-8 rounded-lg bg-white/50 backdrop-blur-sm">
+			<div className="relative z-10 max-w-md w-full space-y-8 px-8 sm:px-6 lg:px-8 text-white py-8 rounded-lg bg-white/5 backdrop-blur-md border border-white/10">
 				{/* Header */}
 				<div className="text-center space-y-3">
 					<img
@@ -92,14 +179,21 @@ export default function SecureAccessPage() {
 								name="email"
 								type="email"
 								autoComplete="email"
-								required
-								className="w-full pl-10 pr-4 py-3 bg-black/50 border border-white/20 rounded-lg text-white placeholder-white/60 transition duration-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 hover:border-white/40 disabled:opacity-50 disabled:cursor-not-allowed"
+								className={`w-full pl-10 pr-4 py-3 bg-black/50 rounded-lg text-white placeholder-white/60 transition duration-200 focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+									errors.email && touched.email
+										? "border border-red-500 focus:border-red-600 focus:ring-red-500/20"
+										: "border border-white/20 focus:border-blue-500 focus:ring-blue-500/20 hover:border-white/40"
+								}`}
 								placeholder="nama@example.com"
 								value={email}
-								onChange={(e) => setEmail(e.target.value)}
+								onChange={handleChange}
+								onBlur={handleBlur}
 								disabled={isLoading}
 							/>
 						</div>
+						{errors.email && touched.email && (
+							<p className="mt-1 text-xs text-red-400">{errors.email}</p>
+						)}
 					</div>
 
 					{/* Password Input */}
@@ -117,14 +211,21 @@ export default function SecureAccessPage() {
 								name="password"
 								type="password"
 								autoComplete="current-password"
-								required
-								className="w-full pl-10 pr-4 py-3 bg-black/50 border border-white/20 rounded-lg text-white placeholder-white/60 transition duration-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 hover:border-white/40 disabled:opacity-50 disabled:cursor-not-allowed"
+								className={`w-full pl-10 pr-4 py-3 bg-black/50 rounded-lg text-white placeholder-white/60 transition duration-200 focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+									errors.password && touched.password
+										? "border border-red-500 focus:border-red-600 focus:ring-red-500/20"
+										: "border border-white/20 focus:border-blue-500 focus:ring-blue-500/20 hover:border-white/40"
+								}`}
 								placeholder="••••••••"
 								value={password}
-								onChange={(e) => setPassword(e.target.value)}
+								onChange={handleChange}
+								onBlur={handleBlur}
 								disabled={isLoading}
 							/>
 						</div>
+						{errors.password && touched.password && (
+							<p className="mt-1 text-xs text-red-400">{errors.password}</p>
+						)}
 					</div>
 
 					{/* Submit Button */}
@@ -148,9 +249,28 @@ export default function SecureAccessPage() {
 				</form>
 
 				{/* Footer */}
-				<p className="text-center text-xs text-white/60">
-					© 2026 Takshaka. Semua hak terlindungi.
-				</p>
+				<div className="space-y-3 text-center">
+					<p className="text-xs text-white/50">
+						This site is protected by reCAPTCHA and the Google{" "}
+						<a
+							href="https://policies.google.com/privacy"
+							className="underline hover:text-white/70 transition"
+						>
+							Privacy Policy
+						</a>{" "}
+						and{" "}
+						<a
+							href="https://policies.google.com/terms"
+							className="underline hover:text-white/70 transition"
+						>
+							Terms of Service
+						</a>{" "}
+						apply.
+					</p>
+					<p className="text-xs text-white/40">
+						© 2026 Takshaka. Semua hak terlindungi.
+					</p>
+				</div>
 			</div>
 		</div>
 	);

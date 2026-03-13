@@ -100,7 +100,7 @@ export default function CommentItem({
 				onClick={() => setShowReplyForm(!showReplyForm)}
 				className="text-primary font-medium hover:underline mb-4 text-sm"
 			>
-				{showReplyForm ? "Batal" : "Balas"}
+				{showReplyForm ? "Cancel" : "Reply"}
 			</button>
 
 			{/* Reply Form */}
@@ -154,7 +154,7 @@ export default function CommentItem({
 
 			{/* Loading Replies */}
 			{loadingReplies && (
-				<div className="text-sm text-gray-500 italic">Memuat balasan...</div>
+				<div className="text-sm text-gray-500 italic">Loading replies...</div>
 			)}
 		</div>
 	);

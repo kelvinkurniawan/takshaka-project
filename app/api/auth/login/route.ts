@@ -8,6 +8,7 @@ import {
 	resetRateLimit,
 	getClientIP,
 } from "@/lib/rate-limiter-supabase";
+import { verifyCaptchaToken } from "@/lib/captcha";
 
 // Use nodejs runtime to support PostgreSQL database
 export const runtime = "nodejs";
@@ -16,6 +17,7 @@ export const dynamic = "force-dynamic";
 const loginSchema = z.object({
 	email: z.string().email("Email tidak valid"),
 	password: z.string().min(1, "Password tidak boleh kosong"),
+	recaptchaToken: z.string().min(1, "reCAPTCHA token is required"),
 });
 
 export async function POST(request: Request) {
@@ -53,6 +55,24 @@ export async function POST(request: Request) {
 
 		// ===== INPUT VALIDATION =====
 		const validatedData = loginSchema.parse(body);
+
+		// ===== RECAPTCHA VERIFICATION =====
+		const captchaResult = await verifyCaptchaToken(
+			validatedData.recaptchaToken,
+		);
+
+		if (!captchaResult.success) {
+			console.warn(
+				"reCAPTCHA verification failed for login:",
+				captchaResult.error,
+				"Score:",
+				captchaResult.score,
+			);
+			return Response.json(
+				{ error: "reCAPTCHA verification failed. Please try again." },
+				{ status: 400 },
+			);
+		}
 
 		// ===== DATABASE LOOKUP =====
 		const db = getDB();

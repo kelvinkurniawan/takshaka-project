@@ -371,3 +371,21 @@ export const galleryOfWorks = pgTable(
 		};
 	},
 );
+
+// Contact Submissions Table
+export const contactSubmissions = pgTable("contact_submissions", {
+	id: serial("id").primaryKey(),
+	fullName: text("full_name").notNull(),
+	email: text("email").notNull(),
+	phoneNumber: text("phone_number"),
+	country: text("country"),
+	subject: text("subject").notNull(),
+	message: text("message").notNull(),
+	status: text("status").notNull().default("new"), // new, read, responded, spam
+	createdAt: timestamp("created_at", { mode: "date" })
+		.notNull()
+		.$defaultFn(() => new Date()),
+	updatedAt: timestamp("updated_at", { mode: "date" })
+		.notNull()
+		.$defaultFn(() => new Date()),
+});

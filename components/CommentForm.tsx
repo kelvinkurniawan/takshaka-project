@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 interface CommentFormProps {
 	contentId: number;
@@ -15,6 +16,7 @@ export default function CommentForm({
 	isReply = false,
 	onSuccess,
 }: CommentFormProps) {
+	const { executeRecaptcha } = useGoogleReCaptcha();
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState<{
 		type: "success" | "error";
@@ -50,6 +52,13 @@ export default function CommentForm({
 				return;
 			}
 
+			if (!executeRecaptcha) {
+				throw new Error("reCAPTCHA not available");
+			}
+
+			// Get reCAPTCHA token
+			const token = await executeRecaptcha("comment_form");
+
 			const submissionTime = Date.now();
 			const endpoint =
 				isReply && parentCommentId
@@ -66,6 +75,7 @@ export default function CommentForm({
 					...formData,
 					submissionTime,
 					honeypot: formData.honeypot,
+					recaptchaToken: token,
 				}),
 			});
 
@@ -74,7 +84,7 @@ export default function CommentForm({
 			if (!response.ok) {
 				setMessage({
 					type: "error",
-					text: data.error || "Terjadi kesalahan saat mengirim komentar",
+					text: data.error || "Failed to submit comment",
 				});
 			} else {
 				setMessage({
@@ -91,7 +101,7 @@ export default function CommentForm({
 			console.error(error);
 			setMessage({
 				type: "error",
-				text: "Terjadi kesalahan. Silakan coba lagi.",
+				text: "An error occurred. Please try again.",
 			});
 		} finally {
 			setLoading(false);
@@ -130,7 +140,7 @@ export default function CommentForm({
 					htmlFor={`name-${parentCommentId}`}
 					className="block text-sm font-medium mb-2"
 				>
-					Nama
+					Name
 				</label>
 				<input
 					id={`name-${parentCommentId}`}
@@ -138,7 +148,7 @@ export default function CommentForm({
 					name="name"
 					value={formData.name}
 					onChange={handleChange}
-					placeholder="Nama Anda"
+					placeholder="Your Name"
 					required
 					disabled={loading}
 					className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-gray-100"
@@ -172,7 +182,7 @@ export default function CommentForm({
 					htmlFor={`content-${parentCommentId}`}
 					className="block text-sm font-medium mb-2"
 				>
-					{isReply ? "Balasan" : "Komentar"}
+					{isReply ? "Reply" : "Comment"}
 				</label>
 				<textarea
 					id={`content-${parentCommentId}`}
@@ -180,7 +190,7 @@ export default function CommentForm({
 					value={formData.content}
 					onChange={handleChange}
 					placeholder={
-						isReply ? "Tulis balasan Anda..." : "Tulis komentar Anda..."
+						isReply ? "Write your reply..." : "Write your comment..."
 					}
 					required
 					disabled={loading}
@@ -188,7 +198,7 @@ export default function CommentForm({
 					className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-gray-100 resize-none"
 				/>
 				<p className="text-xs text-gray-500 mt-2">
-					{formData.content.length} / 5000 karakter
+					{formData.content.length} / 5000 characters
 				</p>
 			</div>
 
@@ -200,7 +210,11 @@ export default function CommentForm({
 				}
 				className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 disabled:bg-gray-300 transition"
 			>
-				{loading ? "Mengirim..." : isReply ? "Kirim Balasan" : "Kirim Komentar"}
+				{loading
+					? "Submitting..."
+					: isReply
+						? "Submit Reply"
+						: "Submit Comment"}
 			</button>
 		</form>
 	);

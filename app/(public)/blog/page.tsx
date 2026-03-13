@@ -1,4 +1,8 @@
-import { SearchableBlogList } from "@/components/public/SearchableBlogList";
+import BlogClient from "./blog-client";
+import { getFooterSections } from "@/lib/page-helpers";
+
+// Revalidate every 60 seconds for ISR (Incremental Static Regeneration)
+export const revalidate = 60;
 
 interface Content {
 	id: number;
@@ -15,7 +19,7 @@ async function getContents(): Promise<Content[]> {
 	try {
 		const response = await fetch(
 			`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/public/contents`,
-			{ next: { revalidate: 3600 } },
+			{ next: { revalidate: 60 } },
 		);
 		if (!response.ok) return [];
 		return response.json();
@@ -27,28 +31,15 @@ async function getContents(): Promise<Content[]> {
 
 export const metadata = {
 	title: "Blog & Artikel - Takshaka CMS",
-	description: "Pelajari tips, trik, dan berita terbaru tentang CMS modern",
+	description:
+		"Pelajari tips, trik, dan berita terbaru tentang CMS modern, pengembangan web, dan transformasi digital",
 };
 
 export default async function BlogPage() {
-	const contents = await getContents();
+	const [contents, footerSections] = await Promise.all([
+		getContents(),
+		getFooterSections(),
+	]);
 
-	return (
-		<>
-			{/* Header */}
-			<section className="bg-gradient-to-r from-primary to-blue-600 text-white py-16">
-				<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-					<h1 className="text-5xl font-bold mb-4">Blog & Artikel</h1>
-					<p className="text-xl text-blue-50">
-						Pelajari tips, trik, dan berita terbaru tentang CMS modern
-					</p>
-				</div>
-			</section>
-
-			{/* Content */}
-			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-				<SearchableBlogList contents={contents} />
-			</div>
-		</>
-	);
+	return <BlogClient contents={contents} footerSections={footerSections} />;
 }

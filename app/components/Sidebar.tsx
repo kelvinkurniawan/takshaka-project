@@ -69,6 +69,11 @@ export default function Sidebar({
 				},
 				{ icon: MessageSquare, label: "Comments", href: "/app/comments" },
 				{ icon: HelpCircle, label: "FAQ Management", href: "/app/faq" },
+				{
+					icon: MessageSquare,
+					label: "Contact Submissions",
+					href: "/app/contact-submissions",
+				},
 			],
 		},
 		{

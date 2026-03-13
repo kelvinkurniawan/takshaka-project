@@ -7,6 +7,7 @@ import {
 	getUserIdentifier,
 } from "@/lib/spam-protection/detector";
 import { eq, desc } from "drizzle-orm";
+import { verifyCaptchaToken } from "@/lib/captcha";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,7 @@ const createReplySchema = z.object({
 	content: z.string().min(2, "Balasan minimal 2 karakter").max(5000),
 	submissionTime: z.number().positive("Submission time harus valid"),
 	honeypot: z.string().optional(),
+	recaptchaToken: z.string().min(1, "reCAPTCHA token is required"),
 });
 
 /**
@@ -72,6 +74,24 @@ export async function POST(
 
 		// Validate input
 		const validatedData = createReplySchema.parse(body);
+
+		// Verify reCAPTCHA token
+		const captchaResult = await verifyCaptchaToken(
+			validatedData.recaptchaToken,
+		);
+
+		if (!captchaResult.success) {
+			console.warn(
+				"reCAPTCHA verification failed for reply:",
+				captchaResult.error,
+				"Score:",
+				captchaResult.score,
+			);
+			return Response.json(
+				{ error: "reCAPTCHA verification failed. Please try again." },
+				{ status: 400 },
+			);
+		}
 
 		const db = getDB();
 		const commentIdNum = parseInt(commentId);
