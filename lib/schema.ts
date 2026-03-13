@@ -261,6 +261,30 @@ export const loginAttempts = pgTable("login_attempts", {
 	identifier: text("identifier").notNull(),
 	attemptedAt: timestamp("attempted_at", { mode: "date" }).notNull(),
 });
+
+// Login logs untuk tracking login berhasil/gagal dengan detail
+export const loginLogs = pgTable(
+	"login_logs",
+	{
+		id: serial("id").primaryKey(),
+		userId: integer("user_id"), // null jika login gagal (user tidak ditemukan)
+		email: text("email").notNull(),
+		success: boolean("success").notNull(),
+		failureReason: text("failure_reason"), // 'user_not_found', 'invalid_password', 'captcha_failed', null jika berhasil
+		ipAddress: text("ip_address").notNull(),
+		userAgent: text("user_agent"),
+		createdAt: timestamp("created_at", { mode: "date" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+	},
+	(table) => {
+		return {
+			userIdIdx: sql`CREATE INDEX idx_login_logs_user_id ON ${table} (${table.userId})`,
+			createdAtIdx: sql`CREATE INDEX idx_login_logs_created_at ON ${table} (${table.createdAt})`,
+		};
+	},
+);
+
 // Analytics tables
 export const pageViews = pgTable("page_views", {
 	id: serial("id").primaryKey(),

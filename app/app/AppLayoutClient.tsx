@@ -7,11 +7,22 @@ import { Bell, User, LogOut, Sun, Moon } from "lucide-react";
 
 type Theme = "light" | "dark";
 
-interface AppLayoutClientProps {
-	children: React.ReactNode;
+interface UserData {
+	id: number;
+	name: string;
+	email: string;
+	role?: string;
 }
 
-export default function AppLayoutClient({ children }: AppLayoutClientProps) {
+interface AppLayoutClientProps {
+	children: React.ReactNode;
+	user: UserData;
+}
+
+export default function AppLayoutClient({
+	children,
+	user,
+}: AppLayoutClientProps) {
 	const router = useRouter();
 	const pathname = usePathname();
 	const [isPending, startTransition] = useTransition();
@@ -139,6 +150,7 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
 
 			{/* Sidebar Component */}
 			<Sidebar
+				user={user}
 				sidebarOpen={sidebarOpen}
 				setSidebarOpen={setSidebarOpen}
 				onLogout={handleLogout}

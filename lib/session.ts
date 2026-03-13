@@ -74,6 +74,8 @@ export async function isAuthenticated(): Promise<boolean> {
  */
 export async function getUserWithRole(): Promise<{
 	id: number;
+	name: string;
+	email: string;
 	role: string;
 } | null> {
 	const userId = await getSessionUserId();
@@ -90,7 +92,12 @@ export async function getUserWithRole(): Promise<{
 		const db = getDB();
 
 		const userList = await db
-			.select({ id: users.id, role: users.role })
+			.select({
+				id: users.id,
+				name: users.name,
+				email: users.email,
+				role: users.role,
+			})
 			.from(users)
 			.where(eq(users.id, userId))
 			.limit(1);

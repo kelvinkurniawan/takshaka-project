@@ -3,16 +3,16 @@ import { redirect } from "next/navigation";
 import AppLayoutClient from "./AppLayoutClient";
 
 export default async function AppLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  // Check authentication on server side
-  const user = await getUserWithRole();
+	// Check authentication on server side
+	const user = await getUserWithRole();
 
-  if (!user) {
-    redirect("/secure-access");
-  }
+	if (!user) {
+		redirect("/secure-access");
+	}
 
-  return <AppLayoutClient>{children}</AppLayoutClient>;
+	return <AppLayoutClient user={user}>{children}</AppLayoutClient>;
 }

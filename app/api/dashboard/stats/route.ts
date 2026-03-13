@@ -1,4 +1,3 @@
-import DashboardClient from "./DashboardClient";
 import { getDB } from "@/lib/db";
 import {
 	contents,
@@ -8,56 +7,21 @@ import {
 	loginLogs,
 } from "@/lib/schema";
 import { eq, and, gte, lte } from "drizzle-orm";
-import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-	title: "Dashboard",
-	description: "Takshaka CMS dashboard overview",
-};
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
-interface DashboardStats {
-	totals: {
-		contents: number;
-		users: number;
-		categories: number;
-	};
-	today: {
-		totalPageViews: number;
-		uniqueVisitors: number;
-		successfulLogins: number;
-		hourlyBreakdown: Array<{ hour: number; visitors: number }>;
-	};
-	recentLogins: Array<{
-		id: number;
-		email: string;
-		userName: string;
-		time: Date;
-	}>;
-}
-
-export default async function DashboardPage() {
-	// Server component: fetch counts from DB and pass as props to client component
-	const db = getDB();
-
-	let stats: DashboardStats = {
-		totals: { contents: 0, users: 0, categories: 0 },
-		today: {
-			totalPageViews: 0,
-			uniqueVisitors: 0,
-			successfulLogins: 0,
-			hourlyBreakdown: [],
-		},
-		recentLogins: [],
-	};
-	let hasError = false;
-
+export async function GET(request: Request) {
 	try {
+		const db = getDB();
+
 		// Get today's date (start and end)
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 		const todayEnd = new Date(today);
 		todayEnd.setHours(23, 59, 59, 999);
 
+		// Fetch all data in parallel
 		const [allContents, allUsers, allCategories, todayPageViews, recentLogins] =
 			await Promise.all([
 				db.select().from(contents),
@@ -131,7 +95,7 @@ export default async function DashboardPage() {
 				time: log.createdAt,
 			}));
 
-		stats = {
+		return Response.json({
 			totals: {
 				contents: activeContents.length,
 				users: activeUsers.length,
@@ -144,11 +108,12 @@ export default async function DashboardPage() {
 				hourlyBreakdown,
 			},
 			recentLogins: recentLoginSummary,
-		};
+		});
 	} catch (error) {
-		console.error("Dashboard data load failed:", error);
-		hasError = true;
+		console.error("Dashboard stats error:", error);
+		return Response.json(
+			{ error: "Failed to fetch dashboard stats" },
+			{ status: 500 },
+		);
 	}
-
-	return <DashboardClient stats={stats} hasError={hasError} />;
 }

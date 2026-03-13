@@ -26,7 +26,15 @@ import {
 
 type Theme = "light" | "dark";
 
+interface UserData {
+	id: number;
+	name: string;
+	email: string;
+	role?: string;
+}
+
 interface SidebarProps {
+	user: UserData;
 	sidebarOpen: boolean;
 	setSidebarOpen: (open: boolean) => void;
 	onLogout: () => void;
@@ -36,6 +44,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({
+	user,
 	sidebarOpen,
 	setSidebarOpen,
 	onLogout,
@@ -44,6 +53,17 @@ export default function Sidebar({
 	onToggleTheme,
 }: SidebarProps) {
 	const pathname = usePathname();
+
+	// Get initials for avatar
+	const getInitials = (name?: string | null) => {
+		if (!name) return "U";
+		return name
+			.split(" ")
+			.map((part) => part[0])
+			.join("")
+			.toUpperCase()
+			.slice(0, 2);
+	};
 
 	const navGroups = [
 		{
@@ -89,6 +109,16 @@ export default function Sidebar({
 		{
 			title: "User Management",
 			items: [{ icon: Users, label: "Users", href: "/app/users" }],
+		},
+		{
+			title: "Audit & Logs",
+			items: [
+				{
+					icon: BarChart3,
+					label: "Login Audit Log",
+					href: "/app/audit/login-logs",
+				},
+			],
 		},
 		{
 			title: "Appearance",
@@ -153,17 +183,22 @@ export default function Sidebar({
 
 			{/* User Menu */}
 			<div className="sidebar-user">
-				<div className="sidebar-user-profile">
+				<Link
+					href="/app/profile"
+					className="sidebar-user-profile hover:bg-gray-100 dark:hover:bg-[#323232] rounded-md transition-colors"
+				>
 					<div className="sidebar-user-avatar">
-						<span className="sidebar-user-avatar-text">U</span>
+						<span className="sidebar-user-avatar-text">
+							{getInitials(user.name)}
+						</span>
 					</div>
 					{sidebarOpen && (
 						<div className="sidebar-user-info">
-							<p className="sidebar-user-name">User</p>
-							<p className="sidebar-user-email">user@example.com</p>
+							<p className="sidebar-user-name">{user.name}</p>
+							<p className="sidebar-user-email">{user.email}</p>
 						</div>
 					)}
-				</div>
+				</Link>
 				<button
 					onClick={onLogout}
 					disabled={isLoggingOut}

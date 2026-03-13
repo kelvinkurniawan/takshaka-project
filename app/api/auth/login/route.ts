@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { verifyPassword } from "@/lib/auth";
 import { getDB } from "@/lib/db";
-import { users } from "@/lib/schema";
+import { users, loginLogs } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import {
 	checkRateLimit,
@@ -20,10 +20,36 @@ const loginSchema = z.object({
 	recaptchaToken: z.string().min(1, "reCAPTCHA token is required"),
 });
 
+// Helper function to log login attempts
+async function logLogin(
+	db: any,
+	email: string,
+	success: boolean,
+	userId: number | null,
+	failureReason: string | null,
+	ipAddress: string,
+	userAgent?: string,
+) {
+	try {
+		await db.insert(loginLogs).values({
+			userId: userId,
+			email,
+			success,
+			failureReason,
+			ipAddress,
+			userAgent: userAgent || null,
+		});
+	} catch (error) {
+		console.error("Failed to log login attempt:", error);
+		// Don't throw - logging failure shouldn't block login
+	}
+}
+
 export async function POST(request: Request) {
 	try {
 		const body = await request.json();
 		const clientIP = getClientIP(request);
+		const userAgent = request.headers.get("user-agent") || undefined;
 		const emailCandidate = body?.email || "";
 
 		// ===== RATE LIMITING (Dual check: IP + Email) =====
@@ -68,6 +94,17 @@ export async function POST(request: Request) {
 				"Score:",
 				captchaResult.score,
 			);
+			// Log failed login - captcha failed
+			const db = getDB();
+			await logLogin(
+				db,
+				validatedData.email,
+				false,
+				null,
+				"captcha_failed",
+				clientIP,
+				userAgent,
+			);
 			return Response.json(
 				{ error: "reCAPTCHA verification failed. Please try again." },
 				{ status: 400 },
@@ -93,6 +130,16 @@ export async function POST(request: Request) {
 			const user = userResult[0];
 
 			if (!user) {
+				// Log failed login - user not found
+				await logLogin(
+					db,
+					validatedData.email,
+					false,
+					null,
+					"user_not_found",
+					clientIP,
+					userAgent,
+				);
 				return Response.json(
 					{ error: "Email atau password salah" },
 					{ status: 401 },
@@ -106,6 +153,16 @@ export async function POST(request: Request) {
 			);
 
 			if (!isPasswordValid) {
+				// Log failed login - invalid password
+				await logLogin(
+					db,
+					validatedData.email,
+					false,
+					user.id,
+					"invalid_password",
+					clientIP,
+					userAgent,
+				);
 				return Response.json(
 					{ error: "Email atau password salah" },
 					{ status: 401 },
@@ -115,6 +172,17 @@ export async function POST(request: Request) {
 			// ===== SUCCESS: Set session cookie via Response headers =====
 			console.log(
 				`[Auth] Login successful for user ${user.id} (${user.email})`,
+			);
+
+			// Log successful login
+			await logLogin(
+				db,
+				validatedData.email,
+				true,
+				user.id,
+				null,
+				clientIP,
+				userAgent,
 			);
 
 			// Calculate cookie expiration
