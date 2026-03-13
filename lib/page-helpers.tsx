@@ -4,7 +4,12 @@
  */
 
 import { getDB } from "@/lib/db";
-import { settings, pageSections, contents } from "@/lib/schema";
+import {
+	settings,
+	pageSections,
+	contents,
+	categories as categoriesTable,
+} from "@/lib/schema";
 import { eq, isNull, and } from "drizzle-orm";
 
 export interface Settings {
@@ -137,6 +142,120 @@ export async function getPageSectionsFromDB(slug: string): Promise<any | null> {
 	} catch (error) {
 		console.error("Failed to fetch page sections from database:", error);
 		return null;
+	}
+}
+
+/**
+ * Transform page sections data by building tabs from selectedCategoryIds
+ * This generates dynamic tabs from the available categories and their content
+ */
+export async function transformPageSectionsWithDynamicTabs(
+	sections: any,
+): Promise<any> {
+	if (!sections || !sections.curatedExperiences) {
+		return sections;
+	}
+
+	const { selectedCategoryIds } = sections.curatedExperiences;
+
+	// If no categories are selected, return sections as-is
+	if (!selectedCategoryIds || selectedCategoryIds.length === 0) {
+		return sections;
+	}
+
+	try {
+		const db = getDB();
+
+		// Fetch categories and their published content
+		const categoriesWithContent = await Promise.all(
+			selectedCategoryIds.map(async (categoryId: number) => {
+				const categoryData = await db
+					.select({
+						id: categoriesTable.id,
+						name: categoriesTable.name,
+						slug: categoriesTable.slug,
+						description: categoriesTable.description,
+					})
+					.from(categoriesTable)
+					.where(
+						and(
+							eq(categoriesTable.id, categoryId),
+							isNull(categoriesTable.deletedAt),
+						),
+					)
+					.limit(1);
+
+				if (categoryData.length === 0) return null;
+
+				const category = categoryData[0];
+
+				// Fetch published contents for this category
+				const categoryContents = await db
+					.select({
+						id: contents.id,
+						title: contents.title,
+						excerpt: contents.excerpt,
+						featuredImage: contents.featuredImage,
+						slug: contents.slug,
+					})
+					.from(contents)
+					.limit(4) // Limit to 5 items per category for performance
+					.where(
+						and(
+							eq(contents.categoryId, categoryId),
+							eq(contents.status, "published"),
+							isNull(contents.deletedAt),
+						),
+					);
+
+				if (categoryContents.length === 0) return null;
+
+				return {
+					...category,
+					contents: categoryContents,
+				};
+			}),
+		);
+
+		// Utility function to truncate text
+		const truncateText = (text: string, maxLength: number = 120): string => {
+			if (!text || text.length <= maxLength) return text;
+			const truncated = text.substring(0, maxLength).trim();
+			return truncated.endsWith(".") ? truncated : truncated + "...";
+		};
+
+		// Placeholder image (simple colored placeholder)
+		const placeholderImage =
+			"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23e5e7eb' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' font-size='16' fill='%23999' text-anchor='middle' dominant-baseline='middle'%3ENo Image Available%3C/text%3E%3C/svg%3E";
+
+		// Filter out null values and generate tabs
+		const validCategories = categoriesWithContent.filter((cat) => cat !== null);
+		const tabs = validCategories.map((category) => ({
+			id: `tab-${category.id}`,
+			label: category.name,
+			items: category.contents.map((content: any) => ({
+				id: content.id.toString(),
+				title: content.title,
+				description: truncateText(content.excerpt || ""),
+				image: content.featuredImage || placeholderImage,
+			})),
+		}));
+
+		// Return sections with generated tabs
+		return {
+			...sections,
+			curatedExperiences: {
+				...sections.curatedExperiences,
+				tabs,
+			},
+		};
+	} catch (error) {
+		console.error(
+			"Failed to transform page sections with dynamic tabs:",
+			error,
+		);
+		// Return original sections if transformation fails
+		return sections;
 	}
 }
 
@@ -429,8 +548,8 @@ export function getFooterSections() {
 		{
 			title: "Let's Connect",
 			links: [
-				{ label: "INQUIRY", href: "/connect/inquiry" },
-				{ label: "CAREER", href: "/connect/career" },
+				{ label: "INQUIRY", href: "/connect/inquiry", type: "button" },
+				{ label: "CAREER", href: "/connect/career", type: "button" },
 			],
 		},
 	];

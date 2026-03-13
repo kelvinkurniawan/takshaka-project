@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
 	Save,
 	Loader,
@@ -70,6 +70,41 @@ export default function SectionDataEditor({
 		{},
 	);
 	const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+	const [categories, setCategories] = useState<
+		Array<{
+			id: number;
+			name: string;
+			slug: string;
+			description: string | null;
+			contents: Array<{
+				id: number;
+				title: string;
+				excerpt: string | null;
+				featuredImage: string | null;
+				slug: string;
+			}>;
+		}>
+	>([]);
+	const [categoriesLoading, setCategoriesLoading] = useState(false);
+
+	// Fetch categories on mount
+	useEffect(() => {
+		const fetchCategories = async () => {
+			try {
+				setCategoriesLoading(true);
+				const response = await fetch("/api/categories/with-contents");
+				if (!response.ok) throw new Error("Failed to fetch categories");
+				const data = await response.json();
+				setCategories(data);
+			} catch (err) {
+				console.error("Error fetching categories:", err);
+			} finally {
+				setCategoriesLoading(false);
+			}
+		};
+
+		fetchCategories();
+	}, []);
 
 	const config = useMemo(() => {
 		const configMap = pageSectionsConfig as Record<string, any>;
@@ -769,6 +804,88 @@ export default function SectionDataEditor({
 							/>
 						</label>
 					</div>
+				</div>
+			);
+		}
+
+		if (fieldConfig.type === "categoriesSelect") {
+			const selectedIds = value || [];
+
+			const handleCategoryToggle = (categoryId: number) => {
+				const newIds = selectedIds.includes(categoryId)
+					? selectedIds.filter((id: number) => id !== categoryId)
+					: [...selectedIds, categoryId];
+
+				// Only save the category IDs, tabs will be generated on the server
+				handleFieldChange(sectionKey, "selectedCategoryIds", newIds);
+			};
+
+			return (
+				<div className="space-y-3">
+					{categoriesLoading ? (
+						<div className="flex items-center justify-center p-4">
+							<div className="w-5 h-5 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+							<p className="ml-2 text-sm text-gray-600 dark:text-[#929292]">
+								Loading categories...
+							</p>
+						</div>
+					) : categories.length === 0 ? (
+						<div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
+							<p className="text-sm text-yellow-800 dark:text-yellow-200">
+								No categories available. Create some categories first.
+							</p>
+						</div>
+					) : (
+						<div className="space-y-2">
+							{categories.map((category) => (
+								<div
+									key={category.id}
+									className="flex items-start gap-3 p-3 border border-gray-200 dark:border-[#525252] rounded-md hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
+								>
+									<input
+										type="checkbox"
+										id={`category-${category.id}`}
+										checked={selectedIds.includes(category.id)}
+										onChange={() => handleCategoryToggle(category.id)}
+										className="mt-1 w-4 h-4 accent-blue-600 cursor-pointer"
+									/>
+									<label
+										htmlFor={`category-${category.id}`}
+										className="flex-1 cursor-pointer"
+									>
+										<div className="font-medium text-sm text-gray-900 dark:text-[#e5e5e5]">
+											{category.name}
+										</div>
+										<div className="text-xs text-gray-600 dark:text-[#929292] mt-1">
+											{category.contents.length} content
+											{category.contents.length !== 1 ? "s" : ""}
+										</div>
+										{category.description && (
+											<div className="text-xs text-gray-500 dark:text-[#767676] mt-1">
+												{category.description}
+											</div>
+										)}
+									</label>
+								</div>
+							))}
+						</div>
+					)}
+
+					{selectedIds.length > 0 && (
+						<div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+							<p className="text-xs font-medium text-blue-900 dark:text-blue-200">
+								✓ {selectedIds.length} categor
+								{selectedIds.length > 1 ? "ies" : "y"} selected
+							</p>
+							<p className="text-xs text-blue-800 dark:text-blue-300 mt-1">
+								{selectedIds.reduce((total: number, id: number) => {
+									const cat = categories.find((c) => c.id === id);
+									return total + (cat?.contents.length || 0);
+								}, 0)}{" "}
+								total items will be displayed
+							</p>
+						</div>
+					)}
 				</div>
 			);
 		}

@@ -18,7 +18,7 @@ export default function ExperiencesSharedSection({
 		<section className="w-full py-12 md:py-24 px-4 sm:px-6 lg:px-8 bg-[#f5f0e6]">
 			<div className="mx-auto max-w-7xl">
 				{/* Title */}
-				<h2 className="text-center text-2xl md:text-4xl lg:text-5xl font-light tracking-wider mb-8 md:mb-12">
+				<h2 className="text-center text-2xl md:text-3xl font-light tracking-wider mb-8 md:mb-12">
 					EXPERIENCES SHARED
 				</h2>
 

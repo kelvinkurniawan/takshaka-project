@@ -16,6 +16,7 @@ import {
 	PageContentRenderer,
 	type Page,
 	getFooterSections,
+	transformPageSectionsWithDynamicTabs,
 } from "@/lib/page-helpers";
 import HomePageClient from "./home-client";
 
@@ -24,10 +25,14 @@ import HomePageClient from "./home-client";
 export const revalidate = 60;
 
 export default async function Home() {
-	const [settings, homeSections] = await Promise.all([
+	const [settings, homeSectionsRaw] = await Promise.all([
 		getSettingsFromDB(),
 		getPageSectionsFromDB("home"),
 	]);
+
+	// Transform sections to generate dynamic tabs from selectedCategoryIds
+	const homeSections =
+		await transformPageSectionsWithDynamicTabs(homeSectionsRaw);
 
 	// Check if index_page is set
 	const indexPageId = settings?.index_page

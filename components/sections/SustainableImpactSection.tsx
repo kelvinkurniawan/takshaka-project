@@ -28,7 +28,7 @@ export default function SustainableImpactSection({
 
 			{/* Content */}
 			<div className="relative z-10 w-full h-full flex flex-col items-center justify-center text-center text-white px-4 py-12 md:py-24">
-				<h2 className="text-2xl md:text-4xl lg:text-5xl tracking-wider mb-3 md:mb-4">
+				<h2 className="text-2xl md:text-3xl tracking-wider mb-3 md:mb-4">
 					{title}
 				</h2>
 				<p className="text-sm md:text-lg lg:text-xl max-w-sm md:max-w-md mx-auto mb-6 md:mb-8 tracking-wide">

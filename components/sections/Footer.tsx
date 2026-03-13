@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { Instagram, Youtube, Linkedin } from "lucide-react";
 
 interface FooterLink {
 	label: string;
 	href: string;
+	type?: "button" | "link";
 }
 
 interface FooterSection {
@@ -30,7 +32,7 @@ export default function Footer({ sections, copyright }: FooterProps) {
 	return (
 		<footer className="w-full" style={{ backgroundColor: "#1a1f3a" }}>
 			{/* Subscribe Section */}
-			<section className="w-full py-8 md:py-16 px-4 sm:px-6 lg:px-8">
+			<section className="w-full pt-16 pb-4 px-4 sm:px-6 lg:px-8">
 				<div className="mx-auto max-w-7xl">
 					<div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6 md:gap-0">
 						{/* Get Inspired */}
@@ -60,19 +62,22 @@ export default function Footer({ sections, copyright }: FooterProps) {
 				style={{ backgroundColor: "#1a1f3a" }}
 			>
 				<div className="mx-auto max-w-7xl">
-					<div className="border-t border-[#A27C34] py-8"></div>
+					<div className="border-t border-[#A27C34] pt-8"></div>
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 md:gap-12 mb-8 md:mb-12">
 						{sections.map((section, idx) => (
 							<div key={idx}>
-								<h4 className="text-white font-semibold tracking-wider mb-3 md:mb-4 text-xs uppercase">
+								<h4 className="text-white font-bold mb-2 text-sm titlecase">
 									{section.title}
 								</h4>
-								<ul className="space-y-2 md:space-y-3">
+								<ul className="space-y-1">
 									{section.links.map((link, linkIdx) => (
-										<li key={linkIdx}>
+										<li
+											key={linkIdx}
+											className={`${link.type === "button" ? "border px-2 py-1 border-[#A27C34] w-[100px] text-center tracking-wider" : ""}`}
+										>
 											<a
 												href={link.href}
-												className="text-gray-400 hover:text-white text-sm leading-relaxed transition-colors"
+												className={`text-white hover:text-gray-400 text-sm leading-relaxed transition-colors duration-300 titlecase `}
 											>
 												{link.label}
 											</a>
@@ -83,8 +88,17 @@ export default function Footer({ sections, copyright }: FooterProps) {
 						))}
 					</div>
 
+					<div className="mb-4">
+						<a
+							href="/contact-us"
+							className="text-white hover:text-gray-400 text-sm leading-relaxed transition-colors duration-300 titlecase border px-2 py-2 border-[#A27C34] w-[120px] text-center tracking-widest"
+						>
+							CONTACT US
+						</a>
+					</div>
+
 					{/* Divider */}
-					<div className="border-t border-[#A27C34] pt-6 md:pt-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0">
+					<div className="border-t border-[#A27C34] pt-4 pb-8 grid grid-cols-1 md:grid-cols-5 gap-4">
 						{/* Logo */}
 						<div className="mb-0">
 							<img
@@ -93,18 +107,46 @@ export default function Footer({ sections, copyright }: FooterProps) {
 								className="h-12 md:h-16"
 							/>
 						</div>
-
-						{/* Copyright */}
-						<p className="text-gray-400 text-xs md:text-sm">
-							{copyright || "Copyright 2026. Takshaka Event & Experience"}
-						</p>
-
 						{/* Social Links */}
-						<div className="flex gap-4 mt-0">
-							<span className="text-gray-400 text-xs md:text-sm">
+						<div className="flex items-center gap-3 md:gap-4 mt-0">
+							<span className="text-white text-xs md:text-sm whitespace-nowrap">
 								Follow us on:
 							</span>
+							<div className="flex gap-3 md:gap-4">
+								<a
+									href="https://instagram.com/takshaka"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-white hover:text-[#A27C34] transition-colors duration-300"
+									title="Follow us on Instagram"
+								>
+									<Instagram size={18} />
+								</a>
+								<a
+									href="https://youtube.com/takshaka"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-white hover:text-[#A27C34] transition-colors duration-300"
+									title="Follow us on YouTube"
+								>
+									<Youtube size={18} />
+								</a>
+								<a
+									href="https://linkedin.com/company/takshaka"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-white hover:text-[#A27C34] transition-colors duration-300"
+									title="Follow us on LinkedIn"
+								>
+									<Linkedin size={18} />
+								</a>
+							</div>
 						</div>
+
+						{/* Copyright */}
+						<p className="text-gray-400 text-xs md:text-sm col-span-3 text-end">
+							{copyright || "Copyright 2026. Takshaka Event & Experience"}
+						</p>
 					</div>
 				</div>
 			</section>

@@ -79,49 +79,11 @@ export const pageSectionsConfig = {
 		],
 		curatedExperiences: [
 			{
-				type: "tabs",
-				label: "Experience Tabs",
-				target: "tabs",
-				tabFields: [
-					{
-						type: "string",
-						label: "Tab ID",
-						target: "id",
-					},
-					{
-						type: "string",
-						label: "Tab Label",
-						target: "label",
-					},
-					{
-						type: "arrayItems",
-						label: "Items",
-						target: "items",
-						fields: [
-							{
-								type: "string",
-								label: "ID",
-								target: "id",
-							},
-							{
-								type: "string",
-								label: "Title",
-								target: "title",
-							},
-							{
-								type: "string",
-								label: "Description",
-								target: "description",
-								multiline: true,
-							},
-							{
-								type: "image",
-								label: "Image",
-								target: "image",
-							},
-						],
-					},
-				],
+				type: "categoriesSelect",
+				label: "Select Categories",
+				target: "selectedCategoryIds",
+				description:
+					"Select categories to display. Contents from these categories will be shown as tabs.",
 			},
 		],
 		experiencesShared: [
