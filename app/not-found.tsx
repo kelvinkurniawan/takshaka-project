@@ -11,7 +11,6 @@ export const metadata = {
 export default function NotFound() {
 	return (
 		<>
-			<PublicHeader />
 			<div className="public-light flex flex-col min-h-screen bg-[#fff8f5] text-gray-900">
 				<main className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 md:py-24">
 					<div className="w-full max-w-3xl text-center">
@@ -94,12 +93,6 @@ export default function NotFound() {
 						</div>
 					</div>
 				</main>
-
-				{/* Footer */}
-				<Footer
-					sections={getFooterSections()}
-					copyright="Copyright 2026. Takshaka Event & Experience"
-				/>
 			</div>
 		</>
 	);
