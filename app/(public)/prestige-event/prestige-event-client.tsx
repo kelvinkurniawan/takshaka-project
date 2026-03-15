@@ -54,7 +54,9 @@ export default function PrestigeEventClient({
 		<>
 			{/* Hero Section */}
 			{prestigeEvents.hero && (
-			<HeroSection
+				<HeroSection
+					{...(prestigeEvents.hero.contents
+						? { contents: prestigeEvents.hero.contents }
 						: {
 								title: prestigeEvents.hero.title,
 								description: prestigeEvents.hero.description,

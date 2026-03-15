@@ -1,6 +1,6 @@
 import { getDB } from "@/lib/db";
 import { categories, contents } from "@/lib/schema";
-import { eq, isNull, and } from "drizzle-orm";
+import { eq, isNull, and, SQLWrapper } from "drizzle-orm";
 
 export const runtime = "nodejs";
 
@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
 		// For each category, get its published contents
 		const categoriesWithContents = await Promise.all(
-			categoriesData.map(async (category) => {
+			categoriesData.map(async (category: { id: number | SQLWrapper }) => {
 				const categoryContents = await db
 					.select({
 						id: contents.id,

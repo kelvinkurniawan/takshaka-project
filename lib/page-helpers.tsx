@@ -12,6 +12,19 @@ import {
 } from "@/lib/schema";
 import { eq, isNull, and } from "drizzle-orm";
 
+interface FooterLink {
+	label: string;
+	href: string;
+	mobileOnly?: boolean;
+	type?: "button" | "link";
+}
+
+interface FooterSection {
+	title: string;
+	mobileOnly?: boolean;
+	links: FooterLink[];
+}
+
 export interface Settings {
 	index_page?: string;
 	hero_title?: string;
@@ -87,7 +100,6 @@ export async function getAppMetadata(): Promise<{
 }> {
 	try {
 		const allSettings = await getSettingsFromDB();
-		console.log("Fetched settings for metadata:", allSettings);
 		return {
 			name: allSettings.site_name ?? "Takshaka CMS",
 			description:
@@ -95,7 +107,6 @@ export async function getAppMetadata(): Promise<{
 				"Modern headless CMS built with Next.js",
 		};
 	} catch (error) {
-		console.error("Failed to fetch app metadata:", error);
 		return {
 			name: "Takshaka CMS",
 			description: "Modern headless CMS built with Next.js",
@@ -508,7 +519,7 @@ export function PageContentRenderer({ content }: { content: string }) {
  * Get footer sections
  */
 export function getFooterSections() {
-	return [
+	const footerSection = [
 		{
 			title: "Our Inspiration",
 			links: [
@@ -560,5 +571,7 @@ export function getFooterSections() {
 				{ label: "CAREER", href: "/connect/career", type: "button" },
 			],
 		},
-	];
+	] satisfies FooterSection[];
+
+	return footerSection;
 }
