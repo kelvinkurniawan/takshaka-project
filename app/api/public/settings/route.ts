@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function GET(request: Request) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const settingsData = await db
 			.select({

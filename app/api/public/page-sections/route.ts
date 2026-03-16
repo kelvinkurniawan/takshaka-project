@@ -19,7 +19,7 @@ export async function GET(request: Request) {
 			);
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const pageSection = await db
 			.select({

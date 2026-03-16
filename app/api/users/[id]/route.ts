@@ -32,7 +32,7 @@ export async function GET(
 			);
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const [user] = await db
 			.select({
@@ -94,7 +94,7 @@ export async function PUT(
 		const body = await request.json();
 		const validatedData = updateUserSchema.parse(body);
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Check if user exists
 		const [existing] = await db
@@ -192,7 +192,7 @@ export async function DELETE(
 			);
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Check if user exists
 		const [existing] = await db

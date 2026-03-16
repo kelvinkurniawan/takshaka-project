@@ -23,7 +23,7 @@ const querySchema = z.object({
 export async function GET(request: Request) {
 	try {
 		await requireAuth();
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const url = new URL(request.url);
 		const params = Object.fromEntries(url.searchParams);

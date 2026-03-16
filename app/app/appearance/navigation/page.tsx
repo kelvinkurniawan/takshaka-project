@@ -20,7 +20,7 @@ async function fetchNavigation(
 	platform: "desktop" | "mobile",
 ): Promise<NavigationItem[]> {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const items = await db
 			.select()
 			.from(navigation)
@@ -52,7 +52,7 @@ async function fetchNavigation(
 
 async function fetchNavigationSetting(): Promise<boolean> {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const result = await db
 			.select()
 			.from(settings)

@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 		// Verify authentication
 		await requireAuth();
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const categoriesData = await db
 			.select({
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
 		const body = await request.json();
 		const validatedData = createCategorySchema.parse(body);
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Check if slug already exists (exclude soft deleted)
 		const existing = await db

@@ -5,7 +5,7 @@ import { navigation } from "@/lib/schema";
 
 export async function POST(request: Request) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Sample navigation data
 		const sampleItems = [

@@ -25,7 +25,7 @@ export async function GET(request: Request) {
 		await requireAuth();
 
 		const faqsData = await withRetry(async () => {
-			const db = getDB();
+			const db = getDB(process.env);
 			return await db
 				.select({
 					id: faqs.id,
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
 		const userId = await getSessionUserId();
 
 		const result = await withRetry(async () => {
-			const db = getDB();
+			const db = getDB(process.env);
 			return await db
 				.insert(faqs)
 				.values({

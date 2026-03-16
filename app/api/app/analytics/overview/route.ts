@@ -25,7 +25,7 @@ export async function GET(request: Request) {
 		const { searchParams } = new URL(request.url);
 		const days = parseInt(searchParams.get("days") || "30");
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Calculate date range
 		const endDate = new Date();

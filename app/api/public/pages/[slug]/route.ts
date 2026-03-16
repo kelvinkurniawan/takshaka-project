@@ -11,7 +11,7 @@ export async function GET(
 	try {
 		const { slug } = await params;
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Fetch page by slug
 		const allPages = await db.select().from(pages).where(eq(pages.slug, slug));

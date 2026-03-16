@@ -89,7 +89,7 @@ export async function getUserWithRole(): Promise<{
 		const { users } = await import("@/lib/schema");
 		const { eq } = await import("drizzle-orm");
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const userList = await db
 			.select({

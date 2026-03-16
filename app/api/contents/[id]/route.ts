@@ -43,7 +43,7 @@ export async function GET(
 		await requireAuth();
 
 		const { id } = await params;
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const contentId = parseInt(id);
 		if (isNaN(contentId)) {
@@ -78,7 +78,7 @@ export async function PUT(
 		const user = await requireAuth();
 
 		const { id } = await params;
-		const db = getDB();
+		const db = getDB(process.env);
 		const body = await request.json();
 
 		const contentId = parseInt(id);
@@ -196,7 +196,7 @@ export async function DELETE(
 		const user = await requireAuth();
 
 		const { id } = await params;
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const contentId = parseInt(id);
 		if (isNaN(contentId)) {

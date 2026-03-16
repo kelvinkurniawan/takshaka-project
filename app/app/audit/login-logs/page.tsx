@@ -25,7 +25,7 @@ export default async function LoginLogsPage({
 }: {
 	searchParams: Promise<{ page?: string; success?: string; userId?: string }>;
 }) {
-	const db = getDB();
+	const db = getDB(process.env);
 	const params = await searchParams;
 
 	const page = parseInt(params.page || "1", 10);

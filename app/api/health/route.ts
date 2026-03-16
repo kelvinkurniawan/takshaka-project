@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		// Simple query to test DB connection
 		const result = await db.select().from(db.sql`SELECT 1 AS result`);
 

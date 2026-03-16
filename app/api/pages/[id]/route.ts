@@ -19,7 +19,7 @@ export async function GET(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const pageId = parseInt((await params).id);
 
 		if (isNaN(pageId)) {
@@ -48,7 +48,7 @@ export async function PUT(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const pageId = parseInt((await params).id);
 		const body = await request.json();
 
@@ -117,7 +117,7 @@ export async function DELETE(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const pageId = parseInt((await params).id);
 
 		if (isNaN(pageId)) {

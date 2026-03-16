@@ -21,7 +21,7 @@ export async function PUT(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const { id } = await params;
 		const body = await request.json();
 
@@ -65,7 +65,7 @@ export async function DELETE(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const { id } = await params;
 
 		const result = await db

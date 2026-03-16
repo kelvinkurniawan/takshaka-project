@@ -19,7 +19,7 @@ export async function POST(request: Request) {
 		// Validate input
 		const validatedData = seedSchema.parse(body);
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Check if user already exists
 		const existingUsers = await db

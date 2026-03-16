@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 		const days = parseInt(searchParams.get("days") || "30");
 		const pageSlug = searchParams.get("pageSlug");
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const endDate = new Date();
 		const startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);

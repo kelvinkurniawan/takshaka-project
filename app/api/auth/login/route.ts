@@ -95,7 +95,7 @@ export async function POST(request: Request) {
 				captchaResult.score,
 			);
 			// Log failed login - captcha failed
-			const db = getDB();
+			const db = getDB(process.env);
 			await logLogin(
 				db,
 				validatedData.email,
@@ -112,7 +112,7 @@ export async function POST(request: Request) {
 		}
 
 		// ===== DATABASE LOOKUP =====
-		const db = getDB();
+		const db = getDB(process.env);
 
 		try {
 			// Find user by email using Drizzle ORM

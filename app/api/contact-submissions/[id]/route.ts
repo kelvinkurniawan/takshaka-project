@@ -24,7 +24,7 @@ export async function PATCH(
 		const body = await request.json();
 		const validatedData = updateStatusSchema.parse(body);
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Update the status
 		await db
@@ -70,7 +70,7 @@ export async function DELETE(
 			return Response.json({ error: "Invalid submission ID" }, { status: 400 });
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Delete the submission
 		await db

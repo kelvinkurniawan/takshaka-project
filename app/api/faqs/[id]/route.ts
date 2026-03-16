@@ -39,7 +39,7 @@ export async function PUT(
 		}
 
 		const result = await withRetry(async () => {
-			const db = getDB();
+			const db = getDB(process.env);
 			return await db
 				.update(faqs)
 				.set({
@@ -91,7 +91,7 @@ export async function DELETE(
 		}
 
 		const result = await withRetry(async () => {
-			const db = getDB();
+			const db = getDB(process.env);
 			return await db
 				.update(faqs)
 				.set({

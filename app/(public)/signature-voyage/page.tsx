@@ -19,12 +19,12 @@ export default async function SignatureVoyagePage() {
 		await Promise.all([
 			getPageSectionsFromDB("signature-voyage"),
 			getFooterSections(),
-			getDB()
+			getDB(process.env)
 				.select()
 				.from(galleryCategories)
 				.where(isNull(galleryCategories.deletedAt))
 				.orderBy(galleryCategories.displayOrder),
-			getDB()
+			getDB(process.env)
 				.select()
 				.from(galleryOfWorks)
 				.where(isNull(galleryOfWorks.deletedAt))

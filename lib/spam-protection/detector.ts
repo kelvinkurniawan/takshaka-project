@@ -193,7 +193,7 @@ export async function checkDuplicateSubmission(
 	content: string,
 ): Promise<SpamCheckResult> {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const oneHourAgo = new Date(Date.now() - 3600000); // 1 hour ago
 
 		// Check for duplicate comments

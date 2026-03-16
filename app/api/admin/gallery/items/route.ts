@@ -20,7 +20,7 @@ export const runtime = "nodejs";
 // Get all gallery items
 export async function GET(request: Request, context: any) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const url = new URL(request.url);
 		const categoryId = url.searchParams.get("categoryId");
 
@@ -49,7 +49,7 @@ export async function GET(request: Request, context: any) {
 // Create new gallery item
 export async function POST(request: Request, context: any) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const body = await request.json();
 		const userId = body.userId || 1; // Fallback for now
 
@@ -102,7 +102,7 @@ export async function POST(request: Request, context: any) {
 // Update gallery item
 export async function PUT(request: Request, context: any) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const body = await request.json();
 		const { id, ...updateData } = body;
 
@@ -147,7 +147,7 @@ export async function PUT(request: Request, context: any) {
 // Delete gallery item (soft delete)
 export async function DELETE(request: Request, context: any) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const body = await request.json();
 		const { id } = body;
 

@@ -17,7 +17,7 @@ export async function POST(
 
 		const { commentId } = await params;
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Update comment status to approved
 		await db

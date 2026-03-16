@@ -19,7 +19,7 @@ export async function generateMetadata({
 
 	try {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const db = getDB();
+		const db = getDB(process.env);
 		const contentId = parseInt(id);
 
 		if (isNaN(contentId)) {
@@ -58,7 +58,7 @@ export default async function EditContentPage({
 }) {
 	const { id } = await params;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const db = getDB();
+	const db = getDB(process.env);
 	const contentId = parseInt(id);
 
 	if (isNaN(contentId)) {

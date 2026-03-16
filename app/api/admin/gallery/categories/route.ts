@@ -16,7 +16,7 @@ export const runtime = "nodejs";
 // Get all categories
 export async function GET(request: Request, context: any) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const categories = await db
 			.select()
@@ -37,7 +37,7 @@ export async function GET(request: Request, context: any) {
 // Create new category
 export async function POST(request: Request, context: any) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const body = await request.json();
 
 		const validatedData = categorySchema.parse(body);
@@ -88,7 +88,7 @@ export async function POST(request: Request, context: any) {
 // Delete category (soft delete)
 export async function DELETE(request: Request, context: any) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const body = await request.json();
 		const { id } = body;
 

@@ -39,7 +39,7 @@ export async function checkRateLimit(
 	}
 
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Import table from schema
 		const { loginAttempts } = await import("@/lib/schema");
@@ -102,7 +102,7 @@ export async function resetRateLimit(identifier: string): Promise<void> {
 	if (!identifier) return;
 
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const { loginAttempts } = await import("@/lib/schema");
 
 		// Delete all attempts for this identifier
@@ -124,7 +124,7 @@ export async function cleanupOldAttempts(
 	olderThanMs: number = 60 * 60 * 1000,
 ): Promise<void> {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const { loginAttempts } = await import("@/lib/schema");
 
 		const cutoff = new Date(Date.now() - olderThanMs);

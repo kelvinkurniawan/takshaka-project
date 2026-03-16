@@ -35,7 +35,7 @@ type SearchParams = z.infer<typeof searchSchema>;
 export async function GET(request: Request) {
 	try {
 		await requireAuth();
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Parse query parameters
 		const url = new URL(request.url);

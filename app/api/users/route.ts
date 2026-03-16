@@ -27,7 +27,7 @@ export async function GET(request: Request) {
 	try {
 		await requireAuth();
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const usersData = await db
 			.select({
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
 		const body = await request.json();
 		const validatedData = createUserSchema.parse(body);
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Check if email already exists (exclude soft deleted)
 		const existing = await db

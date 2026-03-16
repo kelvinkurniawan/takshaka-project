@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Get today's date (start and end)
 		const today = new Date();

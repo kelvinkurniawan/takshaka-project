@@ -35,7 +35,7 @@ export async function GET(request: Request) {
 			return Response.json({ error: "Content ID diperlukan" }, { status: 400 });
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Fetch approved comments only
 		const allComments = await db
@@ -123,7 +123,7 @@ export async function POST(request: Request) {
 			validatedData.submissionTime,
 		);
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Create comment
 		const result = await db.insert(commentsTable).values({

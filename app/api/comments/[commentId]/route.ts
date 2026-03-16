@@ -30,7 +30,7 @@ export async function GET(
 	try {
 		const { commentId } = await params;
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Fetch approved replies only
 		const allReplies = await db
@@ -93,7 +93,7 @@ export async function POST(
 			);
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 		const commentIdNum = parseInt(commentId);
 
 		// Verify comment exists and is approved

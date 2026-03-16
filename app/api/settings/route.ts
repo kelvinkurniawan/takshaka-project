@@ -16,7 +16,7 @@ const updateSettingSchema = z.object({
 export async function GET(request: Request) {
 	try {
 		await requireAuth();
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const settingsData = await db
 			.select({
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 		const body = await request.json();
 		const validatedData = z.record(z.string(), z.string()).parse(body); // Expect object with string key-value pairs
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const results = [];
 

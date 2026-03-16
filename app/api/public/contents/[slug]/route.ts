@@ -11,7 +11,7 @@ export async function GET(
 	try {
 		const { slug } = await params;
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Fetch content by slug
 		const allContents = await db

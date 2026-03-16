@@ -19,7 +19,7 @@ export async function GET(request: Request) {
 		const successParam = url.searchParams.get("success");
 		const userIdParam = url.searchParams.get("userId");
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Build query with filters
 		let allLogs = await db

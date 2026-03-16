@@ -17,7 +17,7 @@ const createPageSchema = z.object({
 
 export async function GET(request: Request) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Fetch all non-deleted pages
 		const allPages = await db
@@ -34,7 +34,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const body = await request.json();
 
 		// Validate input

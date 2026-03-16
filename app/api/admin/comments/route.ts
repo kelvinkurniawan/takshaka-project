@@ -18,7 +18,7 @@ export async function GET(request: Request) {
 		const status = searchParams.get("status") || "all";
 		const spam = searchParams.get("spam") || "all";
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Fetch all comments
 		const allComments = await db

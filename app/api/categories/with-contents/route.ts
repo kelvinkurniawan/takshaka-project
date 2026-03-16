@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 
 export async function GET(request: Request) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const url = new URL(request.url);
 		const categoryIds = url.searchParams.getAll("categoryIds");
 

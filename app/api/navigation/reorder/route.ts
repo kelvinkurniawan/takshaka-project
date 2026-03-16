@@ -14,7 +14,7 @@ const reorderSchema = z.object({
 
 export async function POST(request: Request) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const body = await request.json();
 
 		const { id, direction, parentId, platform } = reorderSchema.parse(body);

@@ -19,7 +19,7 @@ export async function GET(request: Request) {
 			return Response.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Get yesterday's date (untuk daily aggregation)
 		const today = new Date();

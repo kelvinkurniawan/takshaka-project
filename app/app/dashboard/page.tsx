@@ -37,7 +37,7 @@ interface DashboardStats {
 
 export default async function DashboardPage() {
 	// Server component: fetch counts from DB and pass as props to client component
-	const db = getDB();
+	const db = getDB(process.env);
 
 	let stats: DashboardStats = {
 		totals: { contents: 0, users: 0, categories: 0 },

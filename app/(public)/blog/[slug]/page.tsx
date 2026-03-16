@@ -23,7 +23,7 @@ interface Content {
 
 async function getContent(slug: string): Promise<Content | null> {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const article = await db
 			.select({
 				id: contents.id,

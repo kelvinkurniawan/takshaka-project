@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 			);
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Get current user
 		const user = await db

@@ -30,7 +30,7 @@ export async function GET(
 			return Response.json({ error: "ID tidak valid" }, { status: 400 });
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const pageSection = await db
 			.select()
@@ -100,7 +100,7 @@ export async function PUT(
 			}
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Check if page section exists
 		const existingPageSection = await db
@@ -197,7 +197,7 @@ export async function DELETE(
 			return Response.json({ error: "ID tidak valid" }, { status: 400 });
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Check if page section exists
 		const existingPageSection = await db

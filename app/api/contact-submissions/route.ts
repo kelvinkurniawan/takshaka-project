@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 		}
 
 		// Save to database
-		const db = getDB();
+		const db = getDB(process.env);
 		await db.insert(contactSubmissions).values({
 			fullName: validatedData.fullName,
 			email: validatedData.email,
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const submissions = await db
 			.select()
 			.from(contactSubmissions)

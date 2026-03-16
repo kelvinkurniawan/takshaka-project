@@ -21,7 +21,7 @@ export async function GET() {
 			return Response.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const user = await db
 			.select({
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
 		// Validate input
 		const validatedData = updateProfileSchema.parse(body);
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Check if email is already taken by another user
 		const existingUser = await db

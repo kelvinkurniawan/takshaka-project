@@ -44,7 +44,7 @@ const updateContentSchema = createContentSchema.partial();
 export async function GET(request: Request) {
 	try {
 		await requireAuth();
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Get all active (non-deleted) contents
 		const allContents = await db
@@ -72,7 +72,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
 	try {
 		const user = await requireAuth();
-		const db = getDB();
+		const db = getDB(process.env);
 		const body = await request.json();
 
 		// Validate input

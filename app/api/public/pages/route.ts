@@ -5,7 +5,7 @@ import { isNull, eq } from "drizzle-orm";
 export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Fetch all published pages (not deleted)
 		const allPages = await db

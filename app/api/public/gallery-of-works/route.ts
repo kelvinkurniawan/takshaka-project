@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 // Get all categories with item counts
 export async function GET(request: Request, context: any) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const url = new URL(request.url);
 		const categorySlug = url.searchParams.get("category");
 

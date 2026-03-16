@@ -10,7 +10,7 @@ export async function GET(request: Request) {
 		const type = searchParams.get("type");
 		const categoryId = searchParams.get("categoryId");
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Fetch all non-deleted contents
 		const allContents = await db

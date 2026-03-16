@@ -19,7 +19,7 @@ export async function GET(request: Request) {
 		const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
 		const offset = parseInt(searchParams.get("offset") || "0");
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Get recent audit logs
 		const logs = await db

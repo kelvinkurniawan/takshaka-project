@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 			return Response.json({ error: "Media ID is required" }, { status: 400 });
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Get media from database
 		const media = await db

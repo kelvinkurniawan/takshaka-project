@@ -150,7 +150,7 @@ export async function POST(request: Request) {
 		}
 
 		// Save media metadata to database
-		const db = getDB();
+		const db = getDB(process.env);
 		const result = await db.insert(mediaGallery).values({
 			filename: s3Key,
 			url: publicUrl,

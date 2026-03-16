@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
 	try {
 		await requireAuth();
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const media = await db
 			.select()
@@ -43,7 +43,7 @@ export async function DELETE(request: Request) {
 			return Response.json({ error: "Media ID is required" }, { status: 400 });
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Soft delete
 		await db

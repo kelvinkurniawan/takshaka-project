@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 			.digest("hex")
 			.substring(0, 32); // Shortened for storage
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Record page view
 		await db.insert(pageViews).values({

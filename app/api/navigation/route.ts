@@ -18,7 +18,7 @@ const createNavigationSchema = z.object({
 
 export async function GET(request: Request) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const url = new URL(request.url);
 		const platform = url.searchParams.get("platform") || "desktop"; // default to desktop
 
@@ -59,7 +59,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const body = await request.json();
 
 		const validatedData = createNavigationSchema.parse(body);

@@ -32,7 +32,7 @@ export default async function ContentAuditLogsPage({
 		action?: string;
 	}>;
 }) {
-	const db = getDB();
+	const db = getDB(process.env);
 	const params = await searchParams;
 
 	const page = parseInt(params.page || "1", 10);

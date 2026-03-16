@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 		const contentIds = contentIdsParam.split(",").map((id) => parseInt(id));
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Fetch all comments for the specified content IDs
 		const allComments = await db

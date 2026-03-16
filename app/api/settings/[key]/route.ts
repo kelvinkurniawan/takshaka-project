@@ -25,7 +25,7 @@ export async function GET(
 		const { key } = await params;
 		const settingKey = decodeURIComponent(key);
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const [setting] = await db
 			.select({
@@ -82,7 +82,7 @@ export async function PUT(
 		const body = await request.json();
 		const validatedData = updateSettingSchema.parse(body);
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Check if setting exists
 		const [existing] = await db
@@ -162,7 +162,7 @@ export async function DELETE(
 		const { key } = await params;
 		const settingKey = decodeURIComponent(key);
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Check if setting exists
 		const [existing] = await db

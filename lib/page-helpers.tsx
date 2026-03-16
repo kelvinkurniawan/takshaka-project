@@ -119,7 +119,7 @@ export async function getAppMetadata(): Promise<{
  */
 export async function getSettingsFromDB(): Promise<Settings> {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const allSettings = await db.select().from(settings);
 
 		const result: Settings = {};
@@ -138,7 +138,7 @@ export async function getSettingsFromDB(): Promise<Settings> {
  */
 export async function getPageSectionsFromDB(slug: string): Promise<any | null> {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const pageSection = await db
 			.select()
@@ -175,7 +175,7 @@ export async function transformPageSectionsWithDynamicTabs(
 	}
 
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Fetch categories and their published content
 		const categoriesWithContent = await Promise.all(
@@ -275,7 +275,7 @@ export async function transformPageSectionsWithDynamicTabs(
  */
 export async function getPageByIdFromDB(pageId: number): Promise<Page | null> {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const pages = await db
 			.select()
 			.from(contents)

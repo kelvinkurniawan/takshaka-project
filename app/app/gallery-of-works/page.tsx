@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function GalleryOfWorksPage() {
-	const db = getDB();
+	const db = getDB(process.env);
 
 	let categories: Category[] = [];
 	let items: GalleryItem[] = [];

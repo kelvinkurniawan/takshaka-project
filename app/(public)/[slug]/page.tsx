@@ -15,7 +15,7 @@ interface Page {
 
 async function getPage(slug: string): Promise<Page | null> {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const page = await db
 			.select({
 				id: pages.id,

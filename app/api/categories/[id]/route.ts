@@ -32,7 +32,7 @@ export async function GET(
 			);
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const [category] = await db
 			.select({
@@ -96,7 +96,7 @@ export async function PUT(
 		const body = await request.json();
 		const validatedData = updateCategorySchema.parse(body);
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Check if category exists
 		const [existing] = await db
@@ -196,7 +196,7 @@ export async function DELETE(
 			);
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Check if category exists
 		const [existing] = await db

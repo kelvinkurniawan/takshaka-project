@@ -17,7 +17,7 @@ interface FAQ {
 
 async function fetchFAQs(): Promise<FAQ[]> {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Cast dates to string since they might be Date objects
 		const faqsData = await db

@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 		// Verify authentication
 		await requireAuth();
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		const pageSectionsData = await db
 			.select({
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
 			);
 		}
 
-		const db = getDB();
+		const db = getDB(process.env);
 
 		// Check if slug already exists (exclude soft deleted)
 		const existing = await db

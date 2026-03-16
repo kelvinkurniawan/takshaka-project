@@ -20,7 +20,7 @@ interface Content {
 
 async function getContents(): Promise<Content[]> {
 	try {
-		const db = getDB();
+		const db = getDB(process.env);
 		const articles = await db
 			.select({
 				id: contents.id,

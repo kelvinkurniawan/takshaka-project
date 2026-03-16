@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function FaqsPage() {
-	const db = getDB();
+	const db = getDB(process.env);
 
 	let faqsList: any[] = [];
 	let hasError = false;
