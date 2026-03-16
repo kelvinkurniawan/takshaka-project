@@ -4,7 +4,7 @@ import * as schema from "./schema";
 
 let db: any = null;
 
-export function getDB() {
+export function getDB(env: NodeJS.ProcessEnv) {
 	if (db) return db;
 
 	const databaseUrl = process.env.DATABASE_URL;

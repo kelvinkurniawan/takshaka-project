@@ -4,6 +4,8 @@ import AOSInit from "../components/AOSInit";
 import { Footer } from "@/components/sections";
 import { getFooterSections, getAppMetadata } from "@/lib/page-helpers";
 import { RecaptchaProvider } from "@/lib/RecaptchaProvider";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const { name, description } = await getAppMetadata();
@@ -37,6 +39,8 @@ export default function RootLayout({
 					<AOSInit />
 					{children}
 				</RecaptchaProvider>
+				<Analytics />
+				<SpeedInsights />
 			</body>
 		</html>
 	);

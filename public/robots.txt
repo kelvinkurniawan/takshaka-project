@@ -1,0 +1,51 @@
+# NextCMS - Robots.txt Configuration
+# This file tells search engines how to crawl and index the website
+
+# Default rules for all bots
+User-agent: *
+Allow: /
+Allow: /api/public/
+
+# Disallow admin and private routes
+Disallow: /admin/
+Disallow: /api/admin/
+Disallow: /api/app/
+Disallow: /api/auth/
+Disallow: /api/seed/
+Disallow: /api/cron/
+Disallow: /access-denied/
+Disallow: /secure-access/
+
+# Disallow query parameters (pagination, filters, etc)
+Disallow: /*?*
+Disallow: /*&*
+
+# Disallow common bot traps
+Disallow: /*?sort=
+Disallow: /*?filter=
+Disallow: /*?page=
+
+# Allow Google and Bing to crawl
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# Sitemap location
+Sitemap: /sitemap.xml
