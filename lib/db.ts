@@ -7,21 +7,22 @@ let db: any = null;
 export function getDB(env: NodeJS.ProcessEnv) {
 	if (db) return db;
 
-	// Gunakan DIRECT_URL untuk menghindari pooler issues
-	const databaseUrl = process.env.DIRECT_URL || process.env.DATABASE_URL;
+	const databaseUrl = process.env.DATABASE_URL;
 
 	if (!databaseUrl) {
 		throw new Error(
-			"DATABASE_URL atau DIRECT_URL tidak ditemukan. Pastikan sudah set di .env.local",
+			"DATABASE_URL tidak ditemukan. Pastikan sudah set di .env.local atau .env.production",
 		);
 	}
 
 	// Buat koneksi PostgreSQL dengan optimized pool configuration
 	const pool = new Pool({
 		connectionString: databaseUrl,
-		max: 20, // Maximum number of clients in the pool
-		idleTimeoutMillis: 30000, // 30 seconds
-		connectionTimeoutMillis: 10000, // 10 seconds
+		max: 10, // Reduced to respect Supabase connection limits
+		idleTimeoutMillis: 5000, // Release connections faster during build
+		connectionTimeoutMillis: 15000,
+		statement_timeout: 30000,
+		application_name: "takshaka-cms",
 	});
 
 	// Add event listeners untuk debugging
