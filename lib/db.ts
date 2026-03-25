@@ -7,11 +7,12 @@ let db: any = null;
 export function getDB(env: NodeJS.ProcessEnv) {
 	if (db) return db;
 
-	const databaseUrl = process.env.DATABASE_URL;
+	// Gunakan DIRECT_URL untuk menghindari pooler issues
+	const databaseUrl = process.env.DIRECT_URL || process.env.DATABASE_URL;
 
 	if (!databaseUrl) {
 		throw new Error(
-			"DATABASE_URL tidak ditemukan. Pastikan sudah set di .env.local",
+			"DATABASE_URL atau DIRECT_URL tidak ditemukan. Pastikan sudah set di .env.local",
 		);
 	}
 
