@@ -128,6 +128,7 @@ export function createRequestDB(): Database {
 
 /**
  * Internal function to fetch settings directly from database
+ * Returns empty object on failure with graceful error handling
  */
 async function _getSettingsFromDB(db: Database): Promise<Settings> {
 	try {
@@ -139,13 +140,31 @@ async function _getSettingsFromDB(db: Database): Promise<Settings> {
 		}
 		return result;
 	} catch (error) {
-		console.error("❌ DB ERROR FULL:", {
-			message: error instanceof Error ? error.message : String(error),
+		const errorMsg = error instanceof Error ? error.message : String(error);
+		const isTableNotFound =
+			errorMsg.includes("does not exist") ||
+			errorMsg.includes("no such table") ||
+			errorMsg.includes("Failed query");
+
+		// Log at warning level for expected errors (table not initialized)
+		const logLevel = isTableNotFound ? "warn" : "error";
+		console[logLevel]("⚠️  Failed to fetch settings from database:", {
+			message: errorMsg,
 			code: (error as any).code,
 			detail: (error as any).detail,
-			stack: error instanceof Error ? error.stack : undefined,
+			// Only include stack for unexpected errors
+			stack: isTableNotFound
+				? undefined
+				: error instanceof Error
+					? error.stack
+					: undefined,
 		});
-		return {};
+
+		// Return defaults instead of empty object
+		return {
+			site_name: "Takshaka Indonesia",
+			site_description: "Luxury Travel Experiences",
+		};
 	}
 }
 

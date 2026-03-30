@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Instagram, Youtube, Linkedin } from "lucide-react";
 
 interface FooterLink {
@@ -67,12 +68,13 @@ export default function Footer({ sections, copyright }: FooterProps) {
 					<div className="border-t border-[#A27C34] pt-8"></div>
 
 					<div className="mb-4  md:hidden">
-						<a
+						<Link
 							href="/contact-us"
+							prefetch={false}
 							className="text-white hover:text-gray-400 text-sm leading-relaxed transition-colors duration-300 titlecase border px-2 py-2 border-[#A27C34] w-[120px] text-center tracking-widest"
 						>
 							CONTACT US
-						</a>
+						</Link>
 					</div>
 
 					<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-6 md:gap-12 mb-8 md:mb-12">
@@ -90,12 +92,13 @@ export default function Footer({ sections, copyright }: FooterProps) {
 											key={linkIdx}
 											className={`${link.type === "button" ? "border px-2 py-1 border-[#A27C34] w-[100px] text-center tracking-wider" : ""}`}
 										>
-											<a
+											<Link
 												href={link.href}
+												prefetch={false}
 												className={`text-white hover:text-gray-400 text-sm leading-relaxed transition-colors duration-300 titlecase `}
 											>
 												{link.label}
-											</a>
+											</Link>
 										</li>
 									))}
 								</ul>
@@ -104,12 +107,13 @@ export default function Footer({ sections, copyright }: FooterProps) {
 					</div>
 
 					<div className="mb-4 hidden md:flex">
-						<a
+						<Link
 							href="/contact-us"
+							prefetch={false}
 							className="text-white hover:text-gray-400 text-sm leading-relaxed transition-colors duration-300 titlecase border px-2 py-2 border-[#A27C34] w-[120px] text-center tracking-widest"
 						>
 							CONTACT US
-						</a>
+						</Link>
 					</div>
 
 					{/* Divider */}

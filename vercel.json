@@ -3,7 +3,7 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "env": {
-    "DATABASE_URL": "postgresql://postgres.ursfbvnggxsftkeolnux:Q1lUJicGxLlq2Fng@aws-1-ap-south-1.pooler.supabase.com:6543/postgres",
+    "DATABASE_URL": "postgresql://postgres.jyfyfzquyrklypkonigj:TakshakaId1@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres",
     "NODE_ENV": "production"
   },
   "git": {

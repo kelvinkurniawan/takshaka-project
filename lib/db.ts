@@ -12,9 +12,13 @@ export function getDB(env: NodeJS.ProcessEnv) {
 
 	// ✅ Use env parameter first (for Vercel/production), fallback to process.env
 	const databaseUrl = env.DATABASE_URL || process.env.DATABASE_URL;
-	console.log("DB URL from env:", env.DATABASE_URL ? "✅ Set" : "❌ Not set");
+	console.log("🔍 Database initialization:");
 	console.log(
-		"DB URL from process.env:",
+		"  - env.DATABASE_URL:",
+		env.DATABASE_URL ? "✅ Set" : "❌ Not set",
+	);
+	console.log(
+		"  - process.env.DATABASE_URL:",
 		process.env.DATABASE_URL ? "✅ Set" : "❌ Not set",
 	);
 
@@ -23,6 +27,8 @@ export function getDB(env: NodeJS.ProcessEnv) {
 			"DATABASE_URL tidak ditemukan. Pastikan sudah set di .env.local atau .env.production atau Vercel Environment Variables",
 		);
 	}
+
+	console.log("✅ DATABASE_URL found, connecting...");
 
 	// Buat koneksi PostgreSQL dengan optimized pool configuration
 	const pool = new Pool({
@@ -38,7 +44,7 @@ export function getDB(env: NodeJS.ProcessEnv) {
 
 	// Add event listeners untuk debugging
 	pool.on("error", (err) => {
-		console.error("Unexpected error on idle client", err);
+		console.error("❌ Unexpected error on idle client", err);
 	});
 
 	pool.on("connect", () => {
@@ -52,6 +58,7 @@ export function getDB(env: NodeJS.ProcessEnv) {
 	const db = drizzle(pool, { schema });
 	global._db = db;
 
+	console.log("✅ Database instance created");
 	return db;
 }
 

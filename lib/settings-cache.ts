@@ -36,8 +36,24 @@ async function initializeSettingsCache() {
 			`✓ Settings cache initialized with ${allSettings.length} entries`,
 		);
 	} catch (error) {
-		console.error("Failed to initialize settings cache:", error);
-		settingsCache = new Map();
+		const errorMsg = error instanceof Error ? error.message : String(error);
+		const isTableNotFound =
+			errorMsg.includes("does not exist") ||
+			errorMsg.includes("no such table") ||
+			errorMsg.includes("Failed query");
+
+		// Log at warning level for expected errors (table not initialized)
+		if (isTableNotFound) {
+			console.warn("⚠️  Settings table not accessible, using defaults");
+		} else {
+			console.error("Failed to initialize settings cache:", error);
+		}
+
+		// Initialize empty cache instead of showing error
+		settingsCache = new Map([
+			["site_name", "Takshaka Indonesia"],
+			["site_description", "Luxury Travel Experiences"],
+		]);
 	}
 }
 
