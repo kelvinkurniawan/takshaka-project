@@ -1,12 +1,4 @@
 import PublicHeader from "@/components/PublicHeader";
-import {
-	ThreeItemSection,
-	ImagesSection,
-	CuratedExperiencesSection,
-	ExperiencesSharedSection,
-	SustainableImpactSection,
-	Footer,
-} from "@/components/sections";
 
 import {
 	getSettingsFromDB,

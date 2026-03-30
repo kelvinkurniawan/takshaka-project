@@ -3,6 +3,7 @@
  * Shared utility functions for rendering pages and sections
  */
 
+import { cache } from "react";
 import { getDB } from "@/lib/db";
 import {
 	settings,
@@ -10,7 +11,7 @@ import {
 	contents,
 	categories as categoriesTable,
 } from "@/lib/schema";
-import { eq, isNull, and } from "drizzle-orm";
+import { eq, isNull, and, inArray } from "drizzle-orm";
 
 interface FooterLink {
 	label: string;
@@ -115,9 +116,9 @@ export async function getAppMetadata(): Promise<{
 }
 
 /**
- * Fetch settings directly from database
+ * Internal function to fetch settings directly from database
  */
-export async function getSettingsFromDB(): Promise<Settings> {
+async function _getSettingsFromDB(): Promise<Settings> {
 	try {
 		const db = getDB(process.env);
 		const allSettings = await db.select().from(settings);
@@ -134,9 +135,15 @@ export async function getSettingsFromDB(): Promise<Settings> {
 }
 
 /**
- * Fetch page sections directly from database by slug
+ * Cached version of getSettingsFromDB
+ * Results are cached per request to avoid duplicate queries
  */
-export async function getPageSectionsFromDB(slug: string): Promise<any | null> {
+export const getSettingsFromDB = cache(_getSettingsFromDB);
+
+/**
+ * Internal function to fetch page sections from database by slug
+ */
+async function _getPageSectionsFromDB(slug: string): Promise<any | null> {
 	try {
 		const db = getDB(process.env);
 
@@ -157,8 +164,14 @@ export async function getPageSectionsFromDB(slug: string): Promise<any | null> {
 }
 
 /**
+ * Cached version of getPageSectionsFromDB
+ * Results are cached per request to avoid duplicate queries
+ */
+export const getPageSectionsFromDB = cache(_getPageSectionsFromDB);
+
+/**
  * Transform page sections data by building tabs from selectedCategoryIds
- * This generates dynamic tabs from the available categories and their content
+ * Uses batch queries to avoid N+1 problem
  */
 export async function transformPageSectionsWithDynamicTabs(
 	sections: any,
@@ -177,56 +190,68 @@ export async function transformPageSectionsWithDynamicTabs(
 	try {
 		const db = getDB(process.env);
 
-		// Fetch categories and their published content
-		const categoriesWithContent = await Promise.all(
-			selectedCategoryIds.map(async (categoryId: number) => {
-				const categoryData = await db
-					.select({
-						id: categoriesTable.id,
-						name: categoriesTable.name,
-						slug: categoriesTable.slug,
-						description: categoriesTable.description,
-					})
-					.from(categoriesTable)
-					.where(
-						and(
-							eq(categoriesTable.id, categoryId),
-							isNull(categoriesTable.deletedAt),
-						),
-					)
-					.limit(1);
+		// Batch fetch all categories at once (1 query instead of N)
+		const allCategories = await db
+			.select({
+				id: categoriesTable.id,
+				name: categoriesTable.name,
+				slug: categoriesTable.slug,
+				description: categoriesTable.description,
+			})
+			.from(categoriesTable)
+			.where(
+				and(
+					inArray(categoriesTable.id, selectedCategoryIds),
+					isNull(categoriesTable.deletedAt),
+				),
+			);
 
-				if (categoryData.length === 0) return null;
+		if (allCategories.length === 0) return sections;
 
-				const category = categoryData[0];
+		// Batch fetch all contents for these categories at once (1 query instead of N)
+		const allContents = await db
+			.select({
+				id: contents.id,
+				title: contents.title,
+				excerpt: contents.excerpt,
+				featuredImage: contents.featuredImage,
+				slug: contents.slug,
+				categoryId: contents.categoryId,
+			})
+			.from(contents)
+			.where(
+				and(
+					inArray(contents.categoryId, selectedCategoryIds),
+					eq(contents.status, "published"),
+					isNull(contents.deletedAt),
+				),
+			)
+			.limit(4 * selectedCategoryIds.length); // Limit total items to 4 per category
 
-				// Fetch published contents for this category
-				const categoryContents = await db
-					.select({
-						id: contents.id,
-						title: contents.title,
-						excerpt: contents.excerpt,
-						featuredImage: contents.featuredImage,
-						slug: contents.slug,
-					})
-					.from(contents)
-					.limit(4) // Limit to 5 items per category for performance
-					.where(
-						and(
-							eq(contents.categoryId, categoryId),
-							eq(contents.status, "published"),
-							isNull(contents.deletedAt),
-						),
-					);
+		// Group contents by categoryId in memory
+		const contentsByCategory = new Map<number, typeof allContents>();
+		for (const content of allContents) {
+			if (!contentsByCategory.has(content.categoryId)) {
+				contentsByCategory.set(content.categoryId, []);
+			}
+			const categoryContents = contentsByCategory.get(content.categoryId);
+			if (categoryContents && categoryContents.length < 4) {
+				categoryContents.push(content);
+			}
+		}
 
+		// Build categories with content
+		const categoriesWithContent = allCategories
+			.map((category: { id: number }) => {
+				const categoryContents = contentsByCategory.get(category.id) || [];
 				if (categoryContents.length === 0) return null;
 
 				return {
 					...category,
 					contents: categoryContents,
 				};
-			}),
-		);
+			})
+			.filter((cat: null) => cat !== null);
 
 		// Utility function to truncate text
 		const truncateText = (text: string, maxLength: number = 120): string => {
@@ -239,9 +264,8 @@ export async function transformPageSectionsWithDynamicTabs(
 		const placeholderImage =
 			"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23e5e7eb' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' font-size='16' fill='%23999' text-anchor='middle' dominant-baseline='middle'%3ENo Image Available%3C/text%3E%3C/svg%3E";
 
-		// Filter out null values and generate tabs
-		const validCategories = categoriesWithContent.filter((cat) => cat !== null);
-		const tabs = validCategories.map((category) => ({
+		// Generate tabs
+		const tabs = categoriesWithContent.map((category: any) => ({
 			id: `tab-${category.id}`,
 			label: category.name,
 			items: category.contents.map((content: any) => ({

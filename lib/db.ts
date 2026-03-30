@@ -25,6 +25,9 @@ export function getDB(env: NodeJS.ProcessEnv) {
 		max: 1, // Reduced to respect Supabase connection limits
 		idleTimeoutMillis: 5000, // Release connections faster during build
 		connectionTimeoutMillis: 15000,
+		// 🔥 PENTING
+		statement_timeout: false,
+		query_timeout: 5000,
 	});
 	global._pool = pool;
 
