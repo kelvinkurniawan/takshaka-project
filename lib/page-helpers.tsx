@@ -271,6 +271,172 @@ export async function transformPageSectionsWithDynamicTabs(
 }
 
 /**
+ * Transform signature voyage page sections with dynamic top destinations
+ * Fetches articles from selected categories and maps them to destination format
+ */
+export async function transformSignatureVoyageWithDynamicDestinations(
+	sections: any,
+): Promise<any> {
+	if (!sections || !sections.topDestinations) {
+		return sections;
+	}
+
+	const { selectedCategoryIds } = sections.topDestinations;
+
+	// If no categories are selected or they use manual destinations, return as-is
+	if (!selectedCategoryIds || selectedCategoryIds.length === 0) {
+		return sections;
+	}
+
+	try {
+		const db = getDB(process.env);
+
+		// Fetch articles from all selected categories in parallel
+		const articlesFromCategories = await Promise.all(
+			selectedCategoryIds.map(async (categoryId: number) => {
+				// Fetch published contents for this category
+				const categoryContents = await db
+					.select({
+						id: contents.id,
+						title: contents.title,
+						excerpt: contents.excerpt,
+						content: contents.content,
+						featuredImage: contents.featuredImage,
+						slug: contents.slug,
+					})
+					.from(contents)
+					.where(
+						and(
+							eq(contents.categoryId, categoryId),
+							eq(contents.status, "published"),
+							isNull(contents.deletedAt),
+						),
+					)
+					.orderBy(contents.createdAt);
+
+				return categoryContents || [];
+			}),
+		);
+
+		// Flatten all articles from all categories into a single array
+		const allArticles = articlesFromCategories.flat();
+
+		// Map articles to destination format
+		const allDestinations = allArticles.map((content: any) => ({
+			title: content.title,
+			subtitle: content.excerpt || "No description available",
+			description:
+				content.excerpt ||
+				content.content?.substring(0, 200) ||
+				"No description available",
+			image: content.featuredImage,
+			slug: content.slug, // For navigation to blog detail page
+		}));
+
+		// Return sections with generated destinations
+		return {
+			...sections,
+			topDestinations: {
+				...sections.topDestinations,
+				destinations:
+					allDestinations.length > 0
+						? allDestinations
+						: sections.topDestinations.destinations, // Fallback to manual if no articles found
+			},
+		};
+	} catch (error) {
+		console.error(
+			"Failed to transform signature voyage with dynamic destinations:",
+			error,
+		);
+		// Return original sections if transformation fails
+		return sections;
+	}
+}
+
+/**
+ * Transform wellness escape page sections with dynamic top destinations
+ * Same as signature voyage transformation
+ */
+export async function transformWellnessEscapeWithDynamicDestinations(
+	sections: any,
+): Promise<any> {
+	if (!sections || !sections.theHolisticExperience) {
+		return sections;
+	}
+
+	const { selectedCategoryIds } = sections.theHolisticExperience;
+
+	// If no categories are selected or they use manual destinations, return as-is
+	if (!selectedCategoryIds || selectedCategoryIds.length === 0) {
+		return sections;
+	}
+
+	try {
+		const db = getDB(process.env);
+
+		// Fetch articles from all selected categories in parallel
+		const articlesFromCategories = await Promise.all(
+			selectedCategoryIds.map(async (categoryId: number) => {
+				// Fetch published contents for this category
+				const categoryContents = await db
+					.select({
+						id: contents.id,
+						title: contents.title,
+						excerpt: contents.excerpt,
+						content: contents.content,
+						featuredImage: contents.featuredImage,
+						slug: contents.slug,
+					})
+					.from(contents)
+					.where(
+						and(
+							eq(contents.categoryId, categoryId),
+							eq(contents.status, "published"),
+							isNull(contents.deletedAt),
+						),
+					)
+					.orderBy(contents.createdAt);
+
+				return categoryContents || [];
+			}),
+		);
+
+		// Flatten all articles from all categories into a single array
+		const allArticles = articlesFromCategories.flat();
+
+		// Map articles to destination format with validation
+		const allDestinations = allArticles
+			.filter((content) => content.title) // Filter out articles without title
+			.map((content: any) => ({
+				title: content.title,
+				subtitle: content.excerpt || "No description available",
+				description:
+					content.excerpt ||
+					content.content?.substring(0, 200) ||
+					"No description available",
+				image: content.featuredImage || "/images/placeholder.jpg",
+				slug: content.slug, // For navigation to blog detail page
+			}));
+
+		// Return sections with generated destinations
+		return {
+			...sections,
+			theHolisticExperience: {
+				...sections.theHolisticExperience,
+				destinations:
+					allDestinations.length > 0
+						? allDestinations
+						: sections.theHolisticExperience.destinations, // Fallback to manual if no articles found
+			},
+		};
+	} catch (error) {
+		// Return original sections if transformation fails
+		return sections;
+	}
+}
+
+/**
  * Fetch page by ID directly from database
  */
 export async function getPageByIdFromDB(pageId: number): Promise<Page | null> {

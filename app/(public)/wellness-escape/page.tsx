@@ -1,9 +1,9 @@
 import {
 	getPageSectionsFromDB,
 	getFooterSections,
-	transformSignatureVoyageWithDynamicDestinations,
+	transformWellnessEscapeWithDynamicDestinations,
 } from "@/lib/page-helpers";
-import SignatureVoyageClient from "./signature-voyage-client";
+import WellnessEscapeClient from "./wellness-escape-client";
 import { getDB } from "@/lib/db";
 import { galleryCategories, galleryOfWorks } from "@/lib/schema";
 import { isNull } from "drizzle-orm";
@@ -13,17 +13,17 @@ import { isNull } from "drizzle-orm";
 export const revalidate = 60;
 
 export const metadata = {
-	title: "Signature Voyage",
+	title: "Wellness Escape",
 	description:
-		"Experience unforgettable journeys and curated travel adventures",
+		"Experience rejuvenating wellness and mindful retreat experiences",
 };
 
-export default async function SignatureVoyagePage() {
-	const signatureVoyageRaw = await getPageSectionsFromDB("signature-voyage");
+export default async function WellnessEscapePage() {
+	const wellnessEscapeRaw = await getPageSectionsFromDB("wellness-escape");
 
 	// Transform sections to generate dynamic destinations from selectedCategoryIds
-	const signatureVoyage =
-		await transformSignatureVoyageWithDynamicDestinations(signatureVoyageRaw);
+	const wellnessEscape =
+		await transformWellnessEscapeWithDynamicDestinations(wellnessEscapeRaw);
 
 	const [footerSections, categories, items] = await Promise.all([
 		getFooterSections(),
@@ -39,7 +39,7 @@ export default async function SignatureVoyagePage() {
 			.orderBy(galleryOfWorks.displayOrder),
 	]);
 
-	if (!signatureVoyage) {
+	if (!wellnessEscape) {
 		return (
 			<>
 				<div className="text-center py-20">The Page Cannot Be Rendered</div>
@@ -48,8 +48,8 @@ export default async function SignatureVoyagePage() {
 	}
 
 	return (
-		<SignatureVoyageClient
-			signatureVoyage={signatureVoyage}
+		<WellnessEscapeClient
+			wellnessEscape={wellnessEscape}
 			footerSections={footerSections}
 			galleryCategories={categories}
 			galleryItems={items}
