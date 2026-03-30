@@ -1,6 +1,9 @@
-import { getPageSectionsFromDB, getFooterSections } from "@/lib/page-helpers";
+import {
+	createRequestDB,
+	getPageSectionsFromDB,
+	getFooterSections,
+} from "@/lib/page-helpers";
 import PrestigeEventClient from "./prestige-event-client";
-import { getDB } from "@/lib/db";
 import { galleryCategories, galleryOfWorks } from "@/lib/schema";
 import { isNull } from "drizzle-orm";
 
@@ -15,16 +18,20 @@ export const metadata = {
 };
 
 export default async function PrestigeEventPage() {
+	// ✅ Create ONE database instance for this entire request
+	const db = createRequestDB();
+
+	// ✅ Use the same db instance for all queries in Promise.all
 	const [prestigeEvents, footerSections, categories, items] = await Promise.all(
 		[
-			getPageSectionsFromDB("prestige-events"),
-			getFooterSections(),
-			getDB(process.env)
+			getPageSectionsFromDB("prestige-events", db),
+			Promise.resolve(getFooterSections()),
+			db
 				.select()
 				.from(galleryCategories)
 				.where(isNull(galleryCategories.deletedAt))
 				.orderBy(galleryCategories.displayOrder),
-			getDB(process.env)
+			db
 				.select()
 				.from(galleryOfWorks)
 				.where(isNull(galleryOfWorks.deletedAt))

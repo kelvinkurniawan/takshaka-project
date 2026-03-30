@@ -1,10 +1,10 @@
 import {
+	createRequestDB,
 	getPageSectionsFromDB,
 	getFooterSections,
 	transformWellnessEscapeWithDynamicDestinations,
 } from "@/lib/page-helpers";
 import WellnessEscapeClient from "./wellness-escape-client";
-import { getDB } from "@/lib/db";
 import { galleryCategories, galleryOfWorks } from "@/lib/schema";
 import { isNull } from "drizzle-orm";
 
@@ -19,20 +19,27 @@ export const metadata = {
 };
 
 export default async function WellnessEscapePage() {
-	const wellnessEscapeRaw = await getPageSectionsFromDB("wellness-escape");
+	// ✅ Create ONE database instance for this entire request
+	const db = createRequestDB();
+
+	const wellnessEscapeRaw = await getPageSectionsFromDB("wellness-escape", db);
 
 	// Transform sections to generate dynamic destinations from selectedCategoryIds
-	const wellnessEscape =
-		await transformWellnessEscapeWithDynamicDestinations(wellnessEscapeRaw);
+	// ✅ Pass db parameter to maintain single connection
+	const wellnessEscape = await transformWellnessEscapeWithDynamicDestinations(
+		wellnessEscapeRaw,
+		db,
+	);
 
+	// ✅ Use the same db instance for all queries in Promise.all
 	const [footerSections, categories, items] = await Promise.all([
-		getFooterSections(),
-		getDB(process.env)
+		Promise.resolve(getFooterSections()),
+		db
 			.select()
 			.from(galleryCategories)
 			.where(isNull(galleryCategories.deletedAt))
 			.orderBy(galleryCategories.displayOrder),
-		getDB(process.env)
+		db
 			.select()
 			.from(galleryOfWorks)
 			.where(isNull(galleryOfWorks.deletedAt))

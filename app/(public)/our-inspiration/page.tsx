@@ -1,4 +1,4 @@
-import { getPageSectionsFromDB } from "@/lib/page-helpers";
+import { createRequestDB, getPageSectionsFromDB } from "@/lib/page-helpers";
 import OurInspirationClient from "./our-inspiration-client";
 
 // Revalidate every 60 seconds for ISR (Incremental Static Regeneration)
@@ -12,7 +12,14 @@ export const metadata = {
 };
 
 export default async function OurInspirationPage() {
-	const inspirationSections = await getPageSectionsFromDB("our-inspiration");
+	// ✅ Create ONE database instance for this entire request
+	const db = createRequestDB();
+
+	// ✅ Pass db parameter to get page sections
+	const inspirationSections = await getPageSectionsFromDB(
+		"our-inspiration",
+		db,
+	);
 
 	if (!inspirationSections) {
 		return (

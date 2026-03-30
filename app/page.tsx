@@ -1,6 +1,7 @@
 import PublicHeader from "@/components/PublicHeader";
 
 import {
+	createRequestDB,
 	getSettingsFromDB,
 	getPageSectionsFromDB,
 	getPageByIdFromDB,
@@ -16,14 +17,21 @@ import HomePageClient from "./home-client";
 export const revalidate = 60;
 
 export default async function Home() {
+	// ✅ Create ONE database instance for this entire request
+	const db = createRequestDB();
+
+	// ✅ Get settings and page sections using the same db instance
 	const [settings, homeSectionsRaw] = await Promise.all([
-		getSettingsFromDB(),
-		getPageSectionsFromDB("home"),
+		getSettingsFromDB(db),
+		getPageSectionsFromDB("home", db),
 	]);
 
 	// Transform sections to generate dynamic tabs from selectedCategoryIds
-	const homeSections =
-		await transformPageSectionsWithDynamicTabs(homeSectionsRaw);
+	// ✅ Pass db parameter to maintain single connection
+	const homeSections = await transformPageSectionsWithDynamicTabs(
+		homeSectionsRaw,
+		db,
+	);
 
 	// Check if index_page is set
 	const indexPageId = settings?.index_page
@@ -32,7 +40,8 @@ export default async function Home() {
 	let indexPage: Page | null = null;
 
 	if (indexPageId && !isNaN(indexPageId)) {
-		indexPage = await getPageByIdFromDB(indexPageId);
+		// ✅ Pass db parameter
+		indexPage = await getPageByIdFromDB(indexPageId, db);
 	}
 
 	// If index page is set and found, render it

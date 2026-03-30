@@ -1,10 +1,13 @@
 /**
  * Page Rendering Helpers
  * Shared utility functions for rendering pages and sections
+ *
+ * IMPORTANT: All database operations use dependency injection (db parameter)
+ * to ensure a single database connection per request in serverless environments.
  */
 
 import { cache } from "react";
-import { getDB } from "@/lib/db";
+import { getDB as getDBInstance } from "@/lib/db";
 import {
 	settings,
 	pageSections,
@@ -12,6 +15,9 @@ import {
 	categories as categoriesTable,
 } from "@/lib/schema";
 import { eq, isNull, and, inArray } from "drizzle-orm";
+import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+
+type Database = NodePgDatabase<any>;
 
 interface FooterLink {
 	label: string;
@@ -100,7 +106,8 @@ export async function getAppMetadata(): Promise<{
 	description: string;
 }> {
 	try {
-		const allSettings = await getSettingsFromDB();
+		const db = createRequestDB();
+		const allSettings = await getSettingsFromDB(db);
 		return {
 			name: allSettings.site_name ?? "Takshaka CMS",
 			description:
@@ -116,11 +123,23 @@ export async function getAppMetadata(): Promise<{
 }
 
 /**
+ * Create a database instance for the current request
+ * Call this ONCE per request to get a shared database connection
+ *
+ * Usage in server components:
+ * const db = createRequestDB();
+ * const settings = await getSettingsFromDB(db);
+ * const sections = await getPageSectionsFromDB(slug, db);
+ */
+export function createRequestDB(): Database {
+	return getDBInstance(process.env);
+}
+
+/**
  * Internal function to fetch settings directly from database
  */
-async function _getSettingsFromDB(): Promise<Settings> {
+async function _getSettingsFromDB(db: Database): Promise<Settings> {
 	try {
-		const db = getDB(process.env);
 		const allSettings = await db.select().from(settings);
 
 		const result: Settings = {};
@@ -136,17 +155,20 @@ async function _getSettingsFromDB(): Promise<Settings> {
 
 /**
  * Cached version of getSettingsFromDB
- * Results are cached per request to avoid duplicate queries
+ * Results are cached per request to avoid duplicate queries within the same request
  */
-export const getSettingsFromDB = cache(_getSettingsFromDB);
+export function getSettingsFromDB(db: Database): Promise<Settings> {
+	return cache(() => _getSettingsFromDB(db))();
+}
 
 /**
  * Internal function to fetch page sections from database by slug
  */
-async function _getPageSectionsFromDB(slug: string): Promise<any | null> {
+async function _getPageSectionsFromDB(
+	slug: string,
+	db: Database,
+): Promise<any | null> {
 	try {
-		const db = getDB(process.env);
-
 		const pageSection = await db
 			.select()
 			.from(pageSections)
@@ -165,16 +187,24 @@ async function _getPageSectionsFromDB(slug: string): Promise<any | null> {
 
 /**
  * Cached version of getPageSectionsFromDB
- * Results are cached per request to avoid duplicate queries
+ * Results are cached per request to avoid duplicate queries within the same request
  */
-export const getPageSectionsFromDB = cache(_getPageSectionsFromDB);
+export function getPageSectionsFromDB(
+	slug: string,
+	db: Database,
+): Promise<any | null> {
+	return cache(() => _getPageSectionsFromDB(slug, db))();
+}
 
 /**
  * Transform page sections data by building tabs from selectedCategoryIds
- * Uses batch queries to avoid N+1 problem
+ * Uses sequential queries to avoid overwhelming the database connection pool
+ *
+ * Important: Pass db parameter to reuse the same connection instance
  */
 export async function transformPageSectionsWithDynamicTabs(
 	sections: any,
+	db: Database,
 ): Promise<any> {
 	if (!sections || !sections.curatedExperiences) {
 		return sections;
@@ -188,8 +218,6 @@ export async function transformPageSectionsWithDynamicTabs(
 	}
 
 	try {
-		const db = getDB(process.env);
-
 		// Batch fetch all categories at once (1 query instead of N)
 		const allCategories = await db
 			.select({
@@ -229,8 +257,23 @@ export async function transformPageSectionsWithDynamicTabs(
 			.limit(4 * selectedCategoryIds.length); // Limit total items to 4 per category
 
 		// Group contents by categoryId in memory
-		const contentsByCategory = new Map<number, typeof allContents>();
+		// Filter out contents with null categoryId
+		const contentsByCategory = new Map<
+			number,
+			Array<{
+				id: number;
+				title: string;
+				excerpt: string | null;
+				featuredImage: string | null;
+				slug: string;
+				categoryId: number | null;
+			}>
+		>();
+
 		for (const content of allContents) {
+			// Skip if categoryId is null
+			if (content.categoryId === null) continue;
+
 			if (!contentsByCategory.has(content.categoryId)) {
 				contentsByCategory.set(content.categoryId, []);
 			}
@@ -251,7 +294,7 @@ export async function transformPageSectionsWithDynamicTabs(
 					contents: categoryContents,
 				};
 			})
-			.filter((cat: null) => cat !== null);
+			.filter((cat): cat is Exclude<typeof cat, null> => cat !== null);
 
 		// Utility function to truncate text
 		const truncateText = (text: string, maxLength: number = 120): string => {
@@ -297,9 +340,13 @@ export async function transformPageSectionsWithDynamicTabs(
 /**
  * Transform signature voyage page sections with dynamic top destinations
  * Fetches articles from selected categories and maps them to destination format
+ * Uses sequential queries to avoid overwhelming the database connection pool
+ *
+ * Important: Pass db parameter to reuse the same connection instance
  */
 export async function transformSignatureVoyageWithDynamicDestinations(
 	sections: any,
+	db: Database,
 ): Promise<any> {
 	if (!sections || !sections.topDestinations) {
 		return sections;
@@ -313,37 +360,39 @@ export async function transformSignatureVoyageWithDynamicDestinations(
 	}
 
 	try {
-		const db = getDB(process.env);
+		// Fetch articles from all selected categories sequentially
+		const allArticles: Array<{
+			id: number;
+			title: string;
+			excerpt: string | null;
+			content: string;
+			featuredImage: string | null;
+			slug: string;
+		}> = [];
 
-		// Fetch articles from all selected categories in parallel
-		const articlesFromCategories = await Promise.all(
-			selectedCategoryIds.map(async (categoryId: number) => {
-				// Fetch published contents for this category
-				const categoryContents = await db
-					.select({
-						id: contents.id,
-						title: contents.title,
-						excerpt: contents.excerpt,
-						content: contents.content,
-						featuredImage: contents.featuredImage,
-						slug: contents.slug,
-					})
-					.from(contents)
-					.where(
-						and(
-							eq(contents.categoryId, categoryId),
-							eq(contents.status, "published"),
-							isNull(contents.deletedAt),
-						),
-					)
-					.orderBy(contents.createdAt);
+		for (const categoryId of selectedCategoryIds) {
+			// Fetch published contents for this category
+			const categoryContents = await db
+				.select({
+					id: contents.id,
+					title: contents.title,
+					excerpt: contents.excerpt,
+					content: contents.content,
+					featuredImage: contents.featuredImage,
+					slug: contents.slug,
+				})
+				.from(contents)
+				.where(
+					and(
+						eq(contents.categoryId, categoryId),
+						eq(contents.status, "published"),
+						isNull(contents.deletedAt),
+					),
+				)
+				.orderBy(contents.createdAt);
 
-				return categoryContents || [];
-			}),
-		);
-
-		// Flatten all articles from all categories into a single array
-		const allArticles = articlesFromCategories.flat();
+			allArticles.push(...categoryContents);
+		}
 
 		// Map articles to destination format
 		const allDestinations = allArticles.map((content: any) => ({
@@ -380,10 +429,13 @@ export async function transformSignatureVoyageWithDynamicDestinations(
 
 /**
  * Transform wellness escape page sections with dynamic top destinations
- * Same as signature voyage transformation
+ * Same as signature voyage transformation with sequential queries
+ *
+ * Important: Pass db parameter to reuse the same connection instance
  */
 export async function transformWellnessEscapeWithDynamicDestinations(
 	sections: any,
+	db: Database,
 ): Promise<any> {
 	if (!sections || !sections.theHolisticExperience) {
 		return sections;
@@ -397,37 +449,39 @@ export async function transformWellnessEscapeWithDynamicDestinations(
 	}
 
 	try {
-		const db = getDB(process.env);
+		// Fetch articles from all selected categories sequentially
+		const allArticles: Array<{
+			id: number;
+			title: string;
+			excerpt: string | null;
+			content: string;
+			featuredImage: string | null;
+			slug: string;
+		}> = [];
 
-		// Fetch articles from all selected categories in parallel
-		const articlesFromCategories = await Promise.all(
-			selectedCategoryIds.map(async (categoryId: number) => {
-				// Fetch published contents for this category
-				const categoryContents = await db
-					.select({
-						id: contents.id,
-						title: contents.title,
-						excerpt: contents.excerpt,
-						content: contents.content,
-						featuredImage: contents.featuredImage,
-						slug: contents.slug,
-					})
-					.from(contents)
-					.where(
-						and(
-							eq(contents.categoryId, categoryId),
-							eq(contents.status, "published"),
-							isNull(contents.deletedAt),
-						),
-					)
-					.orderBy(contents.createdAt);
+		for (const categoryId of selectedCategoryIds) {
+			// Fetch published contents for this category
+			const categoryContents = await db
+				.select({
+					id: contents.id,
+					title: contents.title,
+					excerpt: contents.excerpt,
+					content: contents.content,
+					featuredImage: contents.featuredImage,
+					slug: contents.slug,
+				})
+				.from(contents)
+				.where(
+					and(
+						eq(contents.categoryId, categoryId),
+						eq(contents.status, "published"),
+						isNull(contents.deletedAt),
+					),
+				)
+				.orderBy(contents.createdAt);
 
-				return categoryContents || [];
-			}),
-		);
-
-		// Flatten all articles from all categories into a single array
-		const allArticles = articlesFromCategories.flat();
+			allArticles.push(...categoryContents);
+		}
 
 		// Map articles to destination format with validation
 		const allDestinations = allArticles
@@ -462,10 +516,13 @@ export async function transformWellnessEscapeWithDynamicDestinations(
 
 /**
  * Fetch page by ID directly from database
+ * Pass db parameter to reuse the same connection instance
  */
-export async function getPageByIdFromDB(pageId: number): Promise<Page | null> {
+export async function getPageByIdFromDB(
+	pageId: number,
+	db: Database,
+): Promise<Page | null> {
 	try {
-		const db = getDB(process.env);
 		const pages = await db
 			.select()
 			.from(contents)
