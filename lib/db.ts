@@ -2,10 +2,13 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema";
 
-let db: any = null;
+declare global {
+	var _db: any;
+	var _pool: Pool;
+}
 
 export function getDB(env: NodeJS.ProcessEnv) {
-	if (db) return db;
+	if (global._db) return global._db;
 
 	const databaseUrl = process.env.DATABASE_URL;
 
@@ -18,12 +21,11 @@ export function getDB(env: NodeJS.ProcessEnv) {
 	// Buat koneksi PostgreSQL dengan optimized pool configuration
 	const pool = new Pool({
 		connectionString: databaseUrl,
-		max: 10, // Reduced to respect Supabase connection limits
+		max: 1, // Reduced to respect Supabase connection limits
 		idleTimeoutMillis: 5000, // Release connections faster during build
 		connectionTimeoutMillis: 15000,
-		statement_timeout: 30000,
-		application_name: "takshaka-cms",
 	});
+	global._pool = pool;
 
 	// Add event listeners untuk debugging
 	pool.on("error", (err) => {
@@ -36,7 +38,8 @@ export function getDB(env: NodeJS.ProcessEnv) {
 		// Optionally set session parameters
 	});
 
-	db = drizzle(pool, { schema });
+	const db = drizzle(pool, { schema });
+	global._db = db;
 
 	return db;
 }
