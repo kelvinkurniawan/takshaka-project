@@ -101,26 +101,16 @@ export interface PageContent {
 /**
  * Fetch app metadata from database
  */
-export async function getAppMetadata(): Promise<{
-	name: string;
-	description: string;
-}> {
-	try {
-		const db = createRequestDB();
-		const allSettings = await getSettingsFromDB(db);
-		return {
-			name: allSettings.site_name ?? "Takshaka CMS",
-			description:
-				allSettings.site_description ??
-				"Modern headless CMS built with Next.js",
-		};
-	} catch (error) {
-		return {
-			name: "Takshaka CMS",
-			description: "Modern headless CMS built with Next.js",
-		};
-	}
-}
+export const getAppMetadata = cache(async () => {
+	const db = createRequestDB();
+	const allSettings = await getSettingsFromDB(db);
+
+	return {
+		name: allSettings.site_name ?? "Takshaka CMS",
+		description:
+			allSettings.site_description ?? "Modern headless CMS built with Next.js",
+	};
+});
 
 /**
  * Create a database instance for the current request

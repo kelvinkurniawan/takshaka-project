@@ -12,6 +12,10 @@ export const runtime = "nodejs";
  */
 export async function POST(request: Request) {
 	try {
+		if (1 == 1) {
+			return Response.json({ success: true });
+		}
+		/* //////////////////////////////////////////////////// */
 		const body = await request.json();
 		const { pageSlug, pageTitle, referrer } = body;
 

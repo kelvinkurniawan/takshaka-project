@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AOSInit from "../components/AOSInit";
-import { Footer } from "@/components/sections";
-import { getFooterSections, getAppMetadata } from "@/lib/page-helpers";
+import { getAppMetadata } from "@/lib/page-helpers";
 import { RecaptchaProvider } from "@/lib/RecaptchaProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
