@@ -2,15 +2,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDB } from "@/lib/db";
 import { pages } from "@/lib/schema";
-import { eq, isNull } from "drizzle-orm";
+import { eq, isNull, and } from "drizzle-orm";
 
 interface Page {
 	id: number;
 	title: string;
 	slug: string;
 	content: string;
-	metaTitle?: string;
-	metaDescription?: string;
+	metaTitle: string | null;
+	metaDescription: string | null;
 }
 
 async function getPage(slug: string): Promise<Page | null> {
@@ -26,7 +26,7 @@ async function getPage(slug: string): Promise<Page | null> {
 				metaDescription: pages.metaDescription,
 			})
 			.from(pages)
-			.where(eq(pages.slug, slug), isNull(pages.deletedAt))
+			.where(and(eq(pages.slug, slug), isNull(pages.deletedAt)))
 			.limit(1);
 
 		return page.length > 0 ? page[0] : null;
