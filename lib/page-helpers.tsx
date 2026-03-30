@@ -139,10 +139,11 @@ async function _getSettingsFromDB(db: Database): Promise<Settings> {
 		}
 		return result;
 	} catch (error) {
-		console.error("❌ Failed to fetch settings from database:", {
-			error: error instanceof Error ? error.message : String(error),
+		console.error("❌ DB ERROR FULL:", {
+			message: error instanceof Error ? error.message : String(error),
+			code: (error as any).code,
+			detail: (error as any).detail,
 			stack: error instanceof Error ? error.stack : undefined,
-			timestamp: new Date().toISOString(),
 		});
 		return {};
 	}
@@ -175,11 +176,11 @@ async function _getPageSectionsFromDB(
 		if (pageSection.length === 0) return null;
 		return JSON.parse(pageSection[0].pageData);
 	} catch (error) {
-		console.error("❌ Failed to fetch page sections from database:", {
-			slug,
-			error: error instanceof Error ? error.message : String(error),
+		console.error("❌ DB ERROR FULL:", {
+			message: error instanceof Error ? error.message : String(error),
+			code: (error as any).code,
+			detail: (error as any).detail,
 			stack: error instanceof Error ? error.stack : undefined,
-			timestamp: new Date().toISOString(),
 		});
 		return null;
 	}

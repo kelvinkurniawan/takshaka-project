@@ -32,7 +32,7 @@ export function getDB(env: NodeJS.ProcessEnv) {
 		connectionTimeoutMillis: 15000,
 		// 🔥 PENTING
 		statement_timeout: false,
-		query_timeout: 5000,
+		query_timeout: 5 * 60 * 1000, //5 minutes
 	});
 	global._pool = pool;
 
