@@ -142,7 +142,7 @@ export default function PublicHeaderClient({
 
 					{/* Mobile Menu Button */}
 					<button
-						className="md:hidden text-white hover:text-gray-900 transition-transform duration-300 ease-in-out"
+						className="md:hidden text-white transition-transform duration-300 ease-in-out"
 						onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
 						aria-label="Toggle menu"
 						style={{
@@ -155,7 +155,7 @@ export default function PublicHeaderClient({
 
 				{/* Mobile Menu - Use mobile navigation items */}
 				{mobileMenuOpen && (
-					<div className="md:hidden h-full fixed top-22 left-0 bg-[#E6E6E6] backdrop-blur-sm w-full z-40 animate-in fade-in slide-in-from-top-2 duration-300 ease-out max-h-[calc(100vh-4rem)] overflow-y-auto">
+					<div className="md:hidden h-full fixed top-[94px] left-0 bg-[#E6E6E6] backdrop-blur-sm w-full z-40 animate-in fade-in slide-in-from-top-2 duration-300 ease-out max-h-[calc(100vh-4rem)] overflow-y-auto">
 						<div className="py-2">
 							{mobileNavigationItems.map((item, idx) =>
 								item.parentId === null && item.isActive ? (
