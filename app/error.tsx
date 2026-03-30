@@ -24,6 +24,7 @@ export default function Error({ error, reset }: ErrorProps) {
 						<Link
 							href="/"
 							className="flex items-center space-x-2 hover:opacity-80 transition"
+							prefetch={false}
 						>
 							<Users size={18} />
 							<span className="text-sm font-medium">
@@ -32,6 +33,7 @@ export default function Error({ error, reset }: ErrorProps) {
 						</Link>
 						<Link
 							href="/"
+							prefetch={false}
 							className="text-foreground hover:text-gray-900 transition-colors uppercase tracking-wider text-sm font-medium hidden sm:block"
 						>
 							Home
@@ -114,6 +116,7 @@ export default function Error({ error, reset }: ErrorProps) {
 							</button>
 							<Link
 								href="/"
+								prefetch={false}
 								className="inline-block border-2 border-gray-900 text-gray-900 px-8 md:px-12 py-3 rounded-full font-semibold hover:bg-gray-900 hover:text-white transition duration-300 text-sm md:text-base"
 							>
 								GO HOME
@@ -142,6 +145,7 @@ export default function Error({ error, reset }: ErrorProps) {
 								<span className="hidden sm:inline text-gray-300">•</span>
 								<Link
 									href="/hubungi"
+									prefetch={false}
 									className="hover:text-amber-600 transition-colors text-sm"
 								>
 									💬 Contact Form

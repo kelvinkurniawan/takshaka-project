@@ -189,7 +189,11 @@ export default function ContentManagerClient({
 				</div>
 
 				{/* Create Button */}
-				<Link href="/app/content/create" className="btn-primary">
+				<Link
+					href="/app/content/create"
+					className="btn-primary"
+					prefetch={false}
+				>
 					+ New Content
 				</Link>
 			</div>
@@ -377,6 +381,7 @@ export default function ContentManagerClient({
 												<td>
 													<div>
 														<Link
+															prefetch={false}
 															href={`/app/content/${content.id}/edit`}
 															className="font-medium text-gray-900 dark:text-[#e5e5e5] hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
 														>
@@ -457,6 +462,7 @@ export default function ContentManagerClient({
 															href={`/app/content/${content.id}/edit`}
 															className="btn-icon btn-icon-primary"
 															title="Edit"
+															prefetch={false}
 														>
 															<Edit2 className="w-4 h-4" />
 														</Link>

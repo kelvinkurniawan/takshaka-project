@@ -93,6 +93,7 @@ export default function FeaturedSection({ items }: FeaturedSectionProps) {
 											})}
 										</span>
 										<Link
+											prefetch={false}
 											href={`/blog/${item.slug}`}
 											className="inline-flex items-center gap-2 text-white font-semibold group/cta hover:gap-3 transition-all"
 										>
@@ -126,6 +127,7 @@ export default function FeaturedSection({ items }: FeaturedSectionProps) {
 					</p>
 					<Link
 						href="/blog"
+						prefetch={false}
 						className="inline-flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-full font-semibold hover:bg-primary transition-colors duration-300 shadow-lg hover:shadow-xl"
 					>
 						Explore All

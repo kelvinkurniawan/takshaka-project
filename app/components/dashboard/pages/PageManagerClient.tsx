@@ -96,7 +96,7 @@ export default function PageManagerClient({
 				</div>
 
 				{/* Create Button */}
-				<Link href="/app/pages/create" className="btn-primary">
+				<Link href="/app/pages/create" className="btn-primary" prefetch={false}>
 					+ New Page
 				</Link>
 			</div>
@@ -180,6 +180,7 @@ export default function PageManagerClient({
 												<td>
 													<div>
 														<Link
+															prefetch={false}
 															href={`/app/pages/${page.id}/edit`}
 															className="font-medium text-gray-900 hover:text-blue-600 dark:hover:text-blue-400 transition-colors dark:text-[#e5e5e5]"
 														>
@@ -220,6 +221,7 @@ export default function PageManagerClient({
 															<Eye className="w-4 h-4" />
 														</a>
 														<Link
+															prefetch={false}
 															href={`/app/pages/${page.id}/edit`}
 															className="btn-icon btn-icon-primary"
 															title="Edit"

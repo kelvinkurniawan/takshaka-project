@@ -71,6 +71,7 @@ export default function PublicHeaderClient({
 					{/* Logo */}
 					<Link
 						href="/"
+						prefetch={false}
 						className="flex items-center space-x-2 uppercase tracking-widest"
 					>
 						<Users size={18} />
@@ -88,6 +89,7 @@ export default function PublicHeaderClient({
 											<Link
 												key={item.id}
 												href={item.url}
+												prefetch={false}
 												className="text-foreground hover:text-primary transition-colors uppercase tracking-wider text-xs"
 												target={item.target}
 											>
@@ -111,6 +113,7 @@ export default function PublicHeaderClient({
 					{/* Logo */}
 					<Link
 						href="/"
+						prefetch={false}
 						className="flex items-center space-x-2 uppercase tracking-widest justify-between"
 					>
 						<img src="images/logo-mob.png" alt="Logo" className="h-6 w-auto" />
@@ -163,6 +166,7 @@ export default function PublicHeaderClient({
 									>
 										<Link
 											href={item.url}
+											prefetch={false}
 											className={`text-xs transition-colors font-minionpro-400 uppercase tracking-wider ${
 												isActive(item.url) ? "text-gray-700" : "text-dark"
 											}`}
@@ -178,6 +182,7 @@ export default function PublicHeaderClient({
 													.map((child) => (
 														<Link
 															key={child.id}
+															prefetch={false}
 															href={child.url}
 															className={`block py-2 px-4 ml-4 text-sm transition-colors  border-gray-300 pl-3 ${
 																isActive(child.url)

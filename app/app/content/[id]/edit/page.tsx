@@ -124,6 +124,7 @@ export default async function EditContentPage({
 				</div>
 				<Link
 					href="/app/content"
+					prefetch={false}
 					className="px-4 py-2 bg-gray-300 dark:bg-[#424242] text-gray-900 dark:text-[#e5e5e5] rounded-lg hover:bg-gray-400 dark:hover:bg-[#525252] transition-colors"
 				>
 					← Kembali

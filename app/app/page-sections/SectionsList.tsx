@@ -133,6 +133,7 @@ export default function SectionsList() {
 						return (
 							<Link
 								key={section.id}
+								prefetch={false}
 								href={`/app/page-sections/${section.id}`}
 								className="group relative bg-white dark:bg-[#323232] border border-gray-200 dark:border-[#424242] rounded-lg overflow-hidden hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-lg dark:hover:shadow-blue-900/30 transition-all duration-200 h-full flex flex-col"
 							>

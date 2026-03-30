@@ -198,6 +198,7 @@ export default function Sidebar({
 						{group.items.map((item) => (
 							<Link
 								key={item.label}
+								prefetch={false}
 								href={item.href}
 								className={`sidebar-nav-item group ${
 									isActive(item.href)
@@ -219,6 +220,7 @@ export default function Sidebar({
 			<div className="sidebar-user">
 				<Link
 					href="/app/profile"
+					prefetch={false}
 					className="sidebar-user-profile hover:bg-gray-100 dark:hover:bg-[#323232] rounded-md transition-colors"
 				>
 					<div className="sidebar-user-avatar">

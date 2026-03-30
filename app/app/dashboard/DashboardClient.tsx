@@ -215,6 +215,7 @@ export default function DashboardClient({
 										</div>
 										<Link
 											href="/app/audit/login-logs"
+											prefetch={false}
 											className="inline-block mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
 										>
 											Lihat semua login →

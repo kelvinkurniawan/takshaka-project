@@ -74,6 +74,7 @@ export default async function PublicPageDetail({
 			<header className="mb-12">
 				<Link
 					href="/"
+					prefetch={false}
 					className="text-primary font-semibold hover:underline mb-4 inline-block"
 				>
 					← Kembali ke Beranda
@@ -96,6 +97,7 @@ export default async function PublicPageDetail({
 			<div className="pt-8 border-t">
 				<Link
 					href="/"
+					prefetch={false}
 					className="inline-block bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition"
 				>
 					← Kembali ke Beranda

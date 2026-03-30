@@ -346,6 +346,7 @@ export default function LoginLogsClient({
 			<div className="mt-6">
 				<Link
 					href="/app/dashboard"
+					prefetch={false}
 					className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
 				>
 					← Back to Dashboard

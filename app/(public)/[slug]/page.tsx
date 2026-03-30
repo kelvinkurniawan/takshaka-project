@@ -89,6 +89,7 @@ export default async function DynamicPageLayout({
 				<Link
 					href="/"
 					className="text-primary font-semibold hover:underline mb-4 inline-block"
+					prefetch={false}
 				>
 					← Kembali ke Beranda
 				</Link>
@@ -110,6 +111,7 @@ export default async function DynamicPageLayout({
 			<div className="pt-8 border-t">
 				<Link
 					href="/"
+					prefetch={false}
 					className="inline-block bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition"
 				>
 					← Kembali ke Beranda

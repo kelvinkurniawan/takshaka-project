@@ -98,7 +98,7 @@ export default function BlogClient({
 												</span>
 											)}
 
-											<Link href={`/blog/${content.slug}`}>
+											<Link href={`/blog/${content.slug}`} prefetch={false}>
 												<h2 className="text-3xl md:text-4xl font-light tracking-wide uppercase mb-3 hover:text-gray-700 transition">
 													{content.title}
 												</h2>
@@ -125,6 +125,7 @@ export default function BlogClient({
 
 											<Link
 												href={`/blog/${content.slug}`}
+												prefetch={false}
 												className="text-gray-900 font-semibold uppercase tracking-wider text-sm hover:text-gray-600 transition flex items-center gap-2"
 											>
 												Read More
