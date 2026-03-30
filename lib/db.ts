@@ -11,6 +11,7 @@ export function getDB(env: NodeJS.ProcessEnv) {
 	if (global._db) return global._db;
 
 	const databaseUrl = process.env.DATABASE_URL;
+	console.log("DB URL:", process.env.DATABASE_URL);
 
 	if (!databaseUrl) {
 		throw new Error(
