@@ -34,6 +34,7 @@ export default function NavigationMenu({ items }: NavigationMenuProps) {
 									key={item.id}
 									href={item.url}
 									target={item.target}
+									prefetch={false}
 									className="group relative p-6 text-center hover:transform hover:scale-105 transition-all duration-300"
 								>
 									{/* Icon if available */}
@@ -67,6 +68,7 @@ export default function NavigationMenu({ items }: NavigationMenuProps) {
 										key={item.id}
 										href={item.url}
 										target={item.target}
+										prefetch={false}
 										className="px-5 py-2 bg-slate-100 text-slate-900 rounded-full text-xs font-semibold hover:bg-slate-900 hover:text-white transition duration-300"
 									>
 										{item.label}

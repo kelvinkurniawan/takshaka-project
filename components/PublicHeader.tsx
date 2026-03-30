@@ -94,7 +94,11 @@ async function _fetchPublicHeaderData(): Promise<PublicHeaderData> {
 			logo,
 		};
 	} catch (error) {
-		console.error("Error fetching public header data:", error);
+		console.error("❌ Error fetching public header data:", {
+			error: error instanceof Error ? error.message : String(error),
+			stack: error instanceof Error ? error.stack : undefined,
+			timestamp: new Date().toISOString(),
+		});
 		// Return safe defaults on error
 		return {
 			desktopItems: [],

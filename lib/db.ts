@@ -10,12 +10,17 @@ declare global {
 export function getDB(env: NodeJS.ProcessEnv) {
 	if (global._db) return global._db;
 
-	const databaseUrl = process.env.DATABASE_URL;
-	console.log("DB URL:", process.env.DATABASE_URL);
+	// ✅ Use env parameter first (for Vercel/production), fallback to process.env
+	const databaseUrl = env.DATABASE_URL || process.env.DATABASE_URL;
+	console.log("DB URL from env:", env.DATABASE_URL ? "✅ Set" : "❌ Not set");
+	console.log(
+		"DB URL from process.env:",
+		process.env.DATABASE_URL ? "✅ Set" : "❌ Not set",
+	);
 
 	if (!databaseUrl) {
 		throw new Error(
-			"DATABASE_URL tidak ditemukan. Pastikan sudah set di .env.local atau .env.production",
+			"DATABASE_URL tidak ditemukan. Pastikan sudah set di .env.local atau .env.production atau Vercel Environment Variables",
 		);
 	}
 

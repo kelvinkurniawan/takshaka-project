@@ -105,6 +105,7 @@ export const getAppMetadata = cache(async () => {
 	const db = createRequestDB();
 	const allSettings = await getSettingsFromDB(db);
 
+	console.log("Get Meta Data");
 	return {
 		name: allSettings.site_name ?? "Takshaka CMS",
 		description:
@@ -138,7 +139,11 @@ async function _getSettingsFromDB(db: Database): Promise<Settings> {
 		}
 		return result;
 	} catch (error) {
-		console.error("Failed to fetch settings from database:", error);
+		console.error("❌ Failed to fetch settings from database:", {
+			error: error instanceof Error ? error.message : String(error),
+			stack: error instanceof Error ? error.stack : undefined,
+			timestamp: new Date().toISOString(),
+		});
 		return {};
 	}
 }
@@ -170,7 +175,12 @@ async function _getPageSectionsFromDB(
 		if (pageSection.length === 0) return null;
 		return JSON.parse(pageSection[0].pageData);
 	} catch (error) {
-		console.error("Failed to fetch page sections from database:", error);
+		console.error("❌ Failed to fetch page sections from database:", {
+			slug,
+			error: error instanceof Error ? error.message : String(error),
+			stack: error instanceof Error ? error.stack : undefined,
+			timestamp: new Date().toISOString(),
+		});
 		return null;
 	}
 }
@@ -318,10 +328,12 @@ export async function transformPageSectionsWithDynamicTabs(
 			},
 		};
 	} catch (error) {
-		console.error(
-			"Failed to transform page sections with dynamic tabs:",
-			error,
-		);
+		console.error("❌ Failed to transform page sections with dynamic tabs:", {
+			error: error instanceof Error ? error.message : String(error),
+			selectedCategoryIds: sections.curatedExperiences?.selectedCategoryIds,
+			stack: error instanceof Error ? error.stack : undefined,
+			timestamp: new Date().toISOString(),
+		});
 		// Return original sections if transformation fails
 		return sections;
 	}
@@ -350,39 +362,26 @@ export async function transformSignatureVoyageWithDynamicDestinations(
 	}
 
 	try {
-		// Fetch articles from all selected categories sequentially
-		const allArticles: Array<{
-			id: number;
-			title: string;
-			excerpt: string | null;
-			content: string;
-			featuredImage: string | null;
-			slug: string;
-		}> = [];
-
-		for (const categoryId of selectedCategoryIds) {
-			// Fetch published contents for this category
-			const categoryContents = await db
-				.select({
-					id: contents.id,
-					title: contents.title,
-					excerpt: contents.excerpt,
-					content: contents.content,
-					featuredImage: contents.featuredImage,
-					slug: contents.slug,
-				})
-				.from(contents)
-				.where(
-					and(
-						eq(contents.categoryId, categoryId),
-						eq(contents.status, "published"),
-						isNull(contents.deletedAt),
-					),
-				)
-				.orderBy(contents.createdAt);
-
-			allArticles.push(...categoryContents);
-		}
+		// ✅ OPTIMIZED: Batch fetch articles from all categories in ONE query
+		// Previously: N queries (one per category) - now: 1 query using inArray()
+		const allArticles = await db
+			.select({
+				id: contents.id,
+				title: contents.title,
+				excerpt: contents.excerpt,
+				content: contents.content,
+				featuredImage: contents.featuredImage,
+				slug: contents.slug,
+			})
+			.from(contents)
+			.where(
+				and(
+					inArray(contents.categoryId, selectedCategoryIds), // ✅ All categories in 1 query
+					eq(contents.status, "published"),
+					isNull(contents.deletedAt),
+				),
+			)
+			.orderBy(contents.createdAt);
 
 		// Map articles to destination format
 		const allDestinations = allArticles.map((content: any) => ({
@@ -409,8 +408,13 @@ export async function transformSignatureVoyageWithDynamicDestinations(
 		};
 	} catch (error) {
 		console.error(
-			"Failed to transform signature voyage with dynamic destinations:",
-			error,
+			"❌ Failed to transform signature voyage with dynamic destinations:",
+			{
+				error: error instanceof Error ? error.message : String(error),
+				selectedCategoryIds,
+				stack: error instanceof Error ? error.stack : undefined,
+				timestamp: new Date().toISOString(),
+			},
 		);
 		// Return original sections if transformation fails
 		return sections;
@@ -439,39 +443,26 @@ export async function transformWellnessEscapeWithDynamicDestinations(
 	}
 
 	try {
-		// Fetch articles from all selected categories sequentially
-		const allArticles: Array<{
-			id: number;
-			title: string;
-			excerpt: string | null;
-			content: string;
-			featuredImage: string | null;
-			slug: string;
-		}> = [];
-
-		for (const categoryId of selectedCategoryIds) {
-			// Fetch published contents for this category
-			const categoryContents = await db
-				.select({
-					id: contents.id,
-					title: contents.title,
-					excerpt: contents.excerpt,
-					content: contents.content,
-					featuredImage: contents.featuredImage,
-					slug: contents.slug,
-				})
-				.from(contents)
-				.where(
-					and(
-						eq(contents.categoryId, categoryId),
-						eq(contents.status, "published"),
-						isNull(contents.deletedAt),
-					),
-				)
-				.orderBy(contents.createdAt);
-
-			allArticles.push(...categoryContents);
-		}
+		// ✅ OPTIMIZED: Batch fetch articles from all categories in ONE query
+		// Previously: N queries (one per category) - now: 1 query using inArray()
+		const allArticles = await db
+			.select({
+				id: contents.id,
+				title: contents.title,
+				excerpt: contents.excerpt,
+				content: contents.content,
+				featuredImage: contents.featuredImage,
+				slug: contents.slug,
+			})
+			.from(contents)
+			.where(
+				and(
+					inArray(contents.categoryId, selectedCategoryIds), // ✅ All categories in 1 query
+					eq(contents.status, "published"),
+					isNull(contents.deletedAt),
+				),
+			)
+			.orderBy(contents.createdAt);
 
 		// Map articles to destination format with validation
 		const allDestinations = allArticles
@@ -499,6 +490,15 @@ export async function transformWellnessEscapeWithDynamicDestinations(
 			},
 		};
 	} catch (error) {
+		console.error(
+			"❌ Failed to transform wellness escape with dynamic destinations:",
+			{
+				error: error instanceof Error ? error.message : String(error),
+				selectedCategoryIds,
+				stack: error instanceof Error ? error.stack : undefined,
+				timestamp: new Date().toISOString(),
+			},
+		);
 		// Return original sections if transformation fails
 		return sections;
 	}
@@ -532,7 +532,12 @@ export async function getPageByIdFromDB(
 			updatedAt: page.updatedAt?.toISOString() || "",
 		};
 	} catch (error) {
-		console.error("Failed to fetch page from database:", error);
+		console.error("❌ Failed to fetch page from database:", {
+			pageId,
+			error: error instanceof Error ? error.message : String(error),
+			stack: error instanceof Error ? error.stack : undefined,
+			timestamp: new Date().toISOString(),
+		});
 		return null;
 	}
 }

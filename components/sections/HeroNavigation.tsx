@@ -54,6 +54,7 @@ export default function HeroNavigation({
 							<Link
 								key={idx}
 								href={link}
+								prefetch={false}
 								className="text-white text-sm font-medium hover:underline transition-colors p-1 md:px-4"
 							>
 								{label}
