@@ -1,6 +1,7 @@
+import { cache } from "react";
 import { getDB } from "@/lib/db";
 import { navigation, settings } from "@/lib/schema";
-import { isNull, asc, eq, and } from "drizzle-orm";
+import { isNull, asc, eq, and, inArray } from "drizzle-orm";
 import PublicHeaderClient from "./PublicHeaderClient";
 
 interface NavigationItem {
@@ -16,83 +17,104 @@ interface NavigationItem {
 	children?: NavigationItem[];
 }
 
-async function fetchNavigation(
-	platform: "desktop" | "mobile",
-): Promise<NavigationItem[]> {
+interface PublicHeaderData {
+	desktopItems: NavigationItem[];
+	mobileItems: NavigationItem[];
+	isNavEnabled: boolean;
+	logo: string;
+}
+
+/**
+ * Fetch all public header data with single database query
+ * Includes: navigation items (desktop/mobile), navigation enabled setting, and logo
+ * Cached per request to avoid duplicate queries
+ */
+async function _fetchPublicHeaderData(): Promise<PublicHeaderData> {
 	try {
 		const db = getDB(process.env);
-		const items = await db
+
+		// ✅ Single database instance - fetch all data in one logical operation
+		// Fetch all navigation items (both desktop and mobile) at once
+		const allNavigationItems = await db
 			.select()
 			.from(navigation)
-			.where(
-				and(isNull(navigation.deletedAt), eq(navigation.platform, platform)),
-			)
+			.where(isNull(navigation.deletedAt))
 			.orderBy(asc(navigation.order), asc(navigation.id));
 
-		// Build nested structure
+		// Fetch all required settings at once
+		const allSettings = await db
+			.select()
+			.from(settings)
+			.where(inArray(settings.key, ["enable_navigation_menu", "logo"]));
+
+		// Build nested structure for a platform
 		const buildTree = (
 			items: NavigationItem[],
+			platform: "desktop" | "mobile",
 			parentId: number | null = null,
 		): NavigationItem[] => {
 			return items
-				.filter((item) => item.parentId === parentId)
+				.filter(
+					(item) => item.parentId === parentId && item.platform === platform,
+				)
 				.map((item) => ({
 					...item,
-					children: buildTree(items, item.id),
+					children: buildTree(items, platform, item.id),
 				}))
 				.sort((a, b) => a.order - b.order);
 		};
 
-		return buildTree(items);
+		// Process data in memory (no additional DB queries)
+		const desktopItems = buildTree(
+			allNavigationItems as NavigationItem[],
+			"desktop",
+		);
+		const mobileItems = buildTree(
+			allNavigationItems as NavigationItem[],
+			"mobile",
+		);
+
+		// Extract settings from single query result
+		const navEnabledSetting = allSettings.find(
+			(s: (typeof allSettings)[number]) => s.key === "enable_navigation_menu",
+		);
+		const logoSetting = allSettings.find(
+			(s: (typeof allSettings)[number]) => s.key === "logo",
+		);
+
+		// Default to enabled if not explicitly set to "false"
+		const isNavEnabled =
+			!navEnabledSetting || navEnabledSetting.value !== "false";
+		const logo = logoSetting?.value || "";
+
+		return {
+			desktopItems,
+			mobileItems,
+			isNavEnabled,
+			logo,
+		};
 	} catch (error) {
-		console.error("Error fetching navigation:", error);
-		return [];
+		console.error("Error fetching public header data:", error);
+		// Return safe defaults on error
+		return {
+			desktopItems: [],
+			mobileItems: [],
+			isNavEnabled: true,
+			logo: "",
+		};
 	}
 }
 
-async function fetchNavigationSetting(): Promise<boolean> {
-	try {
-		const db = getDB(process.env);
-		const result = await db
-			.select()
-			.from(settings)
-			.where(eq(settings.key, "enable_navigation_menu"))
-			.limit(1);
-
-		if (result.length > 0) {
-			return result[0].value !== "false";
-		}
-		return true; // Default to enabled
-	} catch (error) {
-		console.error("Error fetching navigation setting:", error);
-		return true;
-	}
-}
-
-async function fetchLogoSetting(): Promise<string> {
-	try {
-		const db = getDB(process.env);
-		const result = await db
-			.select()
-			.from(settings)
-			.where(eq(settings.key, "logo"))
-			.limit(1);
-
-		if (result.length > 0 && result[0].value) {
-			return result[0].value;
-		}
-		return ""; // No logo set
-	} catch (error) {
-		console.error("Error fetching logo setting:", error);
-		return "";
-	}
-}
+/**
+ * Cached version of fetchPublicHeaderData
+ * Results are cached per request to avoid duplicate queries
+ * Since navigation and settings rarely change, consider ISR/revalidation strategy
+ */
+const fetchPublicHeaderData = cache(_fetchPublicHeaderData);
 
 export default async function PublicHeader() {
-	const desktopItems = await fetchNavigation("desktop");
-	const mobileItems = await fetchNavigation("mobile");
-	const isNavEnabled = await fetchNavigationSetting();
-	const logo = await fetchLogoSetting();
+	const { desktopItems, mobileItems, isNavEnabled, logo } =
+		await fetchPublicHeaderData();
 
 	return (
 		<PublicHeaderClient
