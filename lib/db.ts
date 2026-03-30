@@ -3,49 +3,33 @@ import { Pool } from "pg";
 import * as schema from "./schema";
 
 declare global {
-	var _db: any;
-	var _pool: Pool;
+	var _pool: Pool | undefined;
 }
 
 export function getDB(env: NodeJS.ProcessEnv) {
-	if (global._db) return global._db;
+	if (!global._pool) {
+		const databaseUrl = process.env.DATABASE_URL;
 
-	const databaseUrl = process.env.DATABASE_URL;
-	console.log("DB URL:", process.env.DATABASE_URL);
+		if (!databaseUrl) {
+			throw new Error("DATABASE_URL tidak ditemukan");
+		}
 
-	if (!databaseUrl) {
-		throw new Error(
-			"DATABASE_URL tidak ditemukan. Pastikan sudah set di .env.local atau .env.production",
-		);
+		global._pool = new Pool({
+			connectionString: databaseUrl,
+			max: 5,
+			idleTimeoutMillis: 10000,
+			connectionTimeoutMillis: 10000,
+			ssl: {
+				rejectUnauthorized: false,
+			},
+		});
+
+		global._pool.on("error", (err) => {
+			console.error("Pool error:", err);
+		});
 	}
 
-	// Buat koneksi PostgreSQL dengan optimized pool configuration
-	const pool = new Pool({
-		connectionString: databaseUrl,
-		max: 1, // Reduced to respect Supabase connection limits
-		idleTimeoutMillis: 5000, // Release connections faster during build
-		connectionTimeoutMillis: 15000,
-		// 🔥 PENTING
-		statement_timeout: false,
-		query_timeout: 5000,
-	});
-	global._pool = pool;
-
-	// Add event listeners untuk debugging
-	pool.on("error", (err) => {
-		console.error("Unexpected error on idle client", err);
-	});
-
-	pool.on("connect", () => {
-		// Execute initial setup queries when connection is established
-		const client = pool;
-		// Optionally set session parameters
-	});
-
-	const db = drizzle(pool, { schema });
-	global._db = db;
-
-	return db;
+	return drizzle(global._pool, { schema });
 }
 
 // Helper function untuk reconnect dengan retry logic
