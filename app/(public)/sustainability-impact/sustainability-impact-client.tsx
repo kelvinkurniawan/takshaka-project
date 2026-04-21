@@ -38,7 +38,7 @@ export default function SustainabilityImpactClient({
 
 			{/* Our Impacts Section */}
 			{sections.ourImpacts && (
-				<section className="py-16 md:py-24 bg-white">
+				<section className="py-16 md:py-24">
 					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 						{/* Section Header */}
 						{sections.ourImpacts.title && (
@@ -94,7 +94,7 @@ export default function SustainabilityImpactClient({
 
 			{/* Additional Impact Stories Section (Optional) */}
 			{sections.impactStories && sections.impactStories.items?.length > 0 && (
-				<section className="py-16 md:py-24 bg-gray-50">
+				<section className="py-16 md:py-24 ">
 					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 						{/* Section Header */}
 						{sections.impactStories.title && (
@@ -162,7 +162,7 @@ export default function SustainabilityImpactClient({
 			{/* Our Projects Section */}
 			{sections.projectsSection &&
 				sections.projectsSection.items?.length > 0 && (
-					<section className="py-16 md:py-24 bg-white">
+					<section className="py-16 md:py-24 bg-[#F6F1E7]">
 						<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 							{/* Section Header */}
 							{sections.projectsSection.title && (
@@ -205,21 +205,21 @@ export default function SustainabilityImpactClient({
 												</div>
 
 												{/* Project Content */}
-												<div>
+												<div className="border-b border-[#A27C34] pb-6">
 													{/* Category Tag */}
 													{project.categoryName && (
-														<span className="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-xs uppercase tracking-widest font-semibold rounded-sm mb-3">
+														<span className="inline-block px-3 py-1 bg-[#A27C34] text-white text-xs uppercase tracking-widest font-semibold mb-3">
 															{project.categoryName}
 														</span>
 													)}
 
 													{/* Project Title */}
-													<h3 className="text-lg font-light tracking-wide uppercase mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
+													<h3 className="text-lg font-light tracking-wide uppercase mb-3  transition-colors line-clamp-2">
 														{project.title}
 													</h3>
 
 													{/* Project Description */}
-													<p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
+													<p className="text-sm text-gray-600 leading-relaxed line-clamp-3 italic">
 														{project.excerpt || project.description}
 													</p>
 												</div>

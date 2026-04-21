@@ -923,4 +923,169 @@ export const pageSectionsConfig = {
 			},
 		],
 	},
+	"curated-experience": {
+		hero: [
+			{
+				type: "arrayItems",
+				label: "Hero Content Slides",
+				target: "contents",
+				fields: [
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Description",
+						target: "description",
+						multiline: true,
+					},
+					{
+						type: "image/video",
+						label: "Background (Image or Video)",
+						target: "background",
+					},
+				],
+			},
+		],
+		approachSection: [
+			{
+				type: "string",
+				label: "Section Title",
+				target: "title",
+			},
+			{
+				type: "string",
+				label: "Section Description",
+				target: "description",
+				multiline: true,
+			},
+		],
+		highlightedExperience: [
+			{
+				type: "string",
+				label: "Section Title",
+				target: "title",
+			},
+			{
+				type: "arrayItems",
+				label: "Highlighted Experiences",
+				target: "items",
+				fields: [
+					{
+						type: "image",
+						label: "Experience Image",
+						target: "image",
+					},
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Description",
+						target: "description",
+						multiline: true,
+					},
+					{
+						type: "string",
+						label: "URL",
+						target: "url",
+					},
+				],
+			},
+		],
+		whyCuratedExperience: [
+			{
+				type: "string",
+				label: "Section Title",
+				target: "title",
+			},
+			{
+				type: "arrayItems",
+				label: "Why Items",
+				target: "items",
+				fields: [
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Description",
+						target: "description",
+						multiline: true,
+					},
+				],
+			},
+		],
+		pickYourChoose: [
+			{
+				type: "string",
+				label: "Section Title",
+				target: "title",
+			},
+			{
+				type: "categoriesSelect",
+				label: "Select Categories to Display",
+				target: "selectedCategoryIds",
+			},
+			{
+				type: "string",
+				label: "Button Text",
+				target: "buttonText",
+			},
+			{
+				type: "string",
+				label: "Button Link",
+				target: "buttonLink",
+			},
+		],
+		curatedExperiences: [
+			{
+				type: "string",
+				label: "Section Title",
+				target: "title",
+			},
+			{
+				type: "string",
+				label: "Section Description",
+				target: "description",
+				multiline: true,
+			},
+			{
+				type: "categoriesSelect",
+				label: "Select Experience Categories",
+				target: "selectedCategoryIds",
+				description:
+					"Select categories to display. Contents from these categories will be shown as curated experiences.",
+			},
+		],
+		ctaSection: [
+			{
+				type: "string",
+				label: "Section Title",
+				target: "title",
+			},
+			{
+				type: "string",
+				label: "Section Description",
+				target: "description",
+				multiline: true,
+			},
+			{
+				type: "string",
+				label: "Button Text",
+				target: "buttonText",
+			},
+			{
+				type: "string",
+				label: "Button Link",
+				target: "buttonLink",
+			},
+		],
+	},
 } as const;
