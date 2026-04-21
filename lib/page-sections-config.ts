@@ -676,4 +676,251 @@ export const pageSectionsConfig = {
 			},
 		],
 	},
+	"indonesia-journal": {
+		hero: [
+			{
+				type: "arrayItems",
+				label: "Hero Content Slides",
+				target: "contents",
+				fields: [
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Description",
+						target: "description",
+						multiline: true,
+					},
+					{
+						type: "image/video",
+						label: "Background (Image or Video)",
+						target: "background",
+					},
+				],
+			},
+		],
+		editorPicks: [
+			{
+				type: "string",
+				label: "Section Title",
+				target: "title",
+			},
+			{
+				type: "string",
+				label: "Section Description",
+				target: "description",
+				multiline: true,
+			},
+			{
+				type: "arrayItems",
+				label: "Featured Articles",
+				target: "items",
+				fields: [
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Excerpt",
+						target: "excerpt",
+						multiline: true,
+					},
+					{
+						type: "image",
+						label: "Article Image",
+						target: "image",
+					},
+					{
+						type: "string",
+						label: "Category",
+						target: "category",
+					},
+					{
+						type: "string",
+						label: "Date",
+						target: "date",
+					},
+					{
+						type: "string",
+						label: "Link",
+						target: "link",
+					},
+				],
+			},
+		],
+		articlesList: [
+			{
+				type: "image",
+				label: "Fixed Featured Image",
+				target: "fixedImage",
+			},
+			{
+				type: "arrayItems",
+				label: "Article Items",
+				target: "items",
+				fields: [
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Excerpt",
+						target: "excerpt",
+						multiline: true,
+					},
+					{
+						type: "image",
+						label: "Article Image",
+						target: "image",
+					},
+					{
+						type: "string",
+						label: "Category",
+						target: "category",
+					},
+					{
+						type: "string",
+						label: "Date",
+						target: "date",
+					},
+					{
+						type: "string",
+						label: "Link",
+						target: "link",
+					},
+				],
+			},
+		],
+	},
+	"sustainability-impact": {
+		hero: [
+			{
+				type: "arrayItems",
+				label: "Hero Content Slides",
+				target: "contents",
+				fields: [
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Description",
+						target: "description",
+						multiline: true,
+					},
+					{
+						type: "image/video",
+						label: "Background (Image or Video)",
+						target: "background",
+					},
+				],
+			},
+		],
+		ourImpacts: [
+			{
+				type: "string",
+				label: "Section Title",
+				target: "title",
+			},
+			{
+				type: "string",
+				label: "Section Description",
+				target: "description",
+				multiline: true,
+			},
+			{
+				type: "arrayItems",
+				label: "Impact Stats",
+				target: "items",
+				fields: [
+					{
+						type: "string",
+						label: "Number/Stat",
+						target: "number",
+					},
+					{
+						type: "string",
+						label: "Label",
+						target: "label",
+					},
+					{
+						type: "string",
+						label: "Description",
+						target: "description",
+						multiline: true,
+					},
+				],
+			},
+		],
+		impactStories: [
+			{
+				type: "string",
+				label: "Section Title",
+				target: "title",
+			},
+			{
+				type: "string",
+				label: "Section Description",
+				target: "description",
+				multiline: true,
+			},
+			{
+				type: "arrayItems",
+				label: "Impact Stories",
+				target: "items",
+				fields: [
+					{
+						type: "string",
+						label: "Story Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Story Excerpt",
+						target: "excerpt",
+						multiline: true,
+					},
+					{
+						type: "image",
+						label: "Story Image",
+						target: "image",
+					},
+					{
+						type: "string",
+						label: "Link",
+						target: "link",
+					},
+				],
+			},
+		],
+		projectsSection: [
+			{
+				type: "string",
+				label: "Section Title",
+				target: "title",
+			},
+			{
+				type: "string",
+				label: "Section Description",
+				target: "description",
+				multiline: true,
+			},
+			{
+				type: "categoriesSelect",
+				label: "Select Project Categories",
+				target: "selectedCategoryIds",
+				description:
+					"Select categories to display. Contents from these categories will be shown as projects.",
+			},
+		],
+	},
 } as const;
