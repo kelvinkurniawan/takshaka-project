@@ -265,6 +265,7 @@ export default function CuratedExperienceClient({
 													<h3 className="text-white text-base font-light tracking-wide uppercase mb-2">
 														{item.title}
 													</h3>
+
 													<p className="text-white/90 text-xs leading-relaxed line-clamp-2">
 														{item.excerpt || item.description}
 													</p>
