@@ -28,6 +28,7 @@ interface FooterLink {
 
 interface FooterSection {
 	title: string;
+	href?: string;
 	mobileOnly?: boolean;
 	links: FooterLink[];
 }
@@ -784,6 +785,7 @@ export function getFooterSections() {
 	const footerSection = [
 		{
 			title: "Our Inspiration",
+			href: "/our-inspiration",
 			links: [
 				{
 					label: "Letter from Our Board",
@@ -795,6 +797,7 @@ export function getFooterSections() {
 		},
 		{
 			title: "Prestige Events",
+			href: "/prestige-events",
 			links: [
 				{ label: "Signature Voyage", href: "/signature-voyage" },
 				{ label: "Wellness Escape", href: "/wellness-escape" },
@@ -803,6 +806,7 @@ export function getFooterSections() {
 		},
 		{
 			title: "Indonesia Journal",
+			href: "/indonesia-journal",
 			links: [
 				{ label: "Insights", href: "/indonesia-journal/insights" },
 				{ label: "News & Events", href: "/indonesia-journal/news-events" },
@@ -811,6 +815,7 @@ export function getFooterSections() {
 		},
 		{
 			title: "Portfolio",
+			href: "/portfolio",
 			links: [
 				{ label: "Milestone", href: "/portfolio/milestone" },
 				{ label: "Gallery Events", href: "/portfolio/gallery-events" },
@@ -820,6 +825,7 @@ export function getFooterSections() {
 		},
 		{
 			title: "Sustainable Impact",
+			href: "/sustainable-impact",
 			mobileOnly: true,
 			links: [
 				{ label: "Environtment Impact", href: "/portfolio/environment-impact" },
