@@ -33,6 +33,11 @@ interface FooterSection {
 	links: FooterLink[];
 }
 
+export interface SocialLink {
+	platform: string;
+	url: string;
+}
+
 export interface Settings {
 	index_page?: string;
 	hero_title?: string;
@@ -843,3 +848,60 @@ export function getFooterSections() {
 
 	return footerSection;
 }
+
+/**
+ * Fetch social media links from database settings
+ * Uses React cache for request-level deduplication
+ * Only returns links with non-empty URLs
+ */
+export const getSocialMediaLinks = cache(async (): Promise<SocialLink[]> => {
+	console.log("🔍 [getSocialMediaLinks] Starting fetch...");
+	try {
+		const db = createRequestDB();
+		console.log("🔍 [getSocialMediaLinks] Database connection created");
+
+		const allSettings = await getSettingsFromDB(db);
+		console.log("🔍 [getSocialMediaLinks] All settings fetched:", {
+			totalSettings: Object.keys(allSettings).length,
+			keys: Object.keys(allSettings),
+		});
+
+		const supportedPlatforms = [
+			"instagram",
+			"youtube",
+			"linkedin",
+			"facebook",
+			"twitter",
+		];
+
+		const socialLinks: SocialLink[] = [];
+
+		for (const platform of supportedPlatforms) {
+			const key = `social_${platform}`;
+			const url = allSettings[key];
+			console.log(
+				`🔍 [getSocialMediaLinks] Checking ${key}: ${url || "NOT FOUND"}`,
+			);
+
+			if (url && typeof url === "string" && url.trim().length > 0) {
+				socialLinks.push({
+					platform: platform.charAt(0).toUpperCase() + platform.slice(1),
+					url,
+				});
+				console.log(`✅ [getSocialMediaLinks] Added ${platform}: ${url}`);
+			}
+		}
+
+		console.log(
+			`✅ [getSocialMediaLinks] Complete - Found ${socialLinks.length} social media links:`,
+			socialLinks,
+		);
+		return socialLinks;
+	} catch (error) {
+		console.error("❌ [getSocialMediaLinks] Error:", {
+			message: error instanceof Error ? error.message : String(error),
+			stack: error instanceof Error ? error.stack : undefined,
+		});
+		return [];
+	}
+});

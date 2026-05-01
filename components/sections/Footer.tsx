@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Instagram, Youtube, Linkedin } from "lucide-react";
+import { Instagram, Youtube, Linkedin, Facebook, Twitter } from "lucide-react";
 
 interface FooterLink {
 	label: string;
@@ -17,12 +17,22 @@ interface FooterSection {
 	links: FooterLink[];
 }
 
+interface SocialLink {
+	platform: string;
+	url: string;
+}
+
 interface FooterProps {
 	sections: FooterSection[];
 	copyright?: string;
+	socialLinks?: SocialLink[];
 }
 
-export default function Footer({ sections, copyright }: FooterProps) {
+export default function Footer({
+	sections,
+	copyright,
+	socialLinks,
+}: FooterProps) {
 	const [email, setEmail] = useState("");
 
 	const handleSubscribe = (e: React.FormEvent) => {
@@ -132,33 +142,70 @@ export default function Footer({ sections, copyright }: FooterProps) {
 								Follow us on:
 							</span>
 							<div className="flex gap-3 md:gap-4">
-								<a
-									href="https://instagram.com/takshaka"
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-white hover:text-[#A27C34] transition-colors duration-300"
-									title="Follow us on Instagram"
-								>
-									<Instagram size={18} />
-								</a>
-								<a
-									href="https://youtube.com/takshaka"
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-white hover:text-[#A27C34] transition-colors duration-300"
-									title="Follow us on YouTube"
-								>
-									<Youtube size={18} />
-								</a>
-								<a
-									href="https://linkedin.com/company/takshaka"
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-white hover:text-[#A27C34] transition-colors duration-300"
-									title="Follow us on LinkedIn"
-								>
-									<Linkedin size={18} />
-								</a>
+								{socialLinks && socialLinks.length > 0 ? (
+									socialLinks.map((link) => {
+										const getIcon = () => {
+											const platformLower = link.platform.toLowerCase();
+											switch (platformLower) {
+												case "instagram":
+													return <Instagram size={18} />;
+												case "youtube":
+													return <Youtube size={18} />;
+												case "linkedin":
+													return <Linkedin size={18} />;
+												case "facebook":
+													return <Facebook size={18} />;
+												case "twitter":
+													return <Twitter size={18} />;
+												default:
+													return null;
+											}
+										};
+
+										return (
+											<a
+												key={link.platform}
+												href={link.url}
+												target="_blank"
+												rel="noopener noreferrer"
+												className="text-white hover:text-[#A27C34] transition-colors duration-300"
+												title={`Follow us on ${link.platform}`}
+											>
+												{getIcon()}
+											</a>
+										);
+									})
+								) : (
+									<>
+										<a
+											href="https://instagram.com/takshaka"
+											target="_blank"
+											rel="noopener noreferrer"
+											className="text-white hover:text-[#A27C34] transition-colors duration-300"
+											title="Follow us on Instagram"
+										>
+											<Instagram size={18} />
+										</a>
+										<a
+											href="https://youtube.com/takshaka"
+											target="_blank"
+											rel="noopener noreferrer"
+											className="text-white hover:text-[#A27C34] transition-colors duration-300"
+											title="Follow us on YouTube"
+										>
+											<Youtube size={18} />
+										</a>
+										<a
+											href="https://linkedin.com/company/takshaka"
+											target="_blank"
+											rel="noopener noreferrer"
+											className="text-white hover:text-[#A27C34] transition-colors duration-300"
+											title="Follow us on LinkedIn"
+										>
+											<Linkedin size={18} />
+										</a>
+									</>
+								)}
 							</div>
 						</div>
 

@@ -31,12 +31,14 @@ interface PublicHeaderClientProps {
 	mobileNavigationItems: NavigationItem[];
 	isNavEnabled: boolean;
 	logo?: string;
+	contactPhone?: string;
 }
 
 export default function PublicHeaderClient({
 	desktopNavigationItems,
 	mobileNavigationItems,
 	isNavEnabled,
+	contactPhone,
 }: PublicHeaderClientProps) {
 	const pathname = usePathname();
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -75,7 +77,9 @@ export default function PublicHeaderClient({
 						className="flex items-center space-x-2 uppercase tracking-widest"
 					>
 						<Users size={18} />
-						<span className="text-xs">CONTACT US | +62 361 123456</span>
+						<span className="text-xs">
+							CONTACT US | {contactPhone || "+62 361 123456"}
+						</span>
 					</Link>
 					{/* Desktop Navigation */}
 					{isNavEnabled &&

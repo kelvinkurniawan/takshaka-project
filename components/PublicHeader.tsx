@@ -22,6 +22,7 @@ interface PublicHeaderData {
 	mobileItems: NavigationItem[];
 	isNavEnabled: boolean;
 	logo: string;
+	contactPhone: string;
 }
 
 /**
@@ -45,7 +46,13 @@ async function _fetchPublicHeaderData(): Promise<PublicHeaderData> {
 		const allSettings = await db
 			.select()
 			.from(settings)
-			.where(inArray(settings.key, ["enable_navigation_menu", "logo"]));
+			.where(
+				inArray(settings.key, [
+					"enable_navigation_menu",
+					"logo",
+					"contact_phone",
+				]),
+			);
 
 		// Build nested structure for a platform
 		const buildTree = (
@@ -81,17 +88,22 @@ async function _fetchPublicHeaderData(): Promise<PublicHeaderData> {
 		const logoSetting = allSettings.find(
 			(s: (typeof allSettings)[number]) => s.key === "logo",
 		);
+		const contactPhoneSetting = allSettings.find(
+			(s: (typeof allSettings)[number]) => s.key === "contact_phone",
+		);
 
 		// Default to enabled if not explicitly set to "false"
 		const isNavEnabled =
 			!navEnabledSetting || navEnabledSetting.value !== "false";
 		const logo = logoSetting?.value || "";
+		const contactPhone = contactPhoneSetting?.value || "";
 
 		return {
 			desktopItems,
 			mobileItems,
 			isNavEnabled,
 			logo,
+			contactPhone,
 		};
 	} catch (error) {
 		console.error("❌ Error fetching public header data:", {
@@ -105,6 +117,7 @@ async function _fetchPublicHeaderData(): Promise<PublicHeaderData> {
 			mobileItems: [],
 			isNavEnabled: true,
 			logo: "",
+			contactPhone: "",
 		};
 	}
 }
@@ -117,7 +130,7 @@ async function _fetchPublicHeaderData(): Promise<PublicHeaderData> {
 const fetchPublicHeaderData = cache(_fetchPublicHeaderData);
 
 export default async function PublicHeader() {
-	const { desktopItems, mobileItems, isNavEnabled, logo } =
+	const { desktopItems, mobileItems, isNavEnabled, logo, contactPhone } =
 		await fetchPublicHeaderData();
 
 	return (
@@ -126,6 +139,7 @@ export default async function PublicHeader() {
 			mobileNavigationItems={mobileItems}
 			isNavEnabled={isNavEnabled}
 			logo={logo}
+			contactPhone={contactPhone}
 		/>
 	);
 }

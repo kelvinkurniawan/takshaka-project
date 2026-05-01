@@ -65,3 +65,42 @@ export async function getSiteName(): Promise<string> {
 export async function getSiteLogo(): Promise<string | null> {
 	return await getSetting("logo");
 }
+
+export async function getSocialMediaLink(
+	platform: string,
+): Promise<string | null> {
+	return await getSetting(`social_${platform}`);
+}
+
+export async function getAllSocialMediaLinks(): Promise<
+	Record<string, string>
+> {
+	try {
+		// Initialize cache if needed
+		if (!settingsCache || Date.now() - cacheInitTime > CACHE_TTL) {
+			await initializeSettingsCache();
+		}
+
+		const socialLinks: Record<string, string> = {};
+		const platforms = [
+			"instagram",
+			"youtube",
+			"linkedin",
+			"facebook",
+			"twitter",
+		];
+
+		for (const platform of platforms) {
+			const key = `social_${platform}`;
+			const value = settingsCache?.get(key);
+			if (value) {
+				socialLinks[platform] = value;
+			}
+		}
+
+		return socialLinks;
+	} catch (error) {
+		console.warn("Failed to get social media links:", error);
+		return {};
+	}
+}

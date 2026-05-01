@@ -79,6 +79,23 @@ export default function SettingsManagerClient({
 		logo: "",
 	});
 
+	const [contactSettings, setContactSettings] = useState({
+		contact_phone: "",
+		contact_email: "",
+		contact_address: "",
+		contact_hours: "",
+	});
+
+	const [socialMediaSettings, setSocialMediaSettings] = useState({
+		social_facebook: "",
+		social_instagram: "",
+		social_twitter: "",
+		social_linkedin: "",
+		social_youtube: "",
+		social_tiktok: "",
+		social_whatsapp: "",
+	});
+
 	// Create page options for select
 	const pageOptions = useMemo(
 		() =>
@@ -133,6 +150,23 @@ export default function SettingsManagerClient({
 			setLogoSettings({
 				logo: settingMap.logo || "",
 			});
+
+			setContactSettings({
+				contact_phone: settingMap.contact_phone || "",
+				contact_email: settingMap.contact_email || "",
+				contact_address: settingMap.contact_address || "",
+				contact_hours: settingMap.contact_hours || "",
+			});
+
+			setSocialMediaSettings({
+				social_facebook: settingMap.social_facebook || "",
+				social_instagram: settingMap.social_instagram || "",
+				social_twitter: settingMap.social_twitter || "",
+				social_linkedin: settingMap.social_linkedin || "",
+				social_youtube: settingMap.social_youtube || "",
+				social_tiktok: settingMap.social_tiktok || "",
+				social_whatsapp: settingMap.social_whatsapp || "",
+			});
 		};
 
 		loadSettings();
@@ -183,6 +217,25 @@ export default function SettingsManagerClient({
 				case "logo":
 					settingsToUpdate = {
 						logo: logoSettings.logo,
+					};
+					break;
+				case "contact":
+					settingsToUpdate = {
+						contact_phone: contactSettings.contact_phone,
+						contact_email: contactSettings.contact_email,
+						contact_address: contactSettings.contact_address,
+						contact_hours: contactSettings.contact_hours,
+					};
+					break;
+				case "social_media":
+					settingsToUpdate = {
+						social_facebook: socialMediaSettings.social_facebook,
+						social_instagram: socialMediaSettings.social_instagram,
+						social_twitter: socialMediaSettings.social_twitter,
+						social_linkedin: socialMediaSettings.social_linkedin,
+						social_youtube: socialMediaSettings.social_youtube,
+						social_tiktok: socialMediaSettings.social_tiktok,
+						social_whatsapp: socialMediaSettings.social_whatsapp,
 					};
 					break;
 			}
@@ -242,7 +295,7 @@ export default function SettingsManagerClient({
 			<div className="flex items-center justify-center min-h-[400px]">
 				<div className="text-center">
 					<AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-					<h2 className="text-xl font-semibold text-gray-900 mb-2">
+					<h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
 						Access Denied
 					</h2>
 					<p className="text-secondary">
@@ -287,7 +340,7 @@ export default function SettingsManagerClient({
 			<div className="card-modern">
 				<div className="flex items-center justify-between p-6 border-b border-primary">
 					<div>
-						<h2 className="text-xl font-semibold text-gray-900">
+						<h2 className="text-xl font-semibold text-gray-900 dark:text-white">
 							General Settings
 						</h2>
 						<p className="text-secondary text-sm mt-1">
@@ -307,7 +360,7 @@ export default function SettingsManagerClient({
 				<div className="p-6 space-y-6">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
-							<label className="block text-sm font-medium text-gray-900 mb-2">
+							<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
 								Site Name *
 							</label>
 							<input
@@ -325,7 +378,7 @@ export default function SettingsManagerClient({
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-900 mb-2">
+							<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
 								Admin Email
 							</label>
 							<input
@@ -344,7 +397,7 @@ export default function SettingsManagerClient({
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-900 mb-2">
+						<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
 							Site Description
 						</label>
 						<textarea
@@ -362,7 +415,7 @@ export default function SettingsManagerClient({
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-900 mb-2">
+						<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
 							Site URL
 						</label>
 						<input
@@ -385,7 +438,7 @@ export default function SettingsManagerClient({
 			<div className="card-modern">
 				<div className="flex items-center justify-between p-6 border-b border-primary">
 					<div>
-						<h2 className="text-xl font-semibold text-gray-900">
+						<h2 className="text-xl font-semibold text-gray-900 dark:text-white">
 							Index Page Settings
 						</h2>
 						<p className="text-secondary text-sm mt-1">
@@ -404,7 +457,7 @@ export default function SettingsManagerClient({
 
 				<div className="p-6 space-y-6">
 					<div>
-						<label className="block text-sm font-medium text-gray-900 mb-2">
+						<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
 							Landing Page *
 						</label>
 						<Select
@@ -463,7 +516,7 @@ export default function SettingsManagerClient({
 			<div className="card-modern">
 				<div className="flex items-center justify-between p-6 border-b border-primary">
 					<div>
-						<h2 className="text-xl font-semibold text-gray-900">
+						<h2 className="text-xl font-semibold text-gray-900 dark:text-white">
 							Maintenance Mode
 						</h2>
 						<p className="text-secondary text-sm mt-1">
@@ -503,7 +556,7 @@ export default function SettingsManagerClient({
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-900 mb-2">
+						<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
 							Maintenance Message
 						</label>
 						<textarea
@@ -526,7 +579,9 @@ export default function SettingsManagerClient({
 			<div className="card-modern">
 				<div className="flex items-center justify-between p-6 border-b border-primary">
 					<div>
-						<h2 className="text-xl font-semibold text-gray-900">SEO Settings</h2>
+						<h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+							SEO Settings
+						</h2>
 						<p className="text-secondary text-sm mt-1">
 							Default meta tags and SEO configuration
 						</p>
@@ -543,7 +598,7 @@ export default function SettingsManagerClient({
 
 				<div className="p-6 space-y-6">
 					<div>
-						<label className="block text-sm font-medium text-gray-900 mb-2">
+						<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
 							Default Meta Title
 						</label>
 						<input
@@ -561,7 +616,7 @@ export default function SettingsManagerClient({
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-900 mb-2">
+						<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
 							Default Meta Description
 						</label>
 						<textarea
@@ -579,7 +634,7 @@ export default function SettingsManagerClient({
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-900 mb-2">
+						<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
 							Default Meta Keywords
 						</label>
 						<input
@@ -602,7 +657,7 @@ export default function SettingsManagerClient({
 			<div className="card-modern">
 				<div className="flex items-center justify-between p-6 border-b border-primary">
 					<div>
-						<h2 className="text-xl font-semibold text-gray-900">
+						<h2 className="text-xl font-semibold text-gray-900 dark:text-white">
 							Navigation Settings
 						</h2>
 						<p className="text-secondary text-sm mt-1">
@@ -651,7 +706,7 @@ export default function SettingsManagerClient({
 			<div className="card-modern">
 				<div className="flex items-center justify-between p-6 border-b border-primary">
 					<div>
-						<h2 className="text-xl font-semibold text-gray-900">
+						<h2 className="text-xl font-semibold text-gray-900 dark:text-white">
 							Logo Settings
 						</h2>
 						<p className="text-secondary text-sm mt-1">
@@ -670,7 +725,7 @@ export default function SettingsManagerClient({
 
 				<div className="p-6 space-y-6">
 					<div>
-						<label className="block text-sm font-medium text-gray-900 mb-4">
+						<label className="block text-sm font-medium text-gray-900 dark:text-white mb-4">
 							Site Logo
 						</label>
 						<FileUploadInput
@@ -688,10 +743,267 @@ export default function SettingsManagerClient({
 				</div>
 			</div>
 
+			{/* Contact Settings */}
+			<div className="card-modern">
+				<div className="flex items-center justify-between p-6 border-b border-primary">
+					<div>
+						<h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+							Contact Navbar Settings
+						</h2>
+						<p className="text-secondary text-sm mt-1">
+							Manage contact information displayed in the navbar
+						</p>
+					</div>
+					<button
+						onClick={() => handleSaveSettings("contact")}
+						disabled={isSubmitting}
+						className="btn-solid flex items-center gap-2"
+					>
+						<Save className="w-4 h-4" />
+						{isSubmitting ? "Saving..." : "Save"}
+					</button>
+				</div>
+
+				<div className="p-6 space-y-6">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div>
+							<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+								Phone Number
+							</label>
+							<input
+								type="tel"
+								value={contactSettings.contact_phone}
+								onChange={(e) =>
+									setContactSettings((prev) => ({
+										...prev,
+										contact_phone: e.target.value,
+									}))
+								}
+								className="input-modern w-full"
+								placeholder="+62 1234 5678"
+							/>
+						</div>
+
+						<div>
+							<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+								Contact Email
+							</label>
+							<input
+								type="email"
+								value={contactSettings.contact_email}
+								onChange={(e) =>
+									setContactSettings((prev) => ({
+										...prev,
+										contact_email: e.target.value,
+									}))
+								}
+								className="input-modern w-full"
+								placeholder="contact@example.com"
+							/>
+						</div>
+					</div>
+
+					<div>
+						<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+							Address
+						</label>
+						<textarea
+							value={contactSettings.contact_address}
+							onChange={(e) =>
+								setContactSettings((prev) => ({
+									...prev,
+									contact_address: e.target.value,
+								}))
+							}
+							className="textarea-modern w-full"
+							rows={2}
+							placeholder="123 Main Street, City, Country"
+						/>
+					</div>
+
+					<div>
+						<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+							Operating Hours
+						</label>
+						<input
+							type="text"
+							value={contactSettings.contact_hours}
+							onChange={(e) =>
+								setContactSettings((prev) => ({
+									...prev,
+									contact_hours: e.target.value,
+								}))
+							}
+							className="input-modern w-full"
+							placeholder="Mon-Fri: 09:00-17:00, Sat-Sun: Closed"
+						/>
+					</div>
+				</div>
+			</div>
+
+			{/* Social Media Settings */}
+			<div className="card-modern">
+				<div className="flex items-center justify-between p-6 border-b border-primary">
+					<div>
+						<h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+							Social Media Settings
+						</h2>
+						<p className="text-secondary text-sm mt-1">
+							Add your social media links and profiles
+						</p>
+					</div>
+					<button
+						onClick={() => handleSaveSettings("social_media")}
+						disabled={isSubmitting}
+						className="btn-solid flex items-center gap-2"
+					>
+						<Save className="w-4 h-4" />
+						{isSubmitting ? "Saving..." : "Save"}
+					</button>
+				</div>
+
+				<div className="p-6 space-y-6">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div>
+							<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+								Facebook
+							</label>
+							<input
+								type="url"
+								value={socialMediaSettings.social_facebook}
+								onChange={(e) =>
+									setSocialMediaSettings((prev) => ({
+										...prev,
+										social_facebook: e.target.value,
+									}))
+								}
+								className="input-modern w-full"
+								placeholder="https://facebook.com/yourpage"
+							/>
+						</div>
+
+						<div>
+							<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+								Instagram
+							</label>
+							<input
+								type="url"
+								value={socialMediaSettings.social_instagram}
+								onChange={(e) =>
+									setSocialMediaSettings((prev) => ({
+										...prev,
+										social_instagram: e.target.value,
+									}))
+								}
+								className="input-modern w-full"
+								placeholder="https://instagram.com/yourprofile"
+							/>
+						</div>
+
+						<div>
+							<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+								Twitter / X
+							</label>
+							<input
+								type="url"
+								value={socialMediaSettings.social_twitter}
+								onChange={(e) =>
+									setSocialMediaSettings((prev) => ({
+										...prev,
+										social_twitter: e.target.value,
+									}))
+								}
+								className="input-modern w-full"
+								placeholder="https://twitter.com/yourprofile"
+							/>
+						</div>
+
+						<div>
+							<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+								LinkedIn
+							</label>
+							<input
+								type="url"
+								value={socialMediaSettings.social_linkedin}
+								onChange={(e) =>
+									setSocialMediaSettings((prev) => ({
+										...prev,
+										social_linkedin: e.target.value,
+									}))
+								}
+								className="input-modern w-full"
+								placeholder="https://linkedin.com/company/yourcompany"
+							/>
+						</div>
+
+						<div>
+							<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+								YouTube
+							</label>
+							<input
+								type="url"
+								value={socialMediaSettings.social_youtube}
+								onChange={(e) =>
+									setSocialMediaSettings((prev) => ({
+										...prev,
+										social_youtube: e.target.value,
+									}))
+								}
+								className="input-modern w-full"
+								placeholder="https://youtube.com/@yourchannel"
+							/>
+						</div>
+
+						<div>
+							<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+								TikTok
+							</label>
+							<input
+								type="url"
+								value={socialMediaSettings.social_tiktok}
+								onChange={(e) =>
+									setSocialMediaSettings((prev) => ({
+										...prev,
+										social_tiktok: e.target.value,
+									}))
+								}
+								className="input-modern w-full"
+								placeholder="https://tiktok.com/@yourprofile"
+							/>
+						</div>
+
+						<div>
+							<label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+								WhatsApp
+							</label>
+							<input
+								type="text"
+								value={socialMediaSettings.social_whatsapp}
+								onChange={(e) =>
+									setSocialMediaSettings((prev) => ({
+										...prev,
+										social_whatsapp: e.target.value,
+									}))
+								}
+								className="input-modern w-full"
+								placeholder="+62 812 3456 7890 (hanya angka)"
+							/>
+						</div>
+					</div>
+
+					<p className="text-xs text-secondary dark:text-[#929292]">
+						Masukkan URL lengkap untuk social media atau nomor WhatsApp. Biarkan
+						kosong jika tidak ingin menampilkan.
+					</p>
+				</div>
+			</div>
+
 			{/* All Settings List */}
 			<div className="card-modern">
 				<div className="p-6 border-b border-primary">
-					<h2 className="text-xl font-semibold text-gray-900">All Settings</h2>
+					<h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+						All Settings
+					</h2>
 					<p className="text-secondary text-sm mt-1">
 						Raw view of all stored settings
 					</p>
