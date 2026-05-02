@@ -1,7 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CommentsList from "@/components/CommentsList";
+import FeaturedImageSection from "@/components/FeaturedImageSection";
+import HeroNavigation from "@/components/sections/HeroNavigation";
 import { getDB } from "@/lib/db";
 import { contents } from "@/lib/schema";
 import { eq, isNull } from "drizzle-orm";
@@ -87,54 +88,55 @@ export default async function BlogDetailPage({
 	}
 
 	return (
-		<>
-			{/* Featured Image */}
-			{content.featuredImage && (
-				<div className="w-full h-96 bg-gray-200 overflow-hidden relative">
-					<Image
-						src={content.featuredImage}
-						alt={content.title}
-						fill
-						className="object-cover"
-						unoptimized
-					/>
-				</div>
-			)}
+		<div className="bg-[#f6f1e7]">
+			{/* Hero Header */}
+			<section className="relative min-h-[25vh] flex items-center justify-center overflow-hidden bg-[#f6f1e7]">
+				{/* Navigation */}
+				<HeroNavigation
+					logo={
+						<img
+							src="/images/logo_colored.png"
+							alt="Logo"
+							className="h-24 w-auto"
+						/>
+					}
+					isCompact
+					textColor="text-black"
+				/>
+			</section>
 
-			{/* Article Content */}
-			<article className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12">
-				{/* Header */}
-				<header className="mb-8">
-					{content.type && (
-						<div className="mb-4">
-							<span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">
-								{content.type}
-							</span>
-						</div>
-					)}
+			{/* Content */}
+			<section className="flex items-center justify-center bg-[#f6f1e7]">
+				<div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl pt-12">
+					<h1 className="text-xl sm:text-xl md:text-xl font-elegance uppercase leading-tight tracking-widest text-gray-900 mb-6">
+						{content.title}
+					</h1>
 
-					<h1 className="text-5xl font-bold mb-4">{content.title}</h1>
-
-					<div className="flex items-center gap-4 text-gray-600 pb-8 border-b">
-						<time dateTime={content.publishedAt || content.createdAt}>
+					{/* Publish Date */}
+					<div className="flex justify-center mb-8">
+						<time
+							dateTime={content.publishedAt || content.createdAt}
+							className="text-lg text-[#A27C34] font-light"
+						>
 							{new Date(
 								content.publishedAt || content.createdAt,
-							).toLocaleDateString("en-US", {
+							).toLocaleDateString("id-ID", {
 								year: "numeric",
 								month: "long",
 								day: "numeric",
 							})}
 						</time>
 					</div>
-				</header>
+				</div>
+			</section>
 
-				{/* Excerpt */}
-				{content.excerpt && (
-					<div className="text-xl text-gray-600 mb-8 italic">
-						{content.excerpt}
-					</div>
-				)}
+			{/* Featured Image */}
+			{content.featuredImage && (
+				<FeaturedImageSection src={content.featuredImage} alt={content.title} />
+			)}
 
+			{/* Article Content */}
+			<article className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12 ">
 				{/* Content */}
 				<div
 					className="prose prose-lg max-w-none mb-12"
@@ -144,6 +146,6 @@ export default async function BlogDetailPage({
 
 			{/* Comments Section */}
 			<CommentsList contentId={content.id} />
-		</>
+		</div>
 	);
 }

@@ -13,12 +13,8 @@ export default async function PublicLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	console.log("📄 [PublicLayout] Rendering public layout...");
-
 	// Fetch social media links from database with caching
-	console.log("📄 [PublicLayout] Calling getSocialMediaLinks...");
 	const socialMediaLinks = await getSocialMediaLinks();
-	console.log("📄 [PublicLayout] socialMediaLinks result:", socialMediaLinks);
 
 	return (
 		<>

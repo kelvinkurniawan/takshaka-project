@@ -37,11 +37,19 @@ export default function ExperiencesSharedSection({
 							<div
 								className={`${index % 2 === 1 ? "md:col-start-2" : ""} bg-black inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent h-96 overflow-hidden flex items-center justify-center group`}
 							>
-								<img
-									src={experience.image}
-									alt={experience.title}
-									className="w-full h-auto object-cover"
-								/>
+								{experience.image && (
+									<img
+										src={experience.image}
+										alt={experience.title}
+										className="w-full h-auto object-cover"
+									/>
+								)}
+
+								{!experience.image && (
+									<div className="w-full h-full flex items-center justify-center bg-gray-200">
+										<span className="text-gray-500">No Image</span>
+									</div>
+								)}
 							</div>
 
 							{/* Text Content */}

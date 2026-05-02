@@ -74,7 +74,7 @@ export default function SignatureVoyageClient({
 			{/* Top Destinations Section */}
 			{signatureVoyage.topDestinations && (
 				<section className="py-16 md:py-24">
-					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+					<div className="max-w-7xl mx-auto px-4 sbm:px-6 lg:px-8">
 						{/* Title */}
 						<div className="text-center mb-16">
 							<h2 className="text-4xl md:text-5xl font-light tracking-widest uppercase mb-4">
@@ -187,9 +187,9 @@ export default function SignatureVoyageClient({
 			)}
 
 			{/* Footer Sections */}
-			{footerSections && footerSections.length > 0 && (
+			{/* {footerSections && footerSections.length > 0 && (
 				<Footer sections={footerSections} />
-			)}
+			)} */}
 		</>
 	);
 }

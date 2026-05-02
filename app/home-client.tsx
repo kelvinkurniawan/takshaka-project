@@ -34,11 +34,13 @@ interface FooterSection {
 interface HomePageClientProps {
 	homeSections: HomeSections;
 	footerSections: FooterSection[];
+	socialLinks: any[];
 }
 
 export default function HomePageClient({
 	homeSections,
 	footerSections,
+	socialLinks,
 }: HomePageClientProps) {
 	const pathname = usePathname();
 
@@ -130,6 +132,7 @@ export default function HomePageClient({
 			<Footer
 				sections={footerSections}
 				copyright="Copyright 2026. Takshaka Event & Experience"
+				socialLinks={socialLinks}
 			/>
 		</div>
 	);

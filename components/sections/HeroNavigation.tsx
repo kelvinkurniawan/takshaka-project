@@ -7,6 +7,8 @@ import { Menu, X } from "lucide-react";
 interface HeroNavigationProps {
 	links?: { label: string; link: string }[];
 	logo?: React.ReactNode;
+	textColor?: string;
+	isCompact?: boolean;
 }
 
 const DEFAULT_LINKS = [
@@ -35,6 +37,8 @@ const DEFAULT_LINKS = [
 export default function HeroNavigation({
 	links = DEFAULT_LINKS,
 	logo,
+	textColor = "text-white",
+	isCompact = false,
 }: HeroNavigationProps) {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -49,13 +53,13 @@ export default function HeroNavigation({
 					</a>
 
 					{/* Desktop Navigation - Hidden on mobile */}
-					<div className="flex-wrap md:flex justify-center items-center md:mt-2  hidden ">
+					<div className="flex-wrap md:flex justify-center items-center md:mt-2 hidden">
 						{links.map(({ label, link }, idx) => (
 							<Link
 								key={idx}
 								href={link}
 								prefetch={false}
-								className="text-white text-sm font-medium hover:underline transition-colors p-1 md:px-4"
+								className={`${textColor} text-sm font-medium hover:underline transition-colors p-1 md:px-4`}
 							>
 								{label}
 							</Link>

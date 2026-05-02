@@ -7,6 +7,7 @@ import {
 	type Page,
 	getFooterSections,
 	transformPageSectionsWithDynamicTabs,
+	getSocialMediaLinks,
 } from "@/lib/page-helpers";
 import HomePageClient from "./home-client";
 
@@ -46,6 +47,7 @@ export default async function Home() {
 			<HomePageClient
 				homeSections={homeSections}
 				footerSections={getFooterSections()}
+				socialLinks={await getSocialMediaLinks()}
 			/>
 		</>
 	);

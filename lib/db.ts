@@ -43,22 +43,15 @@ export function getDB(env: NodeJS.ProcessEnv) {
 	global._pool = pool;
 
 	// Add event listeners untuk debugging
-	pool.on("error", (err) => {
-		console.error("❌ Unexpected error on idle client", err);
-	});
+	pool.on("error", (err) => {});
 
-	pool.on("connect", () => {
-		console.log("🟢 NEW DB CONNECTION");
-	});
+	pool.on("connect", () => {});
 
-	pool.on("acquire", () => {
-		console.log("📥 CONNECTION ACQUIRED");
-	});
+	pool.on("acquire", () => {});
 
 	const db = drizzle(pool, { schema });
 	global._db = db;
 
-	console.log("✅ Database instance created");
 	return db;
 }
 
@@ -75,10 +68,6 @@ export async function withRetry<T>(
 			return await fn();
 		} catch (error) {
 			lastError = error;
-			console.warn(
-				`Database operation failed (attempt ${attempt}/${maxAttempts}):`,
-				error,
-			);
 
 			if (attempt < maxAttempts) {
 				// Exponential backoff
