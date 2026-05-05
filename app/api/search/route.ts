@@ -83,11 +83,11 @@ export async function GET(request: Request) {
 
 		// Combine and deduplicate results
 		const allResults = [
-			...contentResults.map((item: typeof contentResults[0]) => ({
+			...contentResults.map((item: (typeof contentResults)[0]) => ({
 				...item,
 				resultType: "content",
 			})),
-			...pageResults.map((item: typeof pageResults[0]) => ({
+			...pageResults.map((item: (typeof pageResults)[0]) => ({
 				...item,
 				resultType: "page",
 			})),
