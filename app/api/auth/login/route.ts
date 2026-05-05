@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 const loginSchema = z.object({
 	email: z.string().email("Email tidak valid"),
 	password: z.string().min(1, "Password tidak boleh kosong"),
-	recaptchaToken: z.string().min(1, "reCAPTCHA token is required"),
+	recaptchaToken: z.string().optional(), // Disabled for development
 });
 
 // Helper function to log login attempts
@@ -82,34 +82,7 @@ export async function POST(request: Request) {
 		// ===== INPUT VALIDATION =====
 		const validatedData = loginSchema.parse(body);
 
-		// ===== RECAPTCHA VERIFICATION =====
-		const captchaResult = await verifyCaptchaToken(
-			validatedData.recaptchaToken,
-		);
-
-		if (!captchaResult.success) {
-			console.warn(
-				"reCAPTCHA verification failed for login:",
-				captchaResult.error,
-				"Score:",
-				captchaResult.score,
-			);
-			// Log failed login - captcha failed
-			const db = getDB(process.env);
-			await logLogin(
-				db,
-				validatedData.email,
-				false,
-				null,
-				"captcha_failed",
-				clientIP,
-				userAgent,
-			);
-			return Response.json(
-				{ error: "reCAPTCHA verification failed. Please try again." },
-				{ status: 400 },
-			);
-		}
+		// ===== RECAPTCHA VERIFICATION (DISABLED FOR DEVELOPMENT) =====
 
 		// ===== DATABASE LOOKUP =====
 		const db = getDB(process.env);

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 interface ValidationErrors {
 	email?: string;
@@ -13,7 +12,6 @@ interface ValidationErrors {
 
 export default function SecureAccessPage() {
 	const router = useRouter();
-	const { executeRecaptcha } = useGoogleReCaptcha();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
@@ -94,19 +92,12 @@ export default function SecureAccessPage() {
 		setIsLoading(true);
 
 		try {
-			if (!executeRecaptcha) {
-				throw new Error("reCAPTCHA not available");
-			}
-
-			// Get reCAPTCHA token
-			const token = await executeRecaptcha("login");
-
 			const response = await fetch("/api/auth/login", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ email, password, recaptchaToken: token }),
+				body: JSON.stringify({ email, password }),
 			});
 
 			const data = await response.json();

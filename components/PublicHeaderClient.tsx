@@ -44,6 +44,9 @@ export default function PublicHeaderClient({
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const [theme, setTheme] = useState<"light" | "dark">("light");
 	const [searchOpen, setSearchOpen] = useState(false);
+	const [searchQuery, setSearchQuery] = useState("");
+	const [searchResults, setSearchResults] = useState<any[]>([]);
+	const [searchLoading, setSearchLoading] = useState(false);
 
 	useLayoutEffect(() => {
 		const initialTheme = "light";
@@ -64,6 +67,37 @@ export default function PublicHeaderClient({
 			return pathname === "/";
 		}
 		return pathname.startsWith(href);
+	};
+
+	const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === "Escape") {
+			setSearchOpen(false);
+			return;
+		}
+
+		if (e.key !== "Enter" || !searchQuery.trim()) return;
+
+		setSearchLoading(true);
+		try {
+			const response = await fetch(
+				`/api/search?q=${encodeURIComponent(searchQuery)}`,
+			);
+			const data = await response.json();
+
+			if (data.success) {
+				setSearchResults(data.results);
+			}
+		} catch (error) {
+			console.error("Search error:", error);
+		} finally {
+			setSearchLoading(false);
+		}
+	};
+
+	const handleSearchOpen = () => {
+		setSearchOpen(true);
+		setSearchQuery("");
+		setSearchResults([]);
 	};
 
 	return (
@@ -211,11 +245,11 @@ export default function PublicHeaderClient({
 				{/* Popup search form */}
 				{searchOpen && (
 					<div
-						className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4"
+						className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
 						onClick={() => setSearchOpen(false)}
 					>
 						<div
-							className="bg-white dark:bg-[#1a1a1a] p-6 md:p-8 rounded-lg shadow-2xl w-full max-w-2xl"
+							className="bg-white dark:bg-[#1a1a1a] p-6 md:p-8 rounded-lg shadow-2xl w-full max-w-2xl max-h-[70vh] overflow-y-auto"
 							onClick={(e) => e.stopPropagation()}
 						>
 							<div className="flex items-center justify-between mb-6 md:mb-8">
@@ -236,13 +270,70 @@ export default function PublicHeaderClient({
 							</div>
 							<input
 								type="text"
-								placeholder="Cari artikel, halaman, atau konten..."
+								placeholder="Search articles, pages, or content..."
 								className="w-full p-3 md:p-4 border border-gray-300 dark:border-[#3a3a3a] rounded-md bg-white dark:bg-[#282828] text-foreground text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-primary"
 								autoFocus
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+								onKeyDown={handleSearch}
 							/>
 							<p className="mt-3 md:mt-4 text-sm md:text-base text-gray-500 dark:text-gray-400">
-								Tekan Enter untuk mencari atau ESC untuk menutup
+								Press Enter to search or ESC to close
 							</p>
+
+							{/* Search Results */}
+							{searchLoading && (
+								<div className="mt-6 text-center">
+									<p className="text-gray-600 dark:text-gray-400">
+										Searching...
+									</p>
+								</div>
+							)}
+
+							{!searchLoading && searchResults.length > 0 && (
+								<div className="mt-6 space-y-4">
+									<p className="text-sm text-gray-600 dark:text-gray-400">
+										Found {searchResults.length} result
+										{searchResults.length !== 1 ? "s" : ""}
+									</p>
+									{searchResults.map((result, idx) => (
+										<Link
+											key={`${result.resultType}-${result.id}`}
+											href={`/${
+												result.resultType === "content" ? "blog" : "pages"
+											}/${result.slug}`}
+											prefetch={false}
+											onClick={() => setSearchOpen(false)}
+											className="block p-4 border border-gray-200 dark:border-[#3a3a3a] rounded-md hover:bg-gray-50 dark:hover:bg-[#282828] transition-colors"
+										>
+											<h3 className="font-semibold text-foreground mb-1">
+												{result.title}
+											</h3>
+											{result.excerpt && (
+												<p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+													{result.excerpt}
+												</p>
+											)}
+											<p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+												{result.resultType === "content" ? "Article" : "Page"} •{" "}
+												{new Date(
+													result.publishedAt || result.createdAt,
+												).toLocaleDateString()}
+											</p>
+										</Link>
+									))}
+								</div>
+							)}
+
+							{!searchLoading &&
+								searchQuery.trim() &&
+								searchResults.length === 0 && (
+									<div className="mt-6 text-center">
+										<p className="text-gray-600 dark:text-gray-400">
+											No results found for "{searchQuery}"
+										</p>
+									</div>
+								)}
 						</div>
 					</div>
 				)}
