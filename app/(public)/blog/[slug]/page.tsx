@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import CommentsList from "@/components/CommentsList";
 import FeaturedImageSection from "@/components/FeaturedImageSection";
 import HeroNavigation from "@/components/sections/HeroNavigation";
 import { getDB } from "@/lib/db";
@@ -143,9 +142,6 @@ export default async function BlogDetailPage({
 					dangerouslySetInnerHTML={{ __html: content.content }}
 				/>
 			</article>
-
-			{/* Comments Section */}
-			<CommentsList contentId={content.id} />
 		</div>
 	);
 }

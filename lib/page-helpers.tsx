@@ -342,6 +342,7 @@ export async function transformPageSectionsWithDynamicTabs(
 				title: content.title,
 				description: truncateText(content.excerpt || ""),
 				image: content.featuredImage || placeholderImage,
+				slug: content.slug,
 			})),
 		}));
 

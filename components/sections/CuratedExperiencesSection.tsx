@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 interface ExperienceItem {
 	id: string;
 	title: string;
 	description: string;
 	image: string;
+	slug?: string;
 }
 
 const PLACEHOLDER_IMAGE =
@@ -64,39 +66,63 @@ export default function CuratedExperiencesSection({
 
 				{/* Tab Content - Grid of Images */}
 				{activeTabContent && (
-					<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 max-w-100 mx-auto">
-						{activeTabContent.items.map((item) => {
-							const hasError = imageErrors[item.id];
-							const imageUrl = hasError ? PLACEHOLDER_IMAGE : item.image;
+					<div>
+						<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 max-w-100 mx-auto">
+							{activeTabContent.items.map((item) => {
+								const hasError = imageErrors[item.id];
+								const imageUrl = hasError ? PLACEHOLDER_IMAGE : item.image;
 
-							return (
-								<div
-									key={item.id}
-									className="relative aspect-[3/4] bg-gray-900 overflow-hidden group ]"
+								return (
+									<Link
+										key={item.id}
+										href={item.slug ? `/blog/${item.slug}` : "#"}
+										className="relative aspect-[3/4] bg-gray-900 overflow-hidden group block"
+									>
+										{/* Image */}
+										<img
+											src={imageUrl}
+											alt={item.title}
+											className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+											onError={() => handleImageError(item.id)}
+										/>
+
+										{/* Overlay */}
+										<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+
+										{/* Floating Content */}
+										<div className="absolute bottom-0 sm:bottom-48 md:bottom-0 left-0 right-0 p-4 md:p-6 text-white">
+											<h3 className="text-xs md:text-sm font-semibold mb-2 md:mb-4 uppercase tracking-widest text-center">
+												{item.title}
+											</h3>
+											<p className="text-xs text-gray-300 leading-relaxed text-center line-clamp-2 md:line-clamp-none">
+												{item.description}
+											</p>
+										</div>
+									</Link>
+								);
+							})}
+						</div>
+
+						{/* View All Button */}
+						<div className="flex justify-center mt-12">
+							<Link
+								href="/curated-experiences"
+								className="inline-flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-full font-semibold hover:bg-amber-700 transition-colors duration-300 shadow-lg hover:shadow-xl uppercase tracking-widest text-sm"
+							>
+								Explore All
+								<svg
+									className="w-5 h-5"
+									fill="currentColor"
+									viewBox="0 0 20 20"
 								>
-									{/* Image */}
-									<img
-										src={imageUrl}
-										alt={item.title}
-										className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-										onError={() => handleImageError(item.id)}
+									<path
+										fillRule="evenodd"
+										d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10l-4.293-4.293a1 1 0 010-1.414z"
+										clipRule="evenodd"
 									/>
-
-									{/* Overlay */}
-									<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-
-									{/* Floating Content */}
-									<div className="absolute bottom-0 sm:bottom-48 md:bottom-0 left-0 right-0 p-4 md:p-6 text-white">
-										<h3 className="text-xs md:text-sm font-semibold mb-2 md:mb-4 uppercase tracking-widest text-center">
-											{item.title}
-										</h3>
-										<p className="text-xs text-gray-300 leading-relaxed text-center line-clamp-2 md:line-clamp-none">
-											{item.description}
-										</p>
-									</div>
-								</div>
-							);
-						})}
+								</svg>
+							</Link>
+						</div>
 					</div>
 				)}
 			</div>
