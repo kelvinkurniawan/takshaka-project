@@ -2,6 +2,7 @@ import { z } from "zod";
 import { getDB } from "@/lib/db";
 import { contactSubmissions } from "@/lib/schema";
 import { eq } from "drizzle-orm";
+import { requireAuth, requireRole } from "@/lib/rbac";
 
 export const runtime = "nodejs";
 
@@ -14,6 +15,9 @@ export async function PATCH(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
+		// Verify authentication - editors and admins can update submissions
+		await requireAuth();
+
 		const { id } = await params;
 		const submissionId = parseInt(id);
 
@@ -51,6 +55,9 @@ export async function PATCH(
 		}
 
 		console.error("Error updating contact submission:", error);
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		return Response.json(
 			{ error: "Failed to update submission" },
 			{ status: 500 },
@@ -63,6 +70,9 @@ export async function DELETE(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
+		// Verify user is admin - only admins can delete submissions
+		await requireRole("admin");
+
 		const { id } = await params;
 		const submissionId = parseInt(id);
 
@@ -83,6 +93,12 @@ export async function DELETE(
 		});
 	} catch (error) {
 		console.error("Error deleting contact submission:", error);
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
+		if (error instanceof Error && error.message.includes("Forbidden")) {
+			return Response.json({ error: "Forbidden" }, { status: 403 });
+		}
 		return Response.json(
 			{ error: "Failed to delete submission" },
 			{ status: 500 },

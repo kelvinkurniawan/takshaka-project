@@ -3,6 +3,7 @@ import { getDB } from "@/lib/db";
 import { contactSubmissions } from "@/lib/schema";
 import { desc, isNull } from "drizzle-orm";
 import { verifyCaptchaToken } from "@/lib/captcha";
+import { requireAuth } from "@/lib/rbac";
 
 // Validation schema
 const contactSubmissionSchema = z.object({
@@ -84,6 +85,9 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
 	try {
+		// Verify authentication - only authenticated users can view submissions
+		await requireAuth();
+
 		const db = getDB(process.env);
 		const submissions = await db
 			.select()
@@ -93,6 +97,9 @@ export async function GET(request: Request) {
 		return Response.json(submissions);
 	} catch (error) {
 		console.error("Error fetching contact submissions:", error);
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		return Response.json(
 			{ error: "Failed to fetch submissions" },
 			{ status: 500 },
