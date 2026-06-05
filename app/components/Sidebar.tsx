@@ -96,9 +96,7 @@ export default function Sidebar({
 				{ icon: FileText, label: "All Content", href: "/app/content" },
 				{ icon: FolderOpen, label: "Categories", href: "/app/categories" },
 				{ icon: Image, label: "Media Library", href: "/app/media" },
-				...(enablePagesMenu
-					? [{ icon: File, label: "Pages", href: "/app/pages" }]
-					: []),
+				{ icon: File, label: "Pages", href: "/app/pages" },
 				{
 					icon: Layers,
 					label: "Section Management",

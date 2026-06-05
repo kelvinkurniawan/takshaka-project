@@ -24,6 +24,7 @@ export default function GalleryOfWorksClient({
 	const [error, setError] = useState<string | null>(null);
 	const [showCategoryForm, setShowCategoryForm] = useState(false);
 	const [showItemForm, setShowItemForm] = useState(false);
+	const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
 	const filteredItems = selectedCategory
 		? items.filter((item) => item.categoryId === selectedCategory)
@@ -58,10 +59,21 @@ export default function GalleryOfWorksClient({
 
 					{showCategoryForm && (
 						<CategoryForm
-							onClose={() => setShowCategoryForm(false)}
-							onSuccess={(cat) => {
-								setCategories([...categories, cat]);
+							initialData={editingCategory}
+							onClose={() => {
 								setShowCategoryForm(false);
+								setEditingCategory(null);
+							}}
+							onSuccess={(cat) => {
+								if (editingCategory) {
+									setCategories(
+										categories.map((c) => (c.id === cat.id ? cat : c))
+									);
+								} else {
+									setCategories([...categories, cat]);
+								}
+								setShowCategoryForm(false);
+								setEditingCategory(null);
 								setError(null);
 							}}
 							setError={setError}
@@ -78,25 +90,82 @@ export default function GalleryOfWorksClient({
 					) : (
 						<div className="space-y-2">
 							{categories.map((cat) => (
-								<button
+								<div
 									key={cat.id}
-									onClick={() => setSelectedCategory(cat.id)}
-									className={`w-full p-4 text-left card-modern transition-all ${
+									className={`p-4 card-modern transition-all flex items-center justify-between gap-2 ${
 										selectedCategory === cat.id
 											? "bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 dark:border-blue-500"
 											: "bg-surface dark:bg-[#323232] hover:shadow-md"
 									}`}
 								>
-									<h3 className="font-semibold text-gray-900 dark:text-[#e5e5e5]">
-										{cat.name}
-									</h3>
-									<p className="text-xs text-secondary dark:text-[#929292] mt-1">
-										{cat.slug}
-									</p>
-									<p className="text-xs text-muted dark:text-[#727272] mt-2">
-										{items.filter((i) => i.categoryId === cat.id).length} items
-									</p>
-								</button>
+									<button
+										onClick={() => setSelectedCategory(cat.id)}
+										className="flex-1 text-left"
+									>
+										<h3 className="font-semibold text-gray-900 dark:text-[#e5e5e5]">
+											{cat.name}
+										</h3>
+										<p className="text-xs text-secondary dark:text-[#929292] mt-1">
+											{cat.slug}
+										</p>
+										<p className="text-xs text-muted dark:text-[#727272] mt-2">
+											{items.filter((i) => i.categoryId === cat.id).length} items
+										</p>
+									</button>
+									<div className="flex items-center gap-1 flex-shrink-0">
+										<button
+											onClick={() => {
+												setEditingCategory(cat);
+												setShowCategoryForm(true);
+											}}
+											className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg transition-colors"
+											title="Edit category"
+										>
+											<Edit2 className="w-4 h-4" />
+										</button>
+										<button
+											onClick={() => {
+												if (
+													confirm(
+														"Delete this category? Its items will be kept as orphaned items."
+													)
+												) {
+													(async () => {
+														try {
+															const res = await fetch(
+																"/api/admin/gallery/categories",
+																{
+																	method: "DELETE",
+																	headers: {
+																		"Content-Type": "application/json",
+																	},
+																	body: JSON.stringify({ id: cat.id }),
+																}
+															);
+															if (!res.ok) throw new Error("Failed to delete");
+															setCategories(
+																categories.filter((c) => c.id !== cat.id)
+															);
+															if (selectedCategory === cat.id) {
+																setSelectedCategory(null);
+															}
+														} catch (err) {
+															setError(
+																err instanceof Error
+																	? err.message
+																	: "An error occurred"
+															);
+														}
+													})();
+												}
+											}}
+											className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg transition-colors"
+											title="Delete category"
+										>
+											<Trash2 className="w-4 h-4" />
+										</button>
+									</div>
+								</div>
 							))}
 						</div>
 					)}
@@ -173,18 +242,20 @@ export default function GalleryOfWorksClient({
 }
 
 function CategoryForm({
+	initialData,
 	onClose,
 	onSuccess,
 	setError,
 }: {
+	initialData?: Category | null;
 	onClose: () => void;
 	onSuccess: (cat: Category) => void;
 	setError: (error: string | null) => void;
 }) {
 	const [formData, setFormData] = useState({
-		name: "",
-		slug: "",
-		displayOrder: 0,
+		name: initialData?.name || "",
+		slug: initialData?.slug || "",
+		displayOrder: initialData?.displayOrder || 0,
 	});
 	const [loading, setLoading] = useState(false);
 
@@ -212,15 +283,21 @@ function CategoryForm({
 		setError(null);
 
 		try {
-			const res = await fetch("/api/admin/gallery/categories", {
-				method: "POST",
+			const method = initialData ? "PUT" : "POST";
+			const url = "/api/admin/gallery/categories";
+			const body = initialData
+				? { id: initialData.id, ...formData }
+				: formData;
+
+			const res = await fetch(url, {
+				method,
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(formData),
+				body: JSON.stringify(body),
 			});
 
 			if (!res.ok) {
 				const errorData = await res.json();
-				throw new Error(errorData.error || "Failed to create category");
+				throw new Error(errorData.error || "Failed to save category");
 			}
 
 			const newCategory = await res.json();
@@ -237,6 +314,10 @@ function CategoryForm({
 			onSubmit={handleSubmit}
 			className="card-modern p-4 space-y-3 bg-surface dark:bg-[#323232] border-2 border-blue-500 dark:border-blue-500"
 		>
+			<h3 className="text-sm font-semibold text-gray-900 dark:text-[#e5e5e5]">
+				{initialData ? "Edit Category" : "Add New Category"}
+			</h3>
+
 			<div>
 				<label className="block text-xs font-semibold text-gray-900 dark:text-[#e5e5e5] mb-1">
 					Name
@@ -270,7 +351,7 @@ function CategoryForm({
 					disabled={loading}
 					className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 				>
-					{loading ? "Saving..." : "Save"}
+					{loading ? "Saving..." : initialData ? "Update" : "Create"}
 				</button>
 				<button
 					type="button"

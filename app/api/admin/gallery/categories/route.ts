@@ -85,6 +85,64 @@ export async function POST(request: Request, context: any) {
 	}
 }
 
+// Update category
+export async function PUT(request: Request, context: any) {
+	try {
+		const db = getDB(process.env);
+		const body = await request.json();
+		const { id, ...updateData } = body;
+
+		if (!id) {
+			return NextResponse.json(
+				{ error: "Category ID is required" },
+				{ status: 400 },
+			);
+		}
+
+		const validatedData = categorySchema.parse(updateData);
+
+		// Check if slug already exists (for other categories)
+		const existing = await db
+			.select()
+			.from(galleryCategories)
+			.where(eq(galleryCategories.slug, validatedData.slug));
+
+		const activeExisting = existing.filter(
+			(cat: any) => cat.deletedAt === null && cat.id !== id,
+		);
+		if (activeExisting.length > 0) {
+			return NextResponse.json(
+				{ error: "Slug sudah digunakan" },
+				{ status: 400 },
+			);
+		}
+
+		const result = await db
+			.update(galleryCategories)
+			.set(validatedData)
+			.where(eq(galleryCategories.id, id))
+			.returning();
+
+		// Revalidate pages that use gallery data
+		await revalidateAllPages();
+
+		return NextResponse.json(result[0]);
+	} catch (error) {
+		if (error instanceof z.ZodError) {
+			return NextResponse.json(
+				{ error: "Validation failed", details: error.errors },
+				{ status: 400 },
+			);
+		}
+
+		console.error("Failed to update gallery category:", error);
+		return NextResponse.json(
+			{ error: "Failed to update category" },
+			{ status: 500 },
+		);
+	}
+}
+
 // Delete category (soft delete)
 export async function DELETE(request: Request, context: any) {
 	try {
