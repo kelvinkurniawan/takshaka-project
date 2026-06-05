@@ -69,8 +69,8 @@ export default function PrestigeEventClient({
 			{prestigeEvents.heroContent?.slides &&
 				prestigeEvents.heroContent.slides.length > 0 && (
 					<section
-						className="relative w-full"
-						style={{ aspectRatio: "1920/1080" }}
+						className="relative w-full min-h-screen sm:min-h-96 md:min-h-screen flex items-center"
+						style={{ aspectRatio: "auto" }}
 					>
 						{/* Slides Container */}
 						{prestigeEvents.heroContent.slides.map(
@@ -92,24 +92,24 @@ export default function PrestigeEventClient({
 									/>
 
 									{/* Floating Text Content */}
-									<div className="absolute inset-0 bg-black/40 flex items-center">
+									<div className="absolute inset-0 bg-black/40 flex items-center py-12 sm:py-16 md:py-0">
 										<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
 											<div
 												data-aos="fade-up"
 												data-aos-duration="800"
-												className="space-y-8"
+												className="space-y-4 sm:space-y-6 md:space-y-8"
 											>
 												<div className="inline-block">
-													<span className="text-sm uppercase tracking-widest text-gray-300">
+													<span className="text-xs sm:text-sm uppercase tracking-widest text-gray-300">
 														{slide.badge}
 													</span>
 												</div>
 
 												<div className="max-w-2xl">
-													<h2 className="text-5xl md:text-6xl font-bold leading-tight mb-8 whitespace-pre-line text-white">
+													<h2 className="text-2xl min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-5xl 2xl:text-5xl font-bold leading-snug sm:leading-tight md:leading-tight mb-4 sm:mb-6 md:mb-8 whitespace-pre-line text-white break-words">
 														{slide.heading}
 													</h2>
-													<p className="text-lg text-gray-200 leading-relaxed max-w-xl">
+													<p className="text-xs min-[400px]:text-sm sm:text-base md:text-lg text-gray-200 leading-relaxed max-w-xl break-words">
 														{slide.description}
 													</p>
 												</div>
