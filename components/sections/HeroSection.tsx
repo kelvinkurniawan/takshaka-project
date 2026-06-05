@@ -145,7 +145,7 @@ export default function HeroSection({
 	return (
 		<>
 			<section
-				className="relative h-[90vh] md:h-screen flex items-center justify-center overflow-hidden"
+				className="relative min-h-[100vh] sm:min-h-[90vh] md:h-screen flex items-center justify-center overflow-hidden"
 				onTouchStart={handleTouchStart}
 				onTouchMove={handleTouchMove}
 				onTouchEnd={handleTouchEnd}
@@ -207,21 +207,21 @@ export default function HeroSection({
 				{/* Content */}
 				<div
 					key={`content-${currentIndex}`}
-					className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-4xl"
+					className="relative z-10 text-center text-white px-3 sm:px-6 lg:px-8 max-w-5xl w-full"
 				>
-					<h1 className="text-xl sm:text-3xl md:text-5xl mb-2 font-elegance uppercase leading-tight drop-shadow-lg tracking-widest">
+					<h1 className="text-2xl min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-3 sm:mb-4 md:mb-6 font-elegance uppercase leading-snug sm:leading-tight md:leading-snug drop-shadow-lg tracking-widest break-words">
 						{currentContent?.title}
 					</h1>
-					<p className="text-base sm:text-lg md:text-base text-gray-100 mb-4 font-light leading-relaxed max-w-3xl mx-auto drop-shadow">
+					<p className="text-xs min-[400px]:text-sm sm:text-base md:text-lg text-gray-100 mb-6 sm:mb-8 font-light leading-relaxed max-w-3xl mx-auto drop-shadow px-1 sm:px-2 break-words">
 						{currentContent?.description}
 					</p>
 
 					{/* CTA Buttons */}
-					<div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
+					<div className="flex flex-col sm:flex-row gap-3 sm:gap-6 justify-center px-1">
 						<Link
 							href="#featured"
 							prefetch={false}
-							className="inline-block bg-white text-slate-900 px-4 sm:px-6 py-2 rounded-full font-semibold hover:bg-gray-100 transition duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base tracking-widest"
+							className="inline-block bg-white text-slate-900 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-semibold hover:bg-gray-100 transition duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs min-[400px]:text-sm sm:text-base tracking-widest whitespace-nowrap"
 						>
 							EXPLORE NOW
 						</Link>
