@@ -34,14 +34,15 @@ export async function POST(request: Request) {
 		}
 
 		// Get all siblings (same parent, same platform, not deleted)
+		const targetParentId = parentId !== undefined ? parentId : movingItem[0].parentId;
 		const siblings = await db
 			.select()
 			.from(navigation)
 			.where(
 				and(
-					parentId === null || parentId === undefined
+					targetParentId === null
 						? isNull(navigation.parentId)
-						: eq(navigation.parentId, parentId || movingItem[0].parentId),
+						: eq(navigation.parentId, targetParentId),
 					isNull(navigation.deletedAt),
 					eq(navigation.platform, platform),
 				),
