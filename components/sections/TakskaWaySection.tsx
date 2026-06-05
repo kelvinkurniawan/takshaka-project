@@ -95,8 +95,8 @@ export default function TakskaWaySection({
 				</div>
 
 				{/* Mobile Horizontal Scrollable */}
-				<div className="md:hidden overflow-x-auto pb-4 -mx-4 px-4">
-					<div className="flex gap-4 min-w-min">
+				<div className="md:hidden overflow-x-auto overflow-y-hidden pb-4">
+					<div className="flex gap-4 px-4">
 						{items.map((item, index) => (
 							<div
 								key={item.id}
