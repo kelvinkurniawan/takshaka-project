@@ -108,6 +108,11 @@ body {
 	font-family: "MinionPro", serif;
 }
 
+.public-light {
+	width: 100vw;
+	overflow-x: hidden;
+}
+
 label {
 	border: none !important;
 	background: none !important;

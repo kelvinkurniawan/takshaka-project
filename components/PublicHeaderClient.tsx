@@ -106,7 +106,7 @@ export default function PublicHeaderClient({
 				<div className="items-center justify-between h-12 text-sm px-4 sm:px-0 hidden md:flex">
 					{/* Logo */}
 					<Link
-						href="/"
+						href="/contact-us"
 						prefetch={false}
 						className="flex items-center space-x-2 uppercase tracking-widest"
 					>
