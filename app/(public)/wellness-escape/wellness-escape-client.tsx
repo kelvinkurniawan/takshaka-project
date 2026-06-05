@@ -168,6 +168,59 @@ export default function WellnessEscapeClient({
 					</div>
 				</section>
 			)}
+
+			{/* Exclusive Experiences Section */}
+			{wellnessEscape.exclusiveExperiences && (
+				<section className="py-16 md:py-24 bg-gray-50">
+					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+						{/* Title */}
+						<div className="text-center mb-16">
+							<h2 className="text-4xl md:text-5xl font-light tracking-widest uppercase mb-4">
+								{wellnessEscape.exclusiveExperiences.title}
+							</h2>
+						</div>
+
+						{/* Experiences Grid */}
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
+							{wellnessEscape.exclusiveExperiences.experiences?.map(
+								(experience: any, index: number) => (
+									<div
+										key={index}
+										className="group"
+										data-aos="fade-up"
+										data-aos-delay={index * 100}
+										data-aos-duration="800"
+									>
+										{/* Image */}
+										<div className="relative overflow-hidden rounded-sm w-full h-64 md:h-72 mb-4">
+											<Image
+												src={experience.image}
+												alt={experience.title}
+												fill
+												className="object-cover group-hover:scale-105 transition-transform duration-300"
+												unoptimized
+											/>
+										</div>
+
+										{/* Content */}
+										<div>
+											<h3 className="text-lg md:text-xl font-light tracking-wide uppercase mb-2">
+												{experience.title}
+											</h3>
+											<p className="text-gray-600 text-sm leading-relaxed">
+												{experience.description}
+											</p>
+										</div>
+									</div>
+								),
+							)}
+						</div>
+					</div>
+				</section>
+			)}
+
+			{/* Footer */}
+			{footerSections && <Footer sections={footerSections} />}
 		</>
 	);
 }
