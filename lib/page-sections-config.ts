@@ -799,6 +799,129 @@ export const pageSectionsConfig = {
 			},
 		],
 	},
+	"portfolio": {
+		hero: [
+			{
+				type: "arrayItems",
+				label: "Hero Content Slides",
+				target: "contents",
+				fields: [
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Description",
+						target: "description",
+						multiline: true,
+					},
+					{
+						type: "image/video",
+						label: "Background (Image or Video)",
+						target: "background",
+					},
+				],
+			},
+		],
+		editorPicks: [
+			{
+				type: "string",
+				label: "Section Title",
+				target: "title",
+			},
+			{
+				type: "string",
+				label: "Section Description",
+				target: "description",
+				multiline: true,
+			},
+			{
+				type: "arrayItems",
+				label: "Featured Articles",
+				target: "items",
+				fields: [
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Excerpt",
+						target: "excerpt",
+						multiline: true,
+					},
+					{
+						type: "image",
+						label: "Article Image",
+						target: "image",
+					},
+					{
+						type: "string",
+						label: "Category",
+						target: "category",
+					},
+					{
+						type: "string",
+						label: "Date",
+						target: "date",
+					},
+					{
+						type: "string",
+						label: "Link",
+						target: "link",
+					},
+				],
+			},
+		],
+		articlesList: [
+			{
+				type: "image",
+				label: "Fixed Featured Image",
+				target: "fixedImage",
+			},
+			{
+				type: "arrayItems",
+				label: "Article Items",
+				target: "items",
+				fields: [
+					{
+						type: "string",
+						label: "Title",
+						target: "title",
+					},
+					{
+						type: "string",
+						label: "Excerpt",
+						target: "excerpt",
+						multiline: true,
+					},
+					{
+						type: "image",
+						label: "Article Image",
+						target: "image",
+					},
+					{
+						type: "string",
+						label: "Category",
+						target: "category",
+					},
+					{
+						type: "string",
+						label: "Date",
+						target: "date",
+					},
+					{
+						type: "string",
+						label: "Link",
+						target: "link",
+					},
+				],
+			},
+		],
+	},
 	"sustainability-impact": {
 		hero: [
 			{
