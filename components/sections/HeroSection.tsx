@@ -209,10 +209,10 @@ export default function HeroSection({
 					key={`content-${currentIndex}`}
 					className="relative z-10 text-center text-white px-3 sm:px-6 lg:px-8 max-w-5xl w-full"
 				>
-					<h1 className="text-2xl min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl mb-3 sm:mb-4 md:mb-6 font-elegance uppercase leading-snug sm:leading-tight md:leading-snug drop-shadow-lg tracking-widest break-words">
+					<h1 className="text-2xl min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-5xl 2xl:text-5xl mb-3 sm:mb-4 md:mb-6 font-elegance uppercase leading-snug sm:leading-tight md:leading-snug drop-shadow-lg tracking-widest break-words">
 						{currentContent?.title}
 					</h1>
-					<p className="text-xs min-[400px]:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl 2xl:text-2xl text-gray-100 mb-6 sm:mb-8 font-light leading-relaxed max-w-3xl mx-auto drop-shadow px-1 sm:px-2 break-words">
+					<p className="text-xs min-[400px]:text-sm sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-lg text-gray-100 mb-6 sm:mb-8 font-light leading-relaxed max-w-3xl mx-auto drop-shadow px-1 sm:px-2 break-words">
 						{currentContent?.description}
 					</p>
 
@@ -221,7 +221,7 @@ export default function HeroSection({
 						<Link
 							href="#featured"
 							prefetch={false}
-							className="inline-block bg-white text-slate-900 px-4 sm:px-6 py-2 sm:py-2.5 2xl:py-3 rounded-full font-semibold hover:bg-gray-100 transition duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs min-[400px]:text-sm sm:text-base xl:text-lg 2xl:text-xl tracking-widest whitespace-nowrap"
+							className="inline-block bg-white text-slate-900 px-4 sm:px-6 py-2 sm:py-2.5 2xl:py-2.5 rounded-full font-semibold hover:bg-gray-100 transition duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs min-[400px]:text-sm sm:text-base xl:text-base 2xl:text-base tracking-widest whitespace-nowrap"
 						>
 							EXPLORE NOW
 						</Link>
