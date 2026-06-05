@@ -53,27 +53,39 @@ export async function POST(request: Request) {
 		const currentIndex = siblings.findIndex((s: { id: number }) => s.id === id);
 
 		if (direction === "up" && currentIndex > 0) {
-			const prevItem = siblings[currentIndex - 1];
-			// Swap orders
-			await db
-				.update(navigation)
-				.set({ order: prevItem.order, updatedAt: new Date() })
-				.where(eq(navigation.id, currentItem.id));
-			await db
-				.update(navigation)
-				.set({ order: currentItem.order, updatedAt: new Date() })
-				.where(eq(navigation.id, prevItem.id));
+			// Move item up: swap positions with previous item
+			const newIndex = currentIndex - 1;
+			const reorderedItems = [
+				...siblings.slice(0, newIndex),
+				siblings[currentIndex],
+				siblings[newIndex],
+				...siblings.slice(currentIndex + 1),
+			];
+
+			// Update all affected items with new order values
+			for (let i = newIndex; i <= currentIndex; i++) {
+				await db
+					.update(navigation)
+					.set({ order: i, updatedAt: new Date() })
+					.where(eq(navigation.id, reorderedItems[i].id));
+			}
 		} else if (direction === "down" && currentIndex < siblings.length - 1) {
-			const nextItem = siblings[currentIndex + 1];
-			// Swap orders
-			await db
-				.update(navigation)
-				.set({ order: nextItem.order, updatedAt: new Date() })
-				.where(eq(navigation.id, currentItem.id));
-			await db
-				.update(navigation)
-				.set({ order: currentItem.order, updatedAt: new Date() })
-				.where(eq(navigation.id, nextItem.id));
+			// Move item down: swap positions with next item
+			const newIndex = currentIndex + 1;
+			const reorderedItems = [
+				...siblings.slice(0, currentIndex),
+				siblings[newIndex],
+				siblings[currentIndex],
+				...siblings.slice(newIndex + 1),
+			];
+
+			// Update all affected items with new order values
+			for (let i = currentIndex; i <= newIndex; i++) {
+				await db
+					.update(navigation)
+					.set({ order: i, updatedAt: new Date() })
+					.where(eq(navigation.id, reorderedItems[i].id));
+			}
 		}
 
 		return Response.json({ success: true });
