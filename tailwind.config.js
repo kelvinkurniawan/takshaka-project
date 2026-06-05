@@ -4,6 +4,12 @@ module.exports = {
 	darkMode: "class",
 	theme: {
 		extend: {
+			screens: {
+				"xs-sm": "375px",
+				"2xl": "1366px",
+				"3xl": "1536px",
+				"4xl": "1920px",
+			},
 			fontFamily: {
 				elegance: ['"Noto Serif Display"', "serif"],
 				"work-sans": ['"Work Sans"', "sans-serif"],
