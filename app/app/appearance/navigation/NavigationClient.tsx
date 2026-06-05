@@ -119,10 +119,28 @@ export default function NavigationClient({
 				: "/api/navigation";
 			const method = editingId ? "PUT" : "POST";
 
-			const submitData = {
+			let submitData = {
 				...formData,
 				platform: currentTab,
 			};
+
+			// For new items, auto-calculate the next order value
+			if (!editingId) {
+				const siblingItems = formData.parentId
+					? items
+							.flatMap((item) => (item.id === formData.parentId ? item.children || [] : []))
+					: items;
+
+				const maxOrder =
+					siblingItems.length > 0
+						? Math.max(...siblingItems.map((item) => item.order))
+						: -1;
+
+				submitData = {
+					...submitData,
+					order: maxOrder + 1,
+				};
+			}
 
 			const response = await fetch(url, {
 				method,
