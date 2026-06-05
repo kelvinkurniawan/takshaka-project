@@ -52,6 +52,7 @@ export default function NavigationClient({
 		useState<NavigationItem[]>(mobileItems);
 	const [editingId, setEditingId] = useState<number | null>(null);
 	const [showForm, setShowForm] = useState(false);
+	const [isReordering, setIsReordering] = useState(false);
 	const [formData, setFormData] = useState<FormData>({
 		label: "",
 		url: "",
@@ -87,6 +88,7 @@ export default function NavigationClient({
 		direction: "up" | "down",
 		parentId: number | null,
 	) => {
+		setIsReordering(true);
 		try {
 			const response = await fetch("/api/navigation/reorder", {
 				method: "POST",
@@ -107,6 +109,8 @@ export default function NavigationClient({
 		} catch (error) {
 			console.error("Error reordering:", error);
 			alert("Failed to move item");
+		} finally {
+			setIsReordering(false);
 		}
 	};
 
@@ -226,7 +230,7 @@ export default function NavigationClient({
 							<div className="flex items-center gap-1">
 								<button
 									onClick={() => handleReorder(item.id, "up", item.parentId)}
-									disabled={index === 0}
+									disabled={index === 0 || isReordering}
 									className="p-1.5 hover:bg-gray-200 dark:hover:bg-[#3a3a3a] rounded text-gray-600 dark:text-[#929292] disabled:opacity-30 disabled:cursor-not-allowed transition"
 									title="Move up"
 								>
@@ -234,7 +238,7 @@ export default function NavigationClient({
 								</button>
 								<button
 									onClick={() => handleReorder(item.id, "down", item.parentId)}
-									disabled={index === items.length - 1}
+									disabled={index === items.length - 1 || isReordering}
 									className="p-1.5 hover:bg-gray-200 dark:hover:bg-[#3a3a3a] rounded text-gray-600 dark:text-[#929292] disabled:opacity-30 disabled:cursor-not-allowed transition"
 									title="Move down"
 								>
