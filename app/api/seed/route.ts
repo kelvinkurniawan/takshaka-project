@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 				name: validatedData.name || validatedData.email.split("@")[0],
 				email: validatedData.email,
 				password: hashedPassword,
-				role: "editor",
+				role: "admin",
 				createdAt: new Date(),
 			})
 			.returning();

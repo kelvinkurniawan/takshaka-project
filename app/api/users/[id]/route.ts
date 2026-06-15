@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { requireAuth, canEdit, canDelete } from "@/lib/rbac";
+import { requireAuth, canEdit } from "@/lib/rbac";
 import { getDB } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq, ne, isNull, and } from "drizzle-orm";
@@ -174,14 +174,6 @@ export async function DELETE(
 ) {
 	try {
 		await requireAuth();
-
-		const canDeleteCheck = await canDelete();
-		if (!canDeleteCheck) {
-			return Response.json(
-				{ error: "Anda tidak memiliki izin untuk menghapus pengguna" },
-				{ status: 403 },
-			);
-		}
 
 		const { id } = await params;
 		const userId = parseInt(id);

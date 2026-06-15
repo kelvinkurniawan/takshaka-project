@@ -179,9 +179,6 @@ export default function UserManagerClient({
 	// Check if user can edit
 	const canEdit = user && (user.role === "admin" || user.role === "editor");
 
-	// Check if user can delete
-	const canDelete = user && user.role === "admin";
-
 	return (
 		<div className="space-y-6">
 			{/* Header Section */}
@@ -273,15 +270,13 @@ export default function UserManagerClient({
 														<Edit2 className="w-4 h-4" />
 													</button>
 												)}
-												{canDelete && (
-													<button
-														onClick={() => setDeleteConfirm(userItem.id)}
-														className="btn-icon btn-icon-danger"
-														title="Delete"
-													>
-														<Trash2 className="w-4 h-4" />
-													</button>
-												)}
+												<button
+													onClick={() => setDeleteConfirm(userItem.id)}
+													className="btn-icon btn-icon-danger"
+													title="Delete"
+												>
+													<Trash2 className="w-4 h-4" />
+												</button>
 											</div>
 										</td>
 									</tr>
