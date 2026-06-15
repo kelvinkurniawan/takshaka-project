@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requireAuth, canEdit, canDelete } from "@/lib/rbac";
+import { hashPassword } from "@/lib/auth";
 import { getDB } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq, isNull } from "drizzle-orm";
@@ -88,8 +89,7 @@ export async function POST(request: Request) {
 			return Response.json({ error: "Email sudah digunakan" }, { status: 400 });
 		}
 
-		// Hash password (simplified for now, should use proper hashing)
-		const hashedPassword = validatedData.password; // TODO: implement proper password hashing
+		const hashedPassword = hashPassword(validatedData.password);
 
 		const result = await db
 			.insert(users)

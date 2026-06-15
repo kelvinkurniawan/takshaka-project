@@ -21,6 +21,15 @@ export async function POST(request: Request) {
 
 		const db = getDB(process.env);
 
+		// Only allow seeding when there are absolutely no users (bootstrap only)
+		const allUsers = await db.select({ id: users.id }).from(users).limit(1);
+		if (allUsers.length > 0) {
+			return Response.json(
+				{ error: "Seed hanya bisa dijalankan saat belum ada user" },
+				{ status: 403 },
+			);
+		}
+
 		// Check if user already exists
 		const existingUsers = await db
 			.select()

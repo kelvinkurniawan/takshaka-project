@@ -2,9 +2,20 @@ export const dynamic = "force-dynamic";
 
 import { getDB } from "@/lib/db";
 import { navigation } from "@/lib/schema";
+import { requireAuth, canEdit } from "@/lib/rbac";
 
 export async function POST(request: Request) {
 	try {
+		await requireAuth();
+
+		const canEditCheck = await canEdit();
+		if (!canEditCheck) {
+			return Response.json(
+				{ error: "Tidak memiliki izin untuk melakukan seed" },
+				{ status: 403 },
+			);
+		}
+
 		const db = getDB(process.env);
 
 		// Sample navigation data
@@ -100,6 +111,9 @@ export async function POST(request: Request) {
 		);
 	} catch (error) {
 		console.error("Error seeding navigation:", error);
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		return Response.json(
 			{ error: "Failed to seed navigation data" },
 			{ status: 500 },
