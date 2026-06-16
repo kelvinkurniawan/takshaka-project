@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState, useEffect } from "react";
 import { Bell, AlertCircle, Loader } from "lucide-react";
@@ -33,7 +34,7 @@ export default function NotificationsPage() {
 		const fetchNotifications = async () => {
 			try {
 				setIsLoading(true);
-				const response = await fetch(
+				const response = await apiFetch(
 					`/api/app/notifications?limit=${limit}&offset=${offset}`,
 				);
 

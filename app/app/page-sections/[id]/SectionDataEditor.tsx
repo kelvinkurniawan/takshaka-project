@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState } from "react";
 import {
@@ -114,7 +115,7 @@ export default function SectionDataEditor({
 			const controller = new AbortController();
 			const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
 
-			const response = await fetch("/api/upload", {
+			const response = await apiFetch("/api/upload", {
 				method: "POST",
 				body: formData,
 				signal: controller.signal,
@@ -152,7 +153,7 @@ export default function SectionDataEditor({
 			setSaving(true);
 			setError(null);
 
-			const response = await fetch(`/api/page-sections/${section.id}`, {
+			const response = await apiFetch(`/api/page-sections/${section.id}`, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",

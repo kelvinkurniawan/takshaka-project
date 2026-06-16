@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState } from "react";
 import { Plus, Edit2, Trash2, X, AlertCircle } from "lucide-react";
@@ -65,7 +66,7 @@ export default function UserManagerClient({
 				? { name: formData.name, email: formData.email, role: formData.role }
 				: formData;
 
-			const response = await fetch(url, {
+			const response = await apiFetch(url, {
 				method,
 				credentials: "include",
 				headers: {
@@ -85,7 +86,7 @@ export default function UserManagerClient({
 			}
 
 			// Refresh users list
-			const refreshResponse = await fetch("/api/users", {
+			const refreshResponse = await apiFetch("/api/users", {
 				method: "GET",
 				credentials: "include",
 			});
@@ -142,7 +143,7 @@ export default function UserManagerClient({
 		setError(null);
 
 		try {
-			const response = await fetch(`/api/users/${id}`, {
+			const response = await apiFetch(`/api/users/${id}`, {
 				method: "DELETE",
 				credentials: "include",
 			});
@@ -158,7 +159,7 @@ export default function UserManagerClient({
 			}
 
 			// Refresh users list
-			const refreshResponse = await fetch("/api/users", {
+			const refreshResponse = await apiFetch("/api/users", {
 				method: "GET",
 				credentials: "include",
 			});

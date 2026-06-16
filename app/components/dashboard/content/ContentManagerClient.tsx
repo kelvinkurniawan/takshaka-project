@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
@@ -72,7 +73,7 @@ export default function ContentManagerClient({
 		const fetchCommentCounts = async () => {
 			try {
 				const contentIds = contents.map((c) => c.id);
-				const response = await fetch(
+				const response = await apiFetch(
 					`/api/comments/count?contentIds=${contentIds.join(",")}`,
 				);
 				if (response.ok) {
@@ -159,7 +160,7 @@ export default function ContentManagerClient({
 		setError(null);
 
 		try {
-			const response = await fetch(`/api/contents/${id}`, { method: "DELETE" });
+			const response = await apiFetch(`/api/contents/${id}`, { method: "DELETE" });
 
 			if (!response.ok) {
 				const data = await response.json();
@@ -519,7 +520,7 @@ function AuditLogsModal({
 	useEffect(() => {
 		const fetchLogs = async () => {
 			try {
-				const response = await fetch(
+				const response = await apiFetch(
 					`/api/audit-logs?entityType=contents&entityId=${contentId}`,
 				);
 				if (!response.ok) throw new Error("Failed to fetch logs");

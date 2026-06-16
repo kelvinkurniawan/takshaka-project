@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
@@ -132,7 +133,7 @@ export default function ContentForm({
 				: "/api/contents";
 			const method = isEditing ? "PUT" : "POST";
 
-			const response = await fetch(url, {
+			const response = await apiFetch(url, {
 				method,
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(payload),

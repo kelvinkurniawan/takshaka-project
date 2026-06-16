@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
@@ -58,7 +59,7 @@ export default function PageManagerClient({
 		setError(null);
 
 		try {
-			const response = await fetch(`/api/pages/${id}`, {
+			const response = await apiFetch(`/api/pages/${id}`, {
 				method: "DELETE",
 				credentials: "include",
 			});

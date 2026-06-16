@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState, useCallback, useMemo } from "react";
 import { CheckCircle2, X, Pencil, Trash2 } from "lucide-react";
@@ -57,7 +58,7 @@ export default function FAQManagerClient({
 
 	const refetchFAQs = async () => {
 		try {
-			const response = await fetch("/api/faqs");
+			const response = await apiFetch("/api/faqs");
 			if (!response.ok) throw new Error("Failed to fetch FAQs");
 			const data = await response.json();
 			setFaqs(data);
@@ -84,7 +85,7 @@ export default function FAQManagerClient({
 			setLoading(true);
 			if (editingId) {
 				// Update
-				const response = await fetch(`/api/faqs/${editingId}`, {
+				const response = await apiFetch(`/api/faqs/${editingId}`, {
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify(formData),
@@ -92,7 +93,7 @@ export default function FAQManagerClient({
 				if (!response.ok) throw new Error("Failed to update FAQ");
 			} else {
 				// Create
-				const response = await fetch("/api/faqs", {
+				const response = await apiFetch("/api/faqs", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify(formData),
@@ -112,7 +113,7 @@ export default function FAQManagerClient({
 		if (!window.confirm("Apakah Anda yakin ingin menghapus FAQ ini?")) return;
 		try {
 			setLoading(true);
-			const response = await fetch(`/api/faqs/${id}`, {
+			const response = await apiFetch(`/api/faqs/${id}`, {
 				method: "DELETE",
 			});
 			if (!response.ok) throw new Error("Failed to delete FAQ");

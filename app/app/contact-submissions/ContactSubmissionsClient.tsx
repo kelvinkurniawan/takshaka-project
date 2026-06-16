@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState, useEffect } from "react";
 import { Loader2, Trash2, Eye, Mail } from "lucide-react";
@@ -29,7 +30,7 @@ export default function ContactSubmissionsClient() {
 	const fetchSubmissions = async () => {
 		try {
 			setLoading(true);
-			const response = await fetch("/api/contact-submissions");
+			const response = await apiFetch("/api/contact-submissions");
 			if (response.ok) {
 				const data: ContactSubmission[] = await response.json();
 				// Filter by status if not "all"
@@ -54,7 +55,7 @@ export default function ContactSubmissionsClient() {
 	const handleMarkAsRead = async (submissionId: number) => {
 		try {
 			setActionLoading(submissionId);
-			const response = await fetch(`/api/contact-submissions/${submissionId}`, {
+			const response = await apiFetch(`/api/contact-submissions/${submissionId}`, {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ status: "read" }),
@@ -79,7 +80,7 @@ export default function ContactSubmissionsClient() {
 
 		try {
 			setActionLoading(submissionId);
-			const response = await fetch(`/api/contact-submissions/${submissionId}`, {
+			const response = await apiFetch(`/api/contact-submissions/${submissionId}`, {
 				method: "DELETE",
 			});
 

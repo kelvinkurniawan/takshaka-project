@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState } from "react";
 import { Plus, Edit2, Trash2, X, AlertCircle } from "lucide-react";
@@ -80,7 +81,7 @@ export default function CategoryManagerClient({
 				: "/api/categories";
 			const method = editingId ? "PUT" : "POST";
 
-			const response = await fetch(url, {
+			const response = await apiFetch(url, {
 				method,
 				credentials: "include",
 				headers: {
@@ -100,7 +101,7 @@ export default function CategoryManagerClient({
 			}
 
 			// Refresh categories list
-			const refreshResponse = await fetch("/api/categories", {
+			const refreshResponse = await apiFetch("/api/categories", {
 				method: "GET",
 				credentials: "include",
 			});
@@ -156,7 +157,7 @@ export default function CategoryManagerClient({
 		setError(null);
 
 		try {
-			const response = await fetch(`/api/categories/${id}`, {
+			const response = await apiFetch(`/api/categories/${id}`, {
 				method: "DELETE",
 				credentials: "include",
 			});
@@ -172,7 +173,7 @@ export default function CategoryManagerClient({
 			}
 
 			// Refresh categories list
-			const refreshResponse = await fetch("/api/categories", {
+			const refreshResponse = await apiFetch("/api/categories", {
 				method: "GET",
 				credentials: "include",
 			});
@@ -258,7 +259,7 @@ export default function CategoryManagerClient({
 							<tbody>
 								{categories.map((category) => (
 									<tr key={category.id}>
-										<td className="font-medium text-gray-900">
+										<td className="font-medium text-gray-900 dark:text-[#e5e5e5]">
 											{category.name}
 										</td>
 										<td>
@@ -312,7 +313,7 @@ export default function CategoryManagerClient({
 					<div className="modal-content card-modern max-w-md">
 						{/* Modal Header */}
 						<div className="flex items-center justify-between p-6 border-b border-primary">
-							<h2 className="text-xl font-bold text-gray-900">
+							<h2 className="text-xl font-bold text-gray-900 dark:text-[#e5e5e5]">
 								{editingId ? "Edit Kategori" : "Kategori Baru"}
 							</h2>
 							<button
@@ -336,7 +337,7 @@ export default function CategoryManagerClient({
 						<form onSubmit={handleSubmit} className="space-y-4 p-6">
 							{/* Name Field */}
 							<div>
-								<label className="block text-sm font-medium text-gray-900 mb-2">
+								<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
 									Category Name *
 								</label>
 								<input
@@ -353,7 +354,7 @@ export default function CategoryManagerClient({
 
 							{/* Slug Field */}
 							<div>
-								<label className="block text-sm font-medium text-gray-900 mb-2">
+								<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
 									Slug *
 								</label>
 								<input
@@ -373,7 +374,7 @@ export default function CategoryManagerClient({
 
 							{/* Description Field */}
 							<div>
-								<label className="block text-sm font-medium text-gray-900 mb-2">
+								<label className="block text-sm font-medium text-gray-900 dark:text-[#e5e5e5] mb-2">
 									Description
 								</label>
 								<textarea

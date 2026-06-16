@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState, forwardRef, useImperativeHandle } from "react";
 import {
@@ -534,7 +535,7 @@ const PageBuilder = forwardRef<PageBuilderHandle, PageBuilderProps>(
 				const url = pageId ? `/api/pages/${pageId}` : "/api/pages";
 				const method = pageId ? "PUT" : "POST";
 
-				const response = await fetch(url, {
+				const response = await apiFetch(url, {
 					method,
 					credentials: "include",
 					headers: {

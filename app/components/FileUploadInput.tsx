@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import Image from "next/image";
 import { useState, useRef } from "react";
@@ -83,7 +84,7 @@ export default function FileUploadInput({
 			const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
 
 			// Step 1: Request presigned URL from API
-			const presignedResponse = await fetch(
+			const presignedResponse = await apiFetch(
 				`/api/upload?fileName=${encodeURIComponent(file.name)}&fileSize=${file.size}&fileType=${encodeURIComponent(file.type)}`,
 				{
 					method: "GET",
@@ -107,7 +108,7 @@ export default function FileUploadInput({
 			// Step 2: Upload file directly to R2 using presigned URL
 			// Convert File to ArrayBuffer for proper cross-origin handling
 			const fileBuffer = await file.arrayBuffer();
-			const uploadResponse = await fetch(presignedUrl, {
+			const uploadResponse = await apiFetch(presignedUrl, {
 				method: "PUT",
 				body: new Uint8Array(fileBuffer),
 				signal: controller.signal,
@@ -118,7 +119,7 @@ export default function FileUploadInput({
 			}
 
 			// Step 3: Save metadata to database
-			const metadataResponse = await fetch("/api/upload", {
+			const metadataResponse = await apiFetch("/api/upload", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

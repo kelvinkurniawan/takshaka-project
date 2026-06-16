@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState, useMemo, useEffect } from "react";
 import {
@@ -92,7 +93,7 @@ export default function SectionDataEditor({
 		const fetchCategories = async () => {
 			try {
 				setCategoriesLoading(true);
-				const response = await fetch("/api/categories/with-contents");
+				const response = await apiFetch("/api/categories/with-contents");
 				if (!response.ok) throw new Error("Failed to fetch categories");
 				const data = await response.json();
 				setCategories(data);
@@ -274,7 +275,7 @@ export default function SectionDataEditor({
 			const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
 
 			// Step 1: Request presigned URL from API
-			const presignedResponse = await fetch(
+			const presignedResponse = await apiFetch(
 				`/api/upload?fileName=${encodeURIComponent(file.name)}&fileSize=${file.size}&fileType=${encodeURIComponent(file.type)}`,
 				{
 					method: "GET",
@@ -296,7 +297,7 @@ export default function SectionDataEditor({
 			// Step 2: Upload file directly to R2 using presigned URL
 			// Convert File to ArrayBuffer for proper cross-origin handling
 			const fileBuffer = await file.arrayBuffer();
-			const uploadResponse = await fetch(presignedUrl, {
+			const uploadResponse = await apiFetch(presignedUrl, {
 				method: "PUT",
 				body: new Uint8Array(fileBuffer),
 			});
@@ -309,7 +310,7 @@ export default function SectionDataEditor({
 			setUploadProgress((prev) => ({ ...prev, [previewKey]: 80 }));
 
 			// Step 3: Save metadata to database
-			const metadataResponse = await fetch("/api/upload", {
+			const metadataResponse = await apiFetch("/api/upload", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -420,7 +421,7 @@ export default function SectionDataEditor({
 			setSaving(true);
 			setError(null);
 
-			const response = await fetch(`/api/page-sections/${section.id}`, {
+			const response = await apiFetch(`/api/page-sections/${section.id}`, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",

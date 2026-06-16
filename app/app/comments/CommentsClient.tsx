@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState, useEffect } from "react";
 import { Loader2, Check, X, Trash2, Eye } from "lucide-react";
@@ -49,7 +50,7 @@ export default function CommentsClient() {
 	const fetchComments = async (offset: number = 0) => {
 		try {
 			setLoading(true);
-			const response = await fetch(
+			const response = await apiFetch(
 				`/api/admin/comments?limit=${pagination.limit}&offset=${offset}&status=${statusFilter}&spam=${spamFilter}`,
 			);
 			const data = await response.json();
@@ -69,7 +70,7 @@ export default function CommentsClient() {
 	const fetchContentDetails = async (contentId: number) => {
 		try {
 			setContentLoading(true);
-			const response = await fetch(`/api/contents/${contentId}`);
+			const response = await apiFetch(`/api/contents/${contentId}`);
 			if (response.ok) {
 				const data = await response.json();
 				setSelectedContent(data);
@@ -87,7 +88,7 @@ export default function CommentsClient() {
 	const handleApprove = async (commentId: number) => {
 		try {
 			setActionLoading(commentId);
-			const response = await fetch(`/api/admin/comments/${commentId}/approve`, {
+			const response = await apiFetch(`/api/admin/comments/${commentId}/approve`, {
 				method: "POST",
 			});
 
@@ -108,7 +109,7 @@ export default function CommentsClient() {
 	const handleReject = async (commentId: number) => {
 		try {
 			setActionLoading(commentId);
-			const response = await fetch(`/api/admin/comments/${commentId}/reject`, {
+			const response = await apiFetch(`/api/admin/comments/${commentId}/reject`, {
 				method: "POST",
 			});
 
@@ -131,7 +132,7 @@ export default function CommentsClient() {
 
 		try {
 			setActionLoading(commentId);
-			const response = await fetch(`/api/admin/comments/${commentId}`, {
+			const response = await apiFetch(`/api/admin/comments/${commentId}`, {
 				method: "DELETE",
 			});
 

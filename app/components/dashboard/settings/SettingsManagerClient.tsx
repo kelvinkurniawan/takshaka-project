@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState, useEffect, useMemo } from "react";
 import Select from "react-select";
@@ -240,7 +241,7 @@ export default function SettingsManagerClient({
 					break;
 			}
 
-			const response = await fetch("/api/settings", {
+			const response = await apiFetch("/api/settings", {
 				method: "POST",
 				credentials: "include",
 				headers: {
@@ -262,7 +263,7 @@ export default function SettingsManagerClient({
 			const data = await response.json();
 
 			// Refresh settings list
-			const refreshResponse = await fetch("/api/settings", {
+			const refreshResponse = await apiFetch("/api/settings", {
 				method: "GET",
 				credentials: "include",
 			});

@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -36,7 +37,7 @@ export default function SectionEditor({ sectionId }: SectionEditorProps) {
 	const fetchSection = async () => {
 		try {
 			setLoading(true);
-			const response = await fetch(`/api/page-sections/${sectionId}`);
+			const response = await apiFetch(`/api/page-sections/${sectionId}`);
 
 			if (!response.ok) {
 				throw new Error("Failed to fetch section");
@@ -66,7 +67,7 @@ export default function SectionEditor({ sectionId }: SectionEditorProps) {
 			}
 
 			setSaving(true);
-			const response = await fetch(`/api/page-sections/${sectionId}`, {
+			const response = await apiFetch(`/api/page-sections/${sectionId}`, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",

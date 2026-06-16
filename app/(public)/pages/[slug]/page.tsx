@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import { getDB } from "@/lib/db";
 import { pages } from "@/lib/schema";
 import { eq, isNull, and } from "drizzle-orm";
+import { PageContentRenderer } from "@/lib/page-helpers";
+
+export const revalidate = 60;
 
 interface Page {
 	id: number;
@@ -26,7 +29,13 @@ async function getPage(slug: string): Promise<Page | null> {
 				metaDescription: pages.metaDescription,
 			})
 			.from(pages)
-			.where(and(eq(pages.slug, slug), isNull(pages.deletedAt)))
+			.where(
+				and(
+					eq(pages.slug, slug),
+					eq(pages.status, "published"),
+					isNull(pages.deletedAt)
+				)
+			)
 			.limit(1);
 
 		return page.length > 0 ? page[0] : null;
@@ -69,9 +78,9 @@ export default async function PublicPageDetail({
 	}
 
 	return (
-		<article className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
+		<article className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
 			{/* Header */}
-			<header className="mb-12">
+			<header className="mb-12 max-w-4xl">
 				<Link
 					href="/"
 					prefetch={false}
@@ -88,13 +97,12 @@ export default async function PublicPageDetail({
 			</header>
 
 			{/* Content */}
-			<div
-				className="prose prose-lg max-w-none mb-12"
-				dangerouslySetInnerHTML={{ __html: page.content }}
-			/>
+			<div className="mb-12">
+				<PageContentRenderer content={page.content} />
+			</div>
 
 			{/* Footer */}
-			<div className="pt-8 border-t">
+			<div className="pt-8 border-t max-w-4xl">
 				<Link
 					href="/"
 					prefetch={false}

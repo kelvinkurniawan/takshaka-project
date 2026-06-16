@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState } from "react";
 import {
@@ -70,7 +71,7 @@ export default function NavigationClient({
 
 	const refreshNavigation = async () => {
 		try {
-			const response = await fetch(`/api/navigation?platform=${currentTab}`);
+			const response = await apiFetch(`/api/navigation?platform=${currentTab}`);
 			if (!response.ok) {
 				throw new Error(`API error: ${response.status}`);
 			}
@@ -90,7 +91,7 @@ export default function NavigationClient({
 	) => {
 		setIsReordering(true);
 		try {
-			const response = await fetch("/api/navigation/reorder", {
+			const response = await apiFetch("/api/navigation/reorder", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -146,7 +147,7 @@ export default function NavigationClient({
 				};
 			}
 
-			const response = await fetch(url, {
+			const response = await apiFetch(url, {
 				method,
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(submitData),
@@ -184,7 +185,7 @@ export default function NavigationClient({
 		if (!confirm("Are you sure you want to delete this item?")) return;
 
 		try {
-			const response = await fetch(`/api/navigation/${id}`, {
+			const response = await apiFetch(`/api/navigation/${id}`, {
 				method: "DELETE",
 			});
 

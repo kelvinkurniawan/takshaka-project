@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState } from "react";
 import { Trash2, Download, Copy, X, Zap } from "lucide-react";
@@ -66,7 +67,7 @@ export default function MediaManagerClient({
 		setError(null);
 
 		try {
-			const response = await fetch(`/api/media-gallery?id=${id}`, {
+			const response = await apiFetch(`/api/media-gallery?id=${id}`, {
 				method: "DELETE",
 			});
 
@@ -115,7 +116,7 @@ export default function MediaManagerClient({
 		setError(null);
 
 		try {
-			const response = await fetch(`/api/media-gallery/compress`, {
+			const response = await apiFetch(`/api/media-gallery/compress`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

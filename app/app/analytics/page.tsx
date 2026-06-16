@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState, useEffect } from "react";
 import {
@@ -63,8 +64,8 @@ export default function AnalyticsPage() {
 				setError("");
 
 				const [overviewRes, visitorsRes] = await Promise.all([
-					fetch(`/api/app/analytics/overview?days=${days}`),
-					fetch(`/api/app/analytics/visitors?days=${days}`),
+					apiFetch(`/api/app/analytics/overview?days=${days}`),
+					apiFetch(`/api/app/analytics/visitors?days=${days}`),
 				]);
 
 				if (!overviewRes.ok || !visitorsRes.ok) {

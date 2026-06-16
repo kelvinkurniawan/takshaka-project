@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState } from "react";
 import { Plus, Trash2, AlertCircle, Edit2 } from "lucide-react";
@@ -132,7 +133,7 @@ export default function GalleryOfWorksClient({
 												) {
 													(async () => {
 														try {
-															const res = await fetch(
+															const res = await apiFetch(
 																"/api/admin/gallery/categories",
 																{
 																	method: "DELETE",
@@ -289,7 +290,7 @@ function CategoryForm({
 				? { id: initialData.id, ...formData }
 				: formData;
 
-			const res = await fetch(url, {
+			const res = await apiFetch(url, {
 				method,
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(body),
@@ -411,7 +412,7 @@ function ItemForm({
 		setError(null);
 
 		try {
-			const res = await fetch("/api/admin/gallery/items", {
+			const res = await apiFetch("/api/admin/gallery/items", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(formData),
@@ -523,7 +524,7 @@ function ItemCard({
 
 		setDeleteLoading(true);
 		try {
-			const res = await fetch("/api/admin/gallery/items", {
+			const res = await apiFetch("/api/admin/gallery/items", {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ id: item.id }),

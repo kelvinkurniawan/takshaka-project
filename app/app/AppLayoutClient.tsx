@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState, useEffect, useTransition, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -117,7 +118,7 @@ export default function AppLayoutClient({
 	const handleLogout = async () => {
 		setIsLoggingOut(true);
 		try {
-			const response = await fetch("/api/auth/logout", {
+			const response = await apiFetch("/api/auth/logout", {
 				method: "POST",
 			});
 

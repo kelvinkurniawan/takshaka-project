@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -38,7 +39,7 @@ export default function ProfilePage() {
 		const fetchProfile = async () => {
 			try {
 				setIsLoading(true);
-				const response = await fetch("/api/app/profile");
+				const response = await apiFetch("/api/app/profile");
 
 				if (!response.ok) {
 					if (response.status === 401) {
@@ -70,7 +71,7 @@ export default function ProfilePage() {
 		try {
 			setIsUpdatingProfile(true);
 
-			const response = await fetch("/api/app/profile", {
+			const response = await apiFetch("/api/app/profile", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ name, email }),
@@ -106,7 +107,7 @@ export default function ProfilePage() {
 		try {
 			setIsChangingPassword(true);
 
-			const response = await fetch("/api/app/profile/change-password", {
+			const response = await apiFetch("/api/app/profile/change-password", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({

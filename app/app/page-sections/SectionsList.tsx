@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api-fetch";
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
@@ -35,7 +36,7 @@ export default function SectionsList() {
 	const fetchSections = async () => {
 		try {
 			setLoading(true);
-			const response = await fetch("/api/page-sections");
+			const response = await apiFetch("/api/page-sections");
 
 			if (!response.ok) {
 				throw new Error("Failed to fetch sections");
