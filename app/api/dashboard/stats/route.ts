@@ -7,12 +7,14 @@ import {
 	loginLogs,
 } from "@/lib/schema";
 import { eq, and, gte, lte } from "drizzle-orm";
+import { requireAuth } from "@/lib/rbac";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
 	try {
+		await requireAuth();
 		const db = getDB(process.env);
 
 		// Get today's date (start and end)
@@ -110,6 +112,9 @@ export async function GET(request: Request) {
 			recentLogins: recentLoginSummary,
 		});
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		console.error("Dashboard stats error:", error);
 		return Response.json(
 			{ error: "Failed to fetch dashboard stats" },

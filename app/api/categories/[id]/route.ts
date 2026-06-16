@@ -58,6 +58,9 @@ export async function GET(
 
 		return Response.json(category);
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		console.error("Get category error:", error);
 		return Response.json(
 			{ error: "Gagal mengambil kategori" },
@@ -157,6 +160,9 @@ export async function PUT(
 
 		return Response.json(category);
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		if (error instanceof z.ZodError) {
 			return Response.json(
 				{ error: "Validasi gagal", details: error.issues },
@@ -226,10 +232,13 @@ export async function DELETE(
 			message: "Kategori berhasil dihapus",
 		});
 	} catch (error) {
-		console.error("Delete category error:", error);
-		if (error instanceof Error && error.message.includes("Forbidden")) {
-			return Response.json({ error: error.message }, { status: 403 });
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
 		}
+		if (error instanceof Error && error.message.includes("Forbidden")) {
+			return Response.json({ error: "Forbidden" }, { status: 403 });
+		}
+		console.error("Delete category error:", error);
 		return Response.json(
 			{ error: "Gagal menghapus kategori" },
 			{ status: 500 },

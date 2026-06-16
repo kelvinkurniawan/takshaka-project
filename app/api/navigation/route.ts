@@ -4,6 +4,7 @@ import { getDB } from "@/lib/db";
 import { navigation } from "@/lib/schema";
 import { isNull, eq, asc, and } from "drizzle-orm";
 import { z } from "zod";
+import { requireAuth, canEdit } from "@/lib/rbac";
 
 const createNavigationSchema = z.object({
 	label: z.string().min(1, "Label is required").max(255),
@@ -59,6 +60,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
 	try {
+		await requireAuth();
+		const canEditCheck = await canEdit();
+		if (!canEditCheck) {
+			return Response.json({ error: "Forbidden" }, { status: 403 });
+		}
 		const db = getDB(process.env);
 		const body = await request.json();
 
@@ -75,6 +81,9 @@ export async function POST(request: Request) {
 
 		return Response.json(result[0], { status: 201 });
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		if (error instanceof z.ZodError) {
 			return Response.json(
 				{ error: "Validation failed", details: error.issues },

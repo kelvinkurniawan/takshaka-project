@@ -4,6 +4,7 @@ import { getDB } from "@/lib/db";
 import { navigation } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { requireAuth, canEdit, canDelete } from "@/lib/rbac";
 
 const updateNavigationSchema = z.object({
 	label: z.string().min(1, "Label is required").max(255).optional(),
@@ -21,6 +22,11 @@ export async function PUT(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
+		await requireAuth();
+		const canEditCheck = await canEdit();
+		if (!canEditCheck) {
+			return Response.json({ error: "Forbidden" }, { status: 403 });
+		}
 		const db = getDB(process.env);
 		const { id } = await params;
 		const body = await request.json();
@@ -45,6 +51,9 @@ export async function PUT(
 
 		return Response.json(result[0]);
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		if (error instanceof z.ZodError) {
 			return Response.json(
 				{ error: "Validation failed", details: error.issues },
@@ -65,6 +74,11 @@ export async function DELETE(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
+		await requireAuth();
+		const canDeleteCheck = await canDelete();
+		if (!canDeleteCheck) {
+			return Response.json({ error: "Forbidden" }, { status: 403 });
+		}
 		const db = getDB(process.env);
 		const { id } = await params;
 
@@ -86,6 +100,9 @@ export async function DELETE(
 
 		return Response.json({ success: true });
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		console.error("Error deleting navigation:", error);
 		return Response.json(
 			{ error: "Failed to delete navigation" },

@@ -4,6 +4,7 @@ import { getDB } from "@/lib/db";
 import { navigation } from "@/lib/schema";
 import { eq, isNull, asc, and } from "drizzle-orm";
 import { z } from "zod";
+import { requireAuth, canEdit } from "@/lib/rbac";
 
 const reorderSchema = z.object({
 	id: z.number(),
@@ -14,6 +15,11 @@ const reorderSchema = z.object({
 
 export async function POST(request: Request) {
 	try {
+		await requireAuth();
+		const canEditCheck = await canEdit();
+		if (!canEditCheck) {
+			return Response.json({ error: "Forbidden" }, { status: 403 });
+		}
 		const db = getDB(process.env);
 		const body = await request.json();
 
@@ -90,6 +96,9 @@ export async function POST(request: Request) {
 
 		return Response.json({ success: true });
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		if (error instanceof z.ZodError) {
 			return Response.json(
 				{ error: "Validation failed", details: error.issues },

@@ -1,6 +1,7 @@
 import { getDB } from "@/lib/db";
 import { loginLogs, users } from "@/lib/schema";
 import { eq, desc, inArray } from "drizzle-orm";
+import { requireAuth } from "@/lib/rbac";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,6 +14,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
 	try {
+		await requireAuth();
 		const url = new URL(request.url);
 		const limit = parseInt(url.searchParams.get("limit") || "50", 10);
 		const offset = parseInt(url.searchParams.get("offset") || "0", 10);
@@ -83,6 +85,9 @@ export async function GET(request: Request) {
 			},
 		});
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		console.error("Login logs fetch error:", error);
 		return Response.json(
 			{ error: "Failed to fetch login logs" },

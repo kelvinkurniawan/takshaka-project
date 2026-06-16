@@ -2,6 +2,7 @@ import { getDB } from "@/lib/db";
 import { pages } from "@/lib/schema";
 import { isNull, eq } from "drizzle-orm";
 import { z } from "zod";
+import { requireAuth, canEdit } from "@/lib/rbac";
 
 export const dynamic = "force-dynamic";
 
@@ -12,14 +13,14 @@ const createPageSchema = z.object({
 	status: z.enum(["draft", "published"]).default("draft"),
 	metaTitle: z.string().max(255).optional(),
 	metaDescription: z.string().max(500).optional(),
-	createdBy: z.number().int().positive(),
 });
 
 export async function GET(request: Request) {
 	try {
+		await requireAuth();
+
 		const db = getDB(process.env);
 
-		// Fetch all non-deleted pages
 		const allPages = await db
 			.select()
 			.from(pages)
@@ -27,6 +28,9 @@ export async function GET(request: Request) {
 
 		return Response.json(allPages);
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		console.error("Failed to fetch pages:", error);
 		return Response.json({ error: "Failed to fetch pages" }, { status: 500 });
 	}
@@ -34,13 +38,18 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
 	try {
+		const user = await requireAuth();
+
+		const canEditCheck = await canEdit();
+		if (!canEditCheck) {
+			return Response.json({ error: "Forbidden" }, { status: 403 });
+		}
+
 		const db = getDB(process.env);
 		const body = await request.json();
 
-		// Validate input
 		const validatedData = createPageSchema.parse(body);
 
-		// Check if slug already exists (manual filtering for soft deletes)
 		const existing = await db
 			.select()
 			.from(pages)
@@ -51,10 +60,10 @@ export async function POST(request: Request) {
 			return Response.json({ error: "Slug sudah digunakan" }, { status: 400 });
 		}
 
-		// Create new page
 		const now = new Date();
 		await db.insert(pages).values({
 			...validatedData,
+			createdBy: user.id,
 			createdAt: now,
 			updatedAt: now,
 		});
@@ -67,7 +76,9 @@ export async function POST(request: Request) {
 				{ status: 400 },
 			);
 		}
-
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return Response.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		console.error("Failed to create page:", error);
 		return Response.json({ error: "Failed to create page" }, { status: 500 });
 	}

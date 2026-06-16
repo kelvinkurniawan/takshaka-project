@@ -4,6 +4,7 @@ import { eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { NextResponse } from "next/server";
 import { revalidateAllPages } from "@/lib/revalidate";
+import { requireAuth, canEdit, canDelete } from "@/lib/rbac";
 
 const categorySchema = z.object({
 	name: z.string().min(1, "Name is required"),
@@ -16,6 +17,7 @@ export const runtime = "nodejs";
 // Get all categories
 export async function GET(request: Request, context: any) {
 	try {
+		await requireAuth();
 		const db = getDB(process.env);
 
 		const categories = await db
@@ -26,6 +28,9 @@ export async function GET(request: Request, context: any) {
 
 		return NextResponse.json(categories);
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		console.error("Failed to fetch gallery categories:", error);
 		return NextResponse.json(
 			{ error: "Failed to fetch categories" },
@@ -37,6 +42,11 @@ export async function GET(request: Request, context: any) {
 // Create new category
 export async function POST(request: Request, context: any) {
 	try {
+		await requireAuth();
+		const canEditCheck = await canEdit();
+		if (!canEditCheck) {
+			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+		}
 		const db = getDB(process.env);
 		const body = await request.json();
 
@@ -70,6 +80,9 @@ export async function POST(request: Request, context: any) {
 
 		return NextResponse.json(result[0]);
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		if (error instanceof z.ZodError) {
 			return NextResponse.json(
 				{ error: "Validation failed", details: error.errors },
@@ -88,6 +101,11 @@ export async function POST(request: Request, context: any) {
 // Update category
 export async function PUT(request: Request, context: any) {
 	try {
+		await requireAuth();
+		const canEditCheck = await canEdit();
+		if (!canEditCheck) {
+			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+		}
 		const db = getDB(process.env);
 		const body = await request.json();
 		const { id, ...updateData } = body;
@@ -128,6 +146,9 @@ export async function PUT(request: Request, context: any) {
 
 		return NextResponse.json(result[0]);
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		if (error instanceof z.ZodError) {
 			return NextResponse.json(
 				{ error: "Validation failed", details: error.errors },
@@ -146,6 +167,11 @@ export async function PUT(request: Request, context: any) {
 // Delete category (soft delete)
 export async function DELETE(request: Request, context: any) {
 	try {
+		await requireAuth();
+		const canDeleteCheck = await canDelete();
+		if (!canDeleteCheck) {
+			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+		}
 		const db = getDB(process.env);
 		const body = await request.json();
 		const { id } = body;
@@ -167,6 +193,9 @@ export async function DELETE(request: Request, context: any) {
 
 		return NextResponse.json({ success: true });
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+		}
 		console.error("Failed to delete gallery category:", error);
 		return NextResponse.json(
 			{ error: "Failed to delete category" },
