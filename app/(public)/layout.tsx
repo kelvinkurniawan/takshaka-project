@@ -2,6 +2,8 @@ import PublicHeader from "@/components/PublicHeader";
 import PublicFooter from "@/components/PublicFooter";
 import { getFooterSections, getSocialMediaLinks } from "@/lib/page-helpers";
 import { Footer } from "@/components/sections";
+import { RecaptchaProvider } from "@/lib/RecaptchaProvider";
+import RouteProgress from "@/components/RouteProgress";
 
 export const metadata = {
 	title: "Takshaka CMS - Headless CMS Modern",
@@ -17,7 +19,7 @@ export default async function PublicLayout({
 	const socialMediaLinks = await getSocialMediaLinks();
 
 	return (
-		<>
+		<RecaptchaProvider>
 			<style>{`
         .public-light {
           color-scheme: light;
@@ -28,6 +30,7 @@ export default async function PublicLayout({
         }
       `}</style>
 			<div className="public-light flex flex-col min-h-screen bg-[#fff8f5] text-gray-900">
+				<RouteProgress />
 				<PublicHeader />
 				<main className="flex-1">{children}</main>
 
@@ -38,6 +41,6 @@ export default async function PublicLayout({
 					socialLinks={socialMediaLinks}
 				/>
 			</div>
-		</>
+		</RecaptchaProvider>
 	);
 }

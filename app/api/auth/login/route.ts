@@ -142,11 +142,6 @@ export async function POST(request: Request) {
 				);
 			}
 
-			// ===== SUCCESS: Set session cookie via Response headers =====
-			console.log(
-				`[Auth] Login successful for user ${user.id} (${user.email})`,
-			);
-
 			// Log successful login
 			await logLogin(
 				db,
@@ -167,8 +162,6 @@ export async function POST(request: Request) {
 			const setCookieHeader = `auth_session=${cookieValue}; Path=/; Max-Age=${maxAge}; HttpOnly; SameSite=Lax${
 				isProduction ? "; Secure" : ""
 			}`;
-
-			console.log(`[Auth] Setting cookie with header:`, setCookieHeader);
 
 			// Clear rate limit counters on successful login
 			await Promise.all([

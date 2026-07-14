@@ -63,6 +63,21 @@
 	}
 }
 
+/* Page transition fade — replayed by app/(public)/template.tsx on each navigation.
+   Opacity-only (no transform) to avoid creating a containing block for any
+   position: fixed descendants during the animation. */
+.page-transition {
+	animation: pageFade 320ms ease-out;
+}
+@keyframes pageFade {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
 :root {
 	--background: #ffffff;
 	--foreground: #000000;
@@ -110,8 +125,13 @@ body {
 }
 
 .public-light {
-	width: 100vw;
-	overflow-x: hidden;
+	/* 100% (not 100vw): 100vw includes the vertical scrollbar width, which pushes
+	   this wrapper ~15px past the body and triggers a horizontal scrollbar */
+	width: 100%;
+	/* clip (not hidden): hidden forces overflow-y to `auto`, turning this into a
+	   scroll container that breaks `position: sticky` on the header. clip trims
+	   horizontal overflow without creating a scroll container, so sticky works. */
+	overflow-x: clip;
 }
 
 label {
@@ -709,7 +729,7 @@ label {
 		position: fixed !important;
 		top: 0 !important;
 		left: 0 !important;
-		width: 100vw !important;
+		width: 100% !important;
 		height: 100vh !important;
 		background: rgba(0, 0, 0, 0.5);
 		display: flex;

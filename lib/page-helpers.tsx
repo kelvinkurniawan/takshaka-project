@@ -111,7 +111,6 @@ export const getAppMetadata = cache(async () => {
 	const db = createRequestDB();
 	const allSettings = await getSettingsFromDB(db);
 
-	console.log("Get Meta Data");
 	return {
 		name: allSettings.site_name ?? "Takshaka CMS",
 		description:
@@ -856,16 +855,10 @@ export function getFooterSections() {
  * Only returns links with non-empty URLs
  */
 export const getSocialMediaLinks = cache(async (): Promise<SocialLink[]> => {
-	console.log("🔍 [getSocialMediaLinks] Starting fetch...");
 	try {
 		const db = createRequestDB();
-		console.log("🔍 [getSocialMediaLinks] Database connection created");
 
 		const allSettings = await getSettingsFromDB(db);
-		console.log("🔍 [getSocialMediaLinks] All settings fetched:", {
-			totalSettings: Object.keys(allSettings).length,
-			keys: Object.keys(allSettings),
-		});
 
 		const supportedPlatforms = [
 			"instagram",
@@ -880,29 +873,16 @@ export const getSocialMediaLinks = cache(async (): Promise<SocialLink[]> => {
 		for (const platform of supportedPlatforms) {
 			const key = `social_${platform}`;
 			const url = allSettings[key];
-			console.log(
-				`🔍 [getSocialMediaLinks] Checking ${key}: ${url || "NOT FOUND"}`,
-			);
 
 			if (url && typeof url === "string" && url.trim().length > 0) {
 				socialLinks.push({
 					platform: platform.charAt(0).toUpperCase() + platform.slice(1),
 					url,
 				});
-				console.log(`✅ [getSocialMediaLinks] Added ${platform}: ${url}`);
 			}
 		}
-
-		console.log(
-			`✅ [getSocialMediaLinks] Complete - Found ${socialLinks.length} social media links:`,
-			socialLinks,
-		);
 		return socialLinks;
 	} catch (error) {
-		console.error("❌ [getSocialMediaLinks] Error:", {
-			message: error instanceof Error ? error.message : String(error),
-			stack: error instanceof Error ? error.stack : undefined,
-		});
 		return [];
 	}
 });

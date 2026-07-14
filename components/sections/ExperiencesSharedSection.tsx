@@ -42,6 +42,8 @@ export default function ExperiencesSharedSection({
 										src={experience.image}
 										alt={experience.title}
 										className="w-full h-auto object-cover"
+											loading="lazy"
+											decoding="async"
 									/>
 								)}
 

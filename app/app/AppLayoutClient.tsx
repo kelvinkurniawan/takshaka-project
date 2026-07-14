@@ -1,9 +1,10 @@
 "use client";
 import { apiFetch } from "@/lib/api-fetch";
 
-import { useState, useEffect, useTransition, useRef } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useState, useEffect, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/app/components/Sidebar";
+import RouteProgress from "@/components/RouteProgress";
 import { Bell, User, LogOut, Sun, Moon } from "lucide-react";
 
 type Theme = "light" | "dark";
@@ -25,21 +26,11 @@ export default function AppLayoutClient({
 	user,
 }: AppLayoutClientProps) {
 	const router = useRouter();
-	const pathname = usePathname();
 	const [isPending, startTransition] = useTransition();
 	const [isLoggingOut, setIsLoggingOut] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const [theme, setTheme] = useState<Theme>("light");
 	const [isThemeLoaded, setIsThemeLoaded] = useState(false);
-
-	// Top progress bar state
-	const [progress, setProgress] = useState<number>(0);
-	const [progressVisible, setProgressVisible] = useState<boolean>(false);
-
-	// Use refs to track pathname and timers
-	const previousPathnameRef = useRef<string>("");
-	const timersRef = useRef<NodeJS.Timeout[]>([]);
-	const isFirstRenderRef = useRef(true);
 
 	// Apply theme to document
 	const applyTheme = (newTheme: Theme) => {
@@ -63,49 +54,6 @@ export default function AppLayoutClient({
 		setTheme(initialTheme);
 		applyTheme(initialTheme);
 		setIsThemeLoaded(true);
-	}, []);
-
-	// Show progress bar when pathname changes
-	useEffect(() => {
-		// On first render, just initialize the ref
-		if (isFirstRenderRef.current) {
-			previousPathnameRef.current = pathname;
-			isFirstRenderRef.current = false;
-			return;
-		}
-
-		// Clear any existing timers
-		timersRef.current.forEach((timer) => clearTimeout(timer));
-		timersRef.current = [];
-
-		// Route changed - show progress bar immediately
-		setProgressVisible(true);
-		setProgress(30);
-
-		// Animation timeline
-		const timer1 = setTimeout(() => setProgress(80), 150);
-		timersRef.current.push(timer1);
-
-		const timer2 = setTimeout(() => {
-			setProgress(100);
-		}, 400);
-		timersRef.current.push(timer2);
-
-		const timer3 = setTimeout(() => {
-			setProgressVisible(false);
-			setProgress(0);
-		}, 600);
-		timersRef.current.push(timer3);
-
-		// Update ref
-		previousPathnameRef.current = pathname;
-	}, [pathname]);
-
-	// Cleanup timers on unmount
-	useEffect(() => {
-		return () => {
-			timersRef.current.forEach((timer) => clearTimeout(timer));
-		};
 	}, []);
 
 	// Toggle theme
@@ -142,12 +90,7 @@ export default function AppLayoutClient({
 	return (
 		<div className="dashboard-container">
 			{/* top page transition loader */}
-			<div
-				className={`top-progress ${progressVisible ? "visible" : ""}`}
-				aria-hidden
-			>
-				<div className="top-progress-bar" style={{ width: `${progress}%` }} />
-			</div>
+			<RouteProgress />
 
 			{/* Sidebar Component */}
 			<Sidebar

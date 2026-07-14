@@ -32,9 +32,6 @@ async function initializeSettingsCache() {
 		}
 
 		cacheInitTime = Date.now();
-		console.log(
-			`✓ Settings cache initialized with ${allSettings.length} entries`,
-		);
 	} catch (error) {
 		const errorMsg = error instanceof Error ? error.message : String(error);
 		const isTableNotFound =

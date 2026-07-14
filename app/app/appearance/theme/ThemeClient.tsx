@@ -31,10 +31,8 @@ export default function ThemeClient() {
 		setLoading(true);
 		try {
 			// TODO: Save theme settings to database/API
-			console.log("Saving theme settings:", settings);
 			alert("Theme settings saved successfully!");
 		} catch (error) {
-			console.error("Error saving theme:", error);
 			alert("Failed to save theme settings");
 		} finally {
 			setLoading(false);

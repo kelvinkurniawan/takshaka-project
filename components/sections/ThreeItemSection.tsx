@@ -33,6 +33,8 @@ export default function ThreeItemSection({
 								src={item.image}
 								alt={item.alt}
 								className="w-full aspect-[3/4] object-cover shadow-lg transition-brightness duration-500 group-hover:brightness-110"
+								loading="lazy"
+								decoding="async"
 							/>
 							<div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-60 flex pt-[40%] md:pt-80 justify-center transition-bg duration-500">
 								<div className="text-center text-white px-6">

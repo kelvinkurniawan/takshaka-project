@@ -12,23 +12,12 @@ export function getDB(env: NodeJS.ProcessEnv) {
 
 	// ✅ Use env parameter first (for Vercel/production), fallback to process.env
 	const databaseUrl = env.DATABASE_URL || process.env.DATABASE_URL;
-	console.log("🔍 Database initialization:");
-	console.log(
-		"  - env.DATABASE_URL:",
-		env.DATABASE_URL ? "✅ Set" : "❌ Not set",
-	);
-	console.log(
-		"  - process.env.DATABASE_URL:",
-		process.env.DATABASE_URL ? "✅ Set" : "❌ Not set",
-	);
 
 	if (!databaseUrl) {
 		throw new Error(
 			"DATABASE_URL tidak ditemukan. Pastikan sudah set di .env.local atau .env.production atau Vercel Environment Variables",
 		);
 	}
-
-	console.log("✅ DATABASE_URL found, connecting...");
 
 	// Buat koneksi PostgreSQL dengan optimized pool configuration
 	const pool = new Pool({

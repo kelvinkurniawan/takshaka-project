@@ -88,9 +88,7 @@ export async function POST(request: Request) {
 
 			// Convert Uint8Array to Buffer
 			buffer = Buffer.from(byteArray);
-			console.log(`Original file size: ${buffer.length} bytes`);
 		} catch (error) {
-			console.error("Download from R2 error:", error);
 			return Response.json(
 				{ error: "Failed to download image from storage" },
 				{ status: 500 },
@@ -124,8 +122,6 @@ export async function POST(request: Request) {
 					{ status: 400 },
 				);
 			}
-
-			console.log(`Compressed file size: ${compressedBuffer.length} bytes`);
 		} catch (error) {
 			console.error("Compression error:", error);
 			return Response.json(
@@ -158,11 +154,6 @@ export async function POST(request: Request) {
 			((mediaItem.fileSize - newFileSize) / mediaItem.fileSize) *
 			100
 		).toFixed(2);
-
-		console.log(`Compression ratio: ${compressionRatio}%`);
-		console.log(
-			`Original: ${mediaItem.fileSize} bytes, Compressed: ${newFileSize} bytes`,
-		);
 
 		await db
 			.update(mediaGallery)

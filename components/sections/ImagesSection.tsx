@@ -30,6 +30,8 @@ export default function ImagesSection({
 							src={image.src}
 							alt={image.alt}
 							className="w-full h-full object-cover transition-brightness duration-500 group-hover:brightness-110"
+							loading="lazy"
+							decoding="async"
 						/>
 						{/* dark overlay that deepens on hover */}
 						<div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-opacity duration-500" />

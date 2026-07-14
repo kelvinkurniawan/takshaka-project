@@ -61,10 +61,6 @@ export async function checkRateLimit(
 		const attemptCount = attempts.length;
 		const isLimited = attemptCount >= config.maxRequests;
 
-		console.log(
-			`[Rate Limit] identifier=${identifier}, attempts=${attemptCount}, limited=${isLimited}`,
-		);
-
 		// Record new attempt only if not already over limit
 		if (!isLimited) {
 			await db.insert(loginAttempts).values({
@@ -109,11 +105,7 @@ export async function resetRateLimit(identifier: string): Promise<void> {
 		await db
 			.delete(loginAttempts)
 			.where(eq(loginAttempts.identifier, identifier));
-
-		console.log(`[Rate Limit] Reset for identifier: ${identifier}`);
-	} catch (error) {
-		console.error("[Rate Limit Error] resetRateLimit failed:", error);
-	}
+	} catch (error) {}
 }
 
 /**
@@ -129,10 +121,6 @@ export async function cleanupOldAttempts(
 
 		const cutoff = new Date(Date.now() - olderThanMs);
 		await db.delete(loginAttempts).where(lt(loginAttempts.attemptedAt, cutoff));
-
-		console.log(
-			`[Rate Limit] Cleaned up attempts older than ${new Date(cutoff)}`,
-		);
 	} catch (error) {
 		console.error("[Rate Limit Error] Cleanup failed:", error);
 	}
@@ -150,6 +138,5 @@ export function getClientIP(request: Request): string {
 		request.headers.get("x-appengine-user-ip") ||
 		"unknown";
 
-	console.log(`[Rate Limit] Client IP: ${ip}`);
 	return ip;
 }

@@ -32,7 +32,6 @@ export async function revalidatePageBySlug(pageSlug: string): Promise<void> {
 	try {
 		for (const path of paths) {
 			nextRevalidatePath(path);
-			console.log(`Revalidated path: ${path}`);
 		}
 	} catch (error) {
 		console.error(`Error revalidating paths for ${pageSlug}:`, error);
@@ -50,7 +49,6 @@ export async function revalidateAllPages(): Promise<void> {
 		for (const path of allPaths) {
 			nextRevalidatePath(path);
 		}
-		console.log(`Revalidated ${allPaths.length} paths`);
 	} catch (error) {
 		console.error("Error revalidating all pages:", error);
 	}

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import AOSInit from "../components/AOSInit";
 import { getAppMetadata } from "@/lib/page-helpers";
-import { RecaptchaProvider } from "@/lib/RecaptchaProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -33,11 +32,9 @@ export default function RootLayout({
 				/>
 			</head>
 			<body className="antialiased">
-				<RecaptchaProvider>
-					{/* client-side initializer for AOS animations */}
-					<AOSInit />
-					{children}
-				</RecaptchaProvider>
+				{/* client-side initializer for AOS animations */}
+				<AOSInit />
+				{children}
 				<Analytics />
 				<SpeedInsights />
 			</body>
