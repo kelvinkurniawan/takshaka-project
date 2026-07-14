@@ -1,4 +1,4 @@
-import { getDB } from "@/lib/db";
+import { getDB, withRetry } from "@/lib/db";
 import {
 	contents,
 	users,
@@ -23,32 +23,34 @@ export async function GET(request: Request) {
 		const todayEnd = new Date(today);
 		todayEnd.setHours(23, 59, 59, 999);
 
-		// Fetch all data in parallel
+		// Fetch all data in parallel, with retry to survive transient DB drops
 		const [allContents, allUsers, allCategories, todayPageViews, recentLogins] =
-			await Promise.all([
-				db.select().from(contents),
-				db.select().from(users),
-				db.select().from(categories),
-				db
-					.select()
-					.from(pageViews)
-					.where(
-						and(
-							gte(pageViews.createdAt, today),
-							lte(pageViews.createdAt, todayEnd),
+			await withRetry(() =>
+				Promise.all([
+					db.select().from(contents),
+					db.select().from(users),
+					db.select().from(categories),
+					db
+						.select()
+						.from(pageViews)
+						.where(
+							and(
+								gte(pageViews.createdAt, today),
+								lte(pageViews.createdAt, todayEnd),
+							),
 						),
-					),
-				db
-					.select()
-					.from(loginLogs)
-					.where(
-						and(
-							gte(loginLogs.createdAt, today),
-							lte(loginLogs.createdAt, todayEnd),
-							eq(loginLogs.success, true),
+					db
+						.select()
+						.from(loginLogs)
+						.where(
+							and(
+								gte(loginLogs.createdAt, today),
+								lte(loginLogs.createdAt, todayEnd),
+								eq(loginLogs.success, true),
+							),
 						),
-					),
-			]);
+				]),
+			);
 
 		// Filter active records (non-deleted)
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any

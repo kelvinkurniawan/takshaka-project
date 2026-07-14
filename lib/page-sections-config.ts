@@ -799,7 +799,7 @@ export const pageSectionsConfig = {
 			},
 		],
 	},
-	"portfolio": {
+	portfolio: {
 		hero: [
 			{
 				type: "arrayItems",
@@ -1167,26 +1167,26 @@ export const pageSectionsConfig = {
 				target: "buttonLink",
 			},
 		],
-		curatedExperiences: [
-			{
-				type: "string",
-				label: "Section Title",
-				target: "title",
-			},
-			{
-				type: "string",
-				label: "Section Description",
-				target: "description",
-				multiline: true,
-			},
-			{
-				type: "categoriesSelect",
-				label: "Select Experience Categories",
-				target: "selectedCategoryIds",
-				description:
-					"Select categories to display. Contents from these categories will be shown as curated experiences.",
-			},
-		],
+		// curatedExperiences: [
+		// 	{
+		// 		type: "string",
+		// 		label: "Section Title",
+		// 		target: "title",
+		// 	},
+		// 	{
+		// 		type: "string",
+		// 		label: "Section Description",
+		// 		target: "description",
+		// 		multiline: true,
+		// 	},
+		// 	{
+		// 		type: "categoriesSelect",
+		// 		label: "Select Experience Categories",
+		// 		target: "selectedCategoryIds",
+		// 		description:
+		// 			"Select categories to display. Contents from these categories will be shown as curated experiences.",
+		// 	},
+		// ],
 		ctaSection: [
 			{
 				type: "string",
