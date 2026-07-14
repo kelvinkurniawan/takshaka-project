@@ -279,8 +279,8 @@ export async function transformPageSectionsWithDynamicTabs(
 					eq(contents.status, "published"),
 					isNull(contents.deletedAt),
 				),
-			)
-			.limit(4 * selectedCategoryIds.length); // Limit total items to 4 per category
+			);
+		// ponytail: no SQL limit — a global limit starves categories unfairly (no ORDER BY, no per-category guarantee); the in-memory cap below enforces max 4 per category
 
 		// Group contents by categoryId in memory
 		// Filter out contents with null categoryId
