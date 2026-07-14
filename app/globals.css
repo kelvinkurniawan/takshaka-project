@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,300..900;1,300..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@100..900&display=swap");
 @import "aos/dist/aos.css"; /* AOS animation styles */
@@ -82,6 +83,18 @@
 	--background: #ffffff;
 	--foreground: #000000;
 
+	/* Geist / Vercel design tokens (see design.md) */
+	--ds-fg: #171717; /* near-black text, not pure #000 */
+	--ds-fg-muted: #4d4d4d; /* secondary copy */
+	--ds-surface: #ffffff;
+	--ds-surface-subtle: #fafafa;
+	--ds-shadow-border: 0 0 0 1px rgba(0, 0, 0, 0.08);
+	--ds-shadow-card: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 2px rgba(0, 0, 0, 0.04),
+		0 0 0 1px #fafafa;
+	--ds-shadow-card-hover: 0 0 0 1px rgba(0, 0, 0, 0.08),
+		0 2px 2px rgba(0, 0, 0, 0.04), 0 8px 8px -8px rgba(0, 0, 0, 0.08),
+		0 0 0 1px #fafafa;
+
 	/* Light mode colors */
 	--gray-50: #f9fafb;
 	--gray-100: #f3f4f6;
@@ -98,6 +111,17 @@
 .dark {
 	--background: #121212; /* Darkest base */
 	--foreground: #e5e5e5; /* Light text */
+
+	/* Geist tokens — dark surfaces use subtle white shadow-borders */
+	--ds-fg: #ededed;
+	--ds-fg-muted: #a1a1a1;
+	--ds-surface: #171717;
+	--ds-surface-subtle: #1a1a1a;
+	--ds-shadow-border: 0 0 0 1px rgba(255, 255, 255, 0.1);
+	--ds-shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.08),
+		0 2px 2px rgba(0, 0, 0, 0.3);
+	--ds-shadow-card-hover: 0 0 0 1px rgba(255, 255, 255, 0.14),
+		0 2px 2px rgba(0, 0, 0, 0.3), 0 8px 8px -8px rgba(0, 0, 0, 0.4);
 
 	/* Grayscale palette from image */
 	--gray-900: #121212; /* Darkest */
@@ -565,8 +589,10 @@ label {
 
 	/* Main Content Styles */
 	.dashboard-container {
-		@apply flex h-screen bg-white dark:bg-[#121212];
-		font-family: "Figtree", sans-serif;
+		@apply flex h-screen bg-white dark:bg-[#0a0a0a];
+		font-family: "Geist", Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+		font-feature-settings: "liga" 1;
+		letter-spacing: -0.011em;
 	}
 
 	.dashboard-content {
@@ -581,9 +607,11 @@ label {
 		@apply p-8 space-y-6;
 	}
 
-	/* Welcome Card */
+	/* Welcome Card — subtle surface with shadow-as-border (design.md) */
 	.welcome-card {
-		@apply bg-gradient-to-br from-blue-50 dark:from-blue-900/20 to-indigo-50 dark:to-indigo-900/20 rounded-xl border border-blue-100 dark:border-blue-800 p-8;
+		@apply rounded-lg p-8;
+		background: var(--ds-surface-subtle);
+		box-shadow: var(--ds-shadow-border);
 	}
 
 	.welcome-card-content {
@@ -591,11 +619,15 @@ label {
 	}
 
 	.welcome-card-icon {
-		@apply p-3 bg-blue-600 dark:bg-blue-700 rounded-lg;
+		@apply p-3 rounded-lg;
+		background: #171717;
+	}
+	.dark .welcome-card-icon {
+		background: #ededed;
 	}
 
 	.welcome-card-icon-svg {
-		@apply w-6 h-6 text-white;
+		@apply w-6 h-6 text-white dark:text-[#171717];
 	}
 
 	.welcome-card-text {
@@ -603,11 +635,13 @@ label {
 	}
 
 	.welcome-card-title {
-		@apply text-2xl font-bold text-gray-900 dark:text-[#e5e5e5] mb-1;
+		@apply text-2xl font-semibold mb-1;
+		color: var(--ds-fg);
+		letter-spacing: -0.96px;
 	}
 
 	.welcome-card-desc {
-		@apply text-gray-700 dark:text-[#929292];
+		color: var(--ds-fg-muted);
 	}
 
 	/* Stats Grid */
@@ -616,15 +650,13 @@ label {
 	}
 
 	.stat-card {
-		@apply bg-white dark:bg-[#222222] rounded-xl border border-gray-200 dark:border-[#424242] p-6 hover:border-blue-300 dark:hover:border-blue-600 transition-colors;
+		@apply rounded-lg p-6 transition-shadow;
+		background: var(--ds-surface);
+		box-shadow: var(--ds-shadow-card);
 	}
 
-	.stat-card:nth-child(2) {
-		@apply hover:border-indigo-300 dark:hover:border-indigo-600;
-	}
-
-	.stat-card:nth-child(3) {
-		@apply hover:border-purple-300 dark:hover:border-purple-600;
+	.stat-card:hover {
+		box-shadow: var(--ds-shadow-card-hover);
 	}
 
 	.stat-card-content {
@@ -636,43 +668,33 @@ label {
 	}
 
 	.stat-card-label {
-		@apply text-gray-600 dark:text-[#929292] text-sm font-medium;
+		@apply text-sm font-medium;
+		color: var(--ds-fg-muted);
 	}
 
 	.stat-card-value {
-		@apply text-3xl font-bold text-gray-900 dark:text-[#e5e5e5] mt-2;
+		@apply text-3xl font-semibold mt-2;
+		color: var(--ds-fg);
+		letter-spacing: -1.28px;
 	}
 
-	.stat-card-icon-wrapper {
-		@apply p-3 rounded-lg;
+	/* Icon chips — achromatic per design.md (no decorative color) */
+	.stat-card-icon-wrapper,
+	.stat-card-icon-wrapper-blue,
+	.stat-card-icon-wrapper-indigo,
+	.stat-card-icon-wrapper-purple,
+	.stat-card-icon-wrapper-green,
+	.stat-card-icon-wrapper-orange {
+		@apply p-3 rounded-lg bg-[#f2f2f2] dark:bg-[#262626];
 	}
 
-	.stat-card-icon-wrapper-blue {
-		@apply bg-blue-100 dark:bg-blue-900/30;
-	}
-
-	.stat-card-icon-wrapper-indigo {
-		@apply bg-indigo-100 dark:bg-indigo-900/30;
-	}
-
-	.stat-card-icon-wrapper-purple {
-		@apply bg-purple-100 dark:bg-purple-900/30;
-	}
-
-	.stat-card-icon {
-		@apply w-6 h-6;
-	}
-
-	.stat-card-icon-blue {
-		@apply text-blue-600;
-	}
-
-	.stat-card-icon-indigo {
-		@apply text-indigo-600;
-	}
-
-	.stat-card-icon-purple {
-		@apply text-purple-600;
+	.stat-card-icon,
+	.stat-card-icon-blue,
+	.stat-card-icon-indigo,
+	.stat-card-icon-purple,
+	.stat-card-icon-green,
+	.stat-card-icon-orange {
+		@apply w-6 h-6 text-[#171717] dark:text-[#ededed];
 	}
 
 	/* Features Grid */
@@ -681,11 +703,18 @@ label {
 	}
 
 	.feature-card {
-		@apply bg-white rounded-xl border border-gray-200 p-6 dark:bg-[#222222] dark:border-[#424242] hover:border-blue-300 dark:hover:border-blue-600 transition-colors;
+		@apply rounded-lg p-6 transition-shadow;
+		background: var(--ds-surface);
+		box-shadow: var(--ds-shadow-card);
+	}
+	.feature-card:hover {
+		box-shadow: var(--ds-shadow-card-hover);
 	}
 
 	.feature-card-title {
-		@apply text-lg font-semibold text-gray-900 mb-4 dark:text-[#e5e5e5];
+		@apply text-base font-medium mb-4;
+		color: var(--ds-fg);
+		letter-spacing: -0.32px;
 	}
 
 	.feature-list {

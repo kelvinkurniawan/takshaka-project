@@ -150,7 +150,7 @@ export default function DashboardClient({
 												className="flex-1 flex flex-col items-center gap-1"
 											>
 												<div
-													className="w-full bg-gradient-to-t from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 rounded-t transition-colors"
+													className="w-full bg-[#171717] dark:bg-[#ededed] hover:opacity-70 rounded-t transition-opacity"
 													style={{
 														height: Math.max(
 															4,
@@ -216,7 +216,7 @@ export default function DashboardClient({
 										<Link
 											href="/app/audit/login-logs"
 											prefetch={false}
-											className="inline-block mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+											className="inline-block mt-2 text-sm text-[#0072f5] hover:underline"
 										>
 											Lihat semua login →
 										</Link>
@@ -238,7 +238,7 @@ export default function DashboardClient({
 					href="/app/content/create"
 					className="feature-card flex items-center gap-4"
 				>
-					<FileText className="w-6 h-6 text-blue-600" />
+					<FileText className="w-6 h-6 text-[#171717] dark:text-[#ededed]" />
 					<div>
 						<div className="feature-card-title">Create Content</div>
 						<div className="text-muted text-sm">
@@ -251,7 +251,7 @@ export default function DashboardClient({
 					href="/app/categories"
 					className="feature-card flex items-center gap-4"
 				>
-					<Database className="w-6 h-6 text-indigo-600" />
+					<Database className="w-6 h-6 text-[#171717] dark:text-[#ededed]" />
 					<div>
 						<div className="feature-card-title">Manage Categories</div>
 						<div className="text-muted text-sm">Tambahkan / edit kategori</div>
@@ -259,7 +259,7 @@ export default function DashboardClient({
 				</a>
 
 				<a href="/app/users" className="feature-card flex items-center gap-4">
-					<Users className="w-6 h-6 text-purple-600" />
+					<Users className="w-6 h-6 text-[#171717] dark:text-[#ededed]" />
 					<div>
 						<div className="feature-card-title">Manage Users</div>
 						<div className="text-muted text-sm">Lihat dan kelola user</div>
@@ -270,7 +270,7 @@ export default function DashboardClient({
 					href="/app/audit/login-logs"
 					className="feature-card flex items-center gap-4"
 				>
-					<LogIn className="w-6 h-6 text-orange-600" />
+					<LogIn className="w-6 h-6 text-[#171717] dark:text-[#ededed]" />
 					<div>
 						<div className="feature-card-title">Login Audit Log</div>
 						<div className="text-muted text-sm">

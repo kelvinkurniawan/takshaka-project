@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
 
 interface ValidationErrors {
@@ -121,144 +120,153 @@ export default function SecureAccessPage() {
 		}
 	};
 
-	return (
-		<div className="relative h-screen flex items-center justify-center overflow-hidden">
-			{/* background image + overlay to mirror homepage hero */}
-			<div className="absolute inset-0">
-				<Image
-					src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80"
-					alt="Background"
-					fill
-					className="object-cover"
-					priority
-				/>
-			</div>
-			<div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40"></div>
+	// Geist input: white surface, shadow-as-border, blue focus ring (design.md)
+	const inputBase =
+		"w-full pl-10 pr-4 py-2.5 rounded-md bg-white text-[#171717] text-sm placeholder-[#808080] transition duration-150 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
 
-			<div className="relative z-10 max-w-md w-full space-y-8 px-8 sm:px-6 lg:px-8 text-white py-8 rounded-lg bg-white/5 backdrop-blur-md border border-white/10">
-				{/* Header */}
-				<div className="text-center space-y-3">
-					<img
-						src="/images/logo.png"
-						alt="Logo"
-						className="mx-auto w-60 h-auto"
-					/>
+	return (
+		<div
+			className="min-h-screen flex items-center justify-center bg-white px-4"
+			style={{
+				fontFamily:
+					'"Geist", Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif',
+			}}
+		>
+			<div className="w-full max-w-sm">
+				{/* Logo */}
+				<div className="flex justify-center mb-8">
+					<img src="/images/logo.png" alt="Logo" className="w-44 h-auto" />
 				</div>
 
-				{/* Form */}
-				<form className="space-y-5" onSubmit={handleSubmit}>
-					{/* Error Alert */}
-					{error && (
-						<div className="flex gap-3 rounded-lg bg-red-500/10 border border-red-500/30 p-4">
-							<AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-							<div className="text-sm font-medium text-red-300">{error}</div>
-						</div>
-					)}
-
-					{/* Email Input */}
-					<div className="group">
-						<label
-							htmlFor="email"
-							className="block text-sm font-medium text-white/90 mb-2"
-						>
-							Email
-						</label>
-						<div className="relative">
-							<Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/70 group-focus-within:text-blue-400 transition" />
-							<input
-								id="email"
-								name="email"
-								type="email"
-								autoComplete="email"
-								className={`w-full pl-10 pr-4 py-3 bg-black/50 rounded-lg text-white placeholder-white/60 transition duration-200 focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-									errors.email && touched.email
-										? "border border-red-500 focus:border-red-600 focus:ring-red-500/20"
-										: "border border-white/20 focus:border-blue-500 focus:ring-blue-500/20 hover:border-white/40"
-								}`}
-								placeholder="nama@example.com"
-								value={email}
-								onChange={handleChange}
-								onBlur={handleBlur}
-								disabled={isLoading}
-							/>
-						</div>
-						{errors.email && touched.email && (
-							<p className="mt-1 text-xs text-red-400">{errors.email}</p>
-						)}
-					</div>
-
-					{/* Password Input */}
-					<div className="group">
-						<label
-							htmlFor="password"
-							className="block text-sm font-medium text-white/90 mb-2"
-						>
-							Password
-						</label>
-						<div className="relative">
-							<Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/70 group-focus-within:text-blue-400 transition" />
-							<input
-								id="password"
-								name="password"
-								type="password"
-								autoComplete="current-password"
-								className={`w-full pl-10 pr-4 py-3 bg-black/50 rounded-lg text-white placeholder-white/60 transition duration-200 focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-									errors.password && touched.password
-										? "border border-red-500 focus:border-red-600 focus:ring-red-500/20"
-										: "border border-white/20 focus:border-blue-500 focus:ring-blue-500/20 hover:border-white/40"
-								}`}
-								placeholder="••••••••"
-								value={password}
-								onChange={handleChange}
-								onBlur={handleBlur}
-								disabled={isLoading}
-							/>
-						</div>
-						{errors.password && touched.password && (
-							<p className="mt-1 text-xs text-red-400">{errors.password}</p>
-						)}
-					</div>
-
-					{/* Submit Button */}
-					<button
-						type="submit"
-						disabled={isLoading}
-						className="w-full py-3 px-4 bg-black text-white font-semibold rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg disabled:hover:shadow-blue-500/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+				{/* Card — shadow-as-border, no CSS border */}
+				<div
+					className="rounded-lg bg-white p-8"
+					style={{ boxShadow: "var(--ds-shadow-card)" }}
+				>
+					<h1
+						className="text-2xl font-semibold text-[#171717] text-center"
+						style={{ letterSpacing: "-0.96px" }}
 					>
-						{isLoading ? (
-							<>
-								<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-								Melakukan login...
-							</>
-						) : (
-							<>
-								Login
-								<ArrowRight className="w-4 h-4" />
-							</>
+						Sign in
+					</h1>
+					<p className="text-sm text-[#4d4d4d] text-center mt-1 mb-6">
+						Masuk untuk mengelola Takshaka CMS
+					</p>
+
+					<form className="space-y-4" onSubmit={handleSubmit}>
+						{/* Error Alert */}
+						{error && (
+							<div className="flex gap-3 rounded-md bg-[#fef2f2] p-3 shadow-[0_0_0_1px_rgba(220,38,38,0.2)]">
+								<AlertCircle className="w-5 h-5 text-[#dc2626] flex-shrink-0 mt-0.5" />
+								<div className="text-sm font-medium text-[#b91c1c]">{error}</div>
+							</div>
 						)}
-					</button>
-				</form>
+
+						{/* Email Input */}
+						<div className="group">
+							<label
+								htmlFor="email"
+								className="block text-sm font-medium text-[#171717] mb-2"
+							>
+								Email
+							</label>
+							<div className="relative">
+								<Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#808080] group-focus-within:text-[#0072f5] transition" />
+								<input
+									id="email"
+									name="email"
+									type="email"
+									autoComplete="email"
+									className={`${inputBase} ${
+										errors.email && touched.email
+											? "shadow-[0_0_0_1px_rgba(220,38,38,0.5)] focus:shadow-[0_0_0_2px_rgba(220,38,38,0.5)]"
+											: "shadow-[0_0_0_1px_rgba(0,0,0,0.1)] focus:shadow-[0_0_0_2px_hsla(212,100%,48%,1)]"
+									}`}
+									placeholder="nama@example.com"
+									value={email}
+									onChange={handleChange}
+									onBlur={handleBlur}
+									disabled={isLoading}
+								/>
+							</div>
+							{errors.email && touched.email && (
+								<p className="mt-1 text-xs text-[#dc2626]">{errors.email}</p>
+							)}
+						</div>
+
+						{/* Password Input */}
+						<div className="group">
+							<label
+								htmlFor="password"
+								className="block text-sm font-medium text-[#171717] mb-2"
+							>
+								Password
+							</label>
+							<div className="relative">
+								<Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#808080] group-focus-within:text-[#0072f5] transition" />
+								<input
+									id="password"
+									name="password"
+									type="password"
+									autoComplete="current-password"
+									className={`${inputBase} ${
+										errors.password && touched.password
+											? "shadow-[0_0_0_1px_rgba(220,38,38,0.5)] focus:shadow-[0_0_0_2px_rgba(220,38,38,0.5)]"
+											: "shadow-[0_0_0_1px_rgba(0,0,0,0.1)] focus:shadow-[0_0_0_2px_hsla(212,100%,48%,1)]"
+									}`}
+									placeholder="••••••••"
+									value={password}
+									onChange={handleChange}
+									onBlur={handleBlur}
+									disabled={isLoading}
+								/>
+							</div>
+							{errors.password && touched.password && (
+								<p className="mt-1 text-xs text-[#dc2626]">{errors.password}</p>
+							)}
+						</div>
+
+						{/* Submit — dark primary CTA, 6px radius (design.md) */}
+						<button
+							type="submit"
+							disabled={isLoading}
+							className="w-full py-2.5 px-4 bg-[#171717] text-white text-sm font-medium rounded-md transition duration-150 flex items-center justify-center gap-2 hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:shadow-[0_0_0_2px_#fff,0_0_0_4px_hsla(212,100%,48%,1)]"
+						>
+							{isLoading ? (
+								<>
+									<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+									Melakukan login...
+								</>
+							) : (
+								<>
+									Login
+									<ArrowRight className="w-4 h-4" />
+								</>
+							)}
+						</button>
+					</form>
+				</div>
 
 				{/* Footer */}
-				<div className="space-y-3 text-center">
-					<p className="text-xs text-white/50">
+				<div className="space-y-3 text-center mt-6">
+					<p className="text-xs text-[#808080]">
 						This site is protected by reCAPTCHA and the Google{" "}
 						<a
 							href="https://policies.google.com/privacy"
-							className="underline hover:text-white/70 transition"
+							className="text-[#0072f5] hover:underline"
 						>
 							Privacy Policy
 						</a>{" "}
 						and{" "}
 						<a
 							href="https://policies.google.com/terms"
-							className="underline hover:text-white/70 transition"
+							className="text-[#0072f5] hover:underline"
 						>
 							Terms of Service
 						</a>{" "}
 						apply.
 					</p>
-					<p className="text-xs text-white/40">
+					<p className="text-xs text-[#a1a1a1]">
 						© 2026 Takshaka. Semua hak terlindungi.
 					</p>
 				</div>
