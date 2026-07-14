@@ -9,11 +9,13 @@ import { revalidatePath as nextRevalidatePath } from "next/cache";
  * Page paths that need revalidation
  * Maps page slugs to their routes
  */
+// ponytail: route groups like (public) are NOT part of the URL — paths must be the real URL
 const PAGE_PATH_MAP: Record<string, string[]> = {
 	home: ["/"],
-	"prestige-events": ["/(public)/prestige-event"],
-	"signature-voyage": ["/(public)/signature-voyage"],
-	"our-inspiration": ["/(public)/our-inspiration"],
+	"prestige-events": ["/prestige-event"],
+	"signature-voyage": ["/signature-voyage"],
+	"our-inspiration": ["/our-inspiration"],
+	"curated-experience": ["/curated-experiences"],
 };
 
 /**

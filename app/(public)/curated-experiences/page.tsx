@@ -110,14 +110,25 @@ export default async function CuratedExperiencePage() {
 					),
 				);
 
-			// Map categoryId to categoryName for each article
-			const articlesWithCategories = articles.map((article) => {
-				const category = allCategories.find((c) => c.id === article.categoryId);
-				return {
-					...article,
-					categoryName: category?.name || "Experience",
-				};
-			});
+			// Map categoryId to categoryName + limit to 4 items per category
+			const perCategoryCount: Record<number, number> = {};
+			const articlesWithCategories = articles
+				.map((article) => {
+					const category = allCategories.find(
+						(c) => c.id === article.categoryId,
+					);
+					return {
+						...article,
+						categoryName: category?.name || "Experience",
+					};
+				})
+				.filter((article) => {
+					const catId = article.categoryId ?? 0;
+					const count = perCategoryCount[catId] ?? 0;
+					if (count >= 4) return false;
+					perCategoryCount[catId] = count + 1;
+					return true;
+				});
 
 			curatedExperienceSections.pickYourChoose.items = articlesWithCategories;
 			curatedExperienceSections.pickYourChoose.categories = allCategories;
