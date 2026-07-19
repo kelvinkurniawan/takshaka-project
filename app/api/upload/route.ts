@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getDB } from "@/lib/db";
 import { mediaGallery } from "@/lib/schema";
 import { getSessionUserId } from "@/lib/session";
+import crypto from "crypto";
 
 export const runtime = "nodejs";
 
@@ -19,10 +20,30 @@ const s3Client = new S3Client({
 
 // Validation schema
 const presignedSchema = z.object({
-	fileName: z.string().min(1),
-	fileSize: z.number().min(1),
-	fileType: z.string().min(1),
+	fileName: z.string().min(1).max(255),
+	fileSize: z.number().int().positive(),
+	fileType: z.enum([
+		"image/jpeg",
+		"image/png",
+		"image/webp",
+		"image/gif",
+		"video/mp4",
+		"video/webm",
+	]),
 });
+
+const uploadMetadataSchema = presignedSchema.extend({
+	s3Key: z.string().min(1),
+});
+
+const FILE_TYPES = {
+	"image/jpeg": { type: "image", extension: "jpg" },
+	"image/png": { type: "image", extension: "png" },
+	"image/webp": { type: "image", extension: "webp" },
+	"image/gif": { type: "image", extension: "gif" },
+	"video/mp4": { type: "video", extension: "mp4" },
+	"video/webm": { type: "video", extension: "webm" },
+} as const;
 
 // Max file sizes (in bytes)
 const MAX_FILE_SIZES = {
@@ -78,11 +99,8 @@ export async function GET(request: Request) {
 			);
 		}
 
-		// Auto-detect media type
-		let type = "image";
-		if (fileType.startsWith("video/")) {
-			type = "video";
-		}
+		const fileDetails = FILE_TYPES[validatedInput.data.fileType];
+		const type = fileDetails.type;
 
 		// Validate file size
 		const maxSize = MAX_FILE_SIZES[type as keyof typeof MAX_FILE_SIZES];
@@ -95,18 +113,15 @@ export async function GET(request: Request) {
 		}
 
 		// Generate unique filename
-		const timestamp = Date.now();
-		const random = Math.random().toString(36).substring(2, 8);
-		const ext = fileName.split(".").pop();
-		const s3Key = `${type}s/${timestamp}-${random}.${ext}`;
+		const s3Key = `${type}s/${Date.now()}-${crypto.randomBytes(16).toString("hex")}.${fileDetails.extension}`;
 
 		// Generate presigned URL valid for 15 minutes
-		// Note: Don't include ContentType in the command to avoid signature conflicts
 		const presignedUrl = await getSignedUrl(
 			s3Client,
 			new PutObjectCommand({
 				Bucket: process.env.R2_BUCKET_NAME || "",
 				Key: s3Key,
+				ContentType: validatedInput.data.fileType,
 			}),
 			{ expiresIn: 900 }, // 15 minutes
 		);
@@ -139,25 +154,35 @@ export async function POST(request: Request) {
 			return Response.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const body = await request.json();
-		const { publicUrl, s3Key, type, fileName, fileSize, fileType } = body;
-
-		if (!publicUrl || !s3Key) {
+		const validatedInput = uploadMetadataSchema.safeParse(await request.json());
+		if (!validatedInput.success) {
 			return Response.json(
-				{ error: "Missing publicUrl or s3Key" },
+				{ error: "Invalid upload metadata", details: validatedInput.error.issues },
 				{ status: 400 },
 			);
 		}
+
+		const { fileName, fileSize, fileType, s3Key } = validatedInput.data;
+		const fileDetails = FILE_TYPES[fileType];
+		const maxSize = MAX_FILE_SIZES[fileDetails.type];
+		const keyPattern = new RegExp(
+			`^${fileDetails.type}s/\\d+-[a-f0-9]{32}\\.${fileDetails.extension}$`,
+		);
+		if (fileSize > maxSize || !keyPattern.test(s3Key)) {
+			return Response.json({ error: "Invalid upload metadata" }, { status: 400 });
+		}
+
+		const publicUrl = `${process.env.R2_PUBLIC_URL?.replace(/\/$/, "")}/${s3Key}`;
 
 		// Save media metadata to database
 		const db = getDB(process.env);
 		const result = await db.insert(mediaGallery).values({
 			filename: s3Key,
 			url: publicUrl,
-			type: type || "image",
-			originalName: fileName || s3Key,
-			fileSize: fileSize || 0,
-			mimeType: fileType || "application/octet-stream",
+			type: fileDetails.type,
+			originalName: fileName,
+			fileSize,
+			mimeType: fileType,
 			createdBy: userId,
 			createdAt: new Date(),
 		});

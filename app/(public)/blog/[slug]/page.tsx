@@ -5,6 +5,7 @@ import HeroNavigation from "@/components/sections/HeroNavigation";
 import { getDB } from "@/lib/db";
 import { contents } from "@/lib/schema";
 import { eq, isNull } from "drizzle-orm";
+import { sanitizeRichText } from "@/lib/sanitize-html";
 
 interface Content {
 	id: number;
@@ -139,7 +140,7 @@ export default async function BlogDetailPage({
 				{/* Content */}
 				<div
 					className="prose prose-lg max-w-none mb-12"
-					dangerouslySetInnerHTML={{ __html: content.content }}
+					dangerouslySetInnerHTML={{ __html: sanitizeRichText(content.content) }}
 				/>
 			</article>
 		</div>

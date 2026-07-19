@@ -9,6 +9,7 @@ import {
 	getClientIP,
 } from "@/lib/rate-limiter-supabase";
 import { verifyCaptchaToken } from "@/lib/captcha";
+import { createSession, sessionCookieHeader } from "@/lib/session";
 
 // Use nodejs runtime to support PostgreSQL database
 export const runtime = "nodejs";
@@ -153,15 +154,7 @@ export async function POST(request: Request) {
 				userAgent,
 			);
 
-			// Calculate cookie expiration
-			const maxAge = 24 * 60 * 60; // 24 hours in seconds
-			const isProduction = process.env.NODE_ENV === "production";
-
-			// Build Set-Cookie header
-			const cookieValue = String(user.id);
-			const setCookieHeader = `auth_session=${cookieValue}; Path=/; Max-Age=${maxAge}; HttpOnly; SameSite=Lax${
-				isProduction ? "; Secure" : ""
-			}`;
+			const sessionToken = await createSession(user.id);
 
 			// Clear rate limit counters on successful login
 			await Promise.all([
@@ -182,7 +175,7 @@ export async function POST(request: Request) {
 					status: 200,
 					headers: {
 						"Content-Type": "application/json",
-						"Set-Cookie": setCookieHeader,
+						"Set-Cookie": sessionCookieHeader(sessionToken),
 					},
 				},
 			);

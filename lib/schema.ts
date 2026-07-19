@@ -29,6 +29,24 @@ export const users = pgTable(
 	},
 );
 
+export const sessions = pgTable(
+	"sessions",
+	{
+		id: serial("id").primaryKey(),
+		tokenHash: text("token_hash").notNull(),
+		userId: integer("user_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+		expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
+		createdAt: timestamp("created_at", { mode: "date" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+	},
+	(table) => ({
+		tokenHashIdx: uniqueIndex("sessions_token_hash_idx").on(table.tokenHash),
+	}),
+);
+
 export const categories = pgTable(
 	"categories",
 	{

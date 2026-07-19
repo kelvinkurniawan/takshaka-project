@@ -52,7 +52,7 @@ export default function DashboardClient({
 	return (
 		<>
 			{/* Welcome Card */}
-			<div className="welcome-card">
+			<div className="welcome-card mb-6">
 				<div className="welcome-card-content">
 					<div className="welcome-card-icon">
 						<LayoutDashboard className="welcome-card-icon-svg" />

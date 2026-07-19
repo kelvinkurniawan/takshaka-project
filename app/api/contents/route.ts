@@ -4,6 +4,7 @@ import { isNull, eq, desc } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuth } from "@/lib/rbac";
 import { logAudit, extractMetadata } from "@/lib/audit-log";
+import { sanitizeRichText } from "@/lib/sanitize-html";
 
 export const dynamic = "force-dynamic";
 
@@ -94,6 +95,7 @@ export async function POST(request: Request) {
 			.insert(contents)
 			.values({
 				...validatedData,
+				content: sanitizeRichText(validatedData.content),
 				type: validatedData.type || "article",
 				createdAt: now,
 				updatedAt: now,

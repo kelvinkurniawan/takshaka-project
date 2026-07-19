@@ -1,10 +1,9 @@
 import PublicHeader from "@/components/PublicHeader";
+import RouteProgress from "@/components/RouteProgress";
 
 import {
 	createRequestDB,
-	getSettingsFromDB,
 	getPageSectionsFromDB,
-	type Page,
 	getFooterSections,
 	transformPageSectionsWithDynamicTabs,
 	getSocialMediaLinks,
@@ -42,13 +41,14 @@ export default async function Home() {
 
 	// Pass data to client component for tracking and rendering
 	return (
-		<>
+		<div className="page-transition">
+			<RouteProgress />
 			<PublicHeader />
 			<HomePageClient
 				homeSections={homeSections}
 				footerSections={getFooterSections()}
 				socialLinks={await getSocialMediaLinks()}
 			/>
-		</>
+		</div>
 	);
 }

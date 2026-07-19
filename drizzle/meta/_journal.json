@@ -50,6 +50,13 @@
       "when": 1739920800000,
       "tag": "0012_add_page_sections",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1784365200000,
+      "tag": "0018_add_sessions",
+      "breakpoints": true
     }
   ]
 }

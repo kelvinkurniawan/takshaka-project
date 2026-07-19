@@ -1,9 +1,9 @@
 import { getSessionUserId } from "@/lib/session";
+import { hashPassword, verifyPassword } from "@/lib/auth";
 import { getDB } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import crypto from "crypto";
 
 export const runtime = "nodejs";
 
@@ -16,10 +16,6 @@ const changePasswordSchema = z.object({
 		.regex(/[0-9]/, "Password must contain number"),
 	confirmPassword: z.string(),
 });
-
-function hashPassword(password: string): string {
-	return crypto.createHash("sha256").update(password).digest("hex");
-}
 
 export async function POST(request: Request) {
 	try {
@@ -56,8 +52,7 @@ export async function POST(request: Request) {
 		}
 
 		// Verify current password
-		const hashedCurrentPassword = hashPassword(validatedData.currentPassword);
-		if (user[0].password !== hashedCurrentPassword) {
+		if (!verifyPassword(validatedData.currentPassword, user[0].password)) {
 			return Response.json(
 				{ error: "Current password is incorrect" },
 				{ status: 400 },

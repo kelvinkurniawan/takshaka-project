@@ -110,6 +110,7 @@ export default function FileUploadInput({
 			const fileBuffer = await file.arrayBuffer();
 			const uploadResponse = await apiFetch(presignedUrl, {
 				method: "PUT",
+				headers: { "Content-Type": file.type },
 				body: new Uint8Array(fileBuffer),
 				signal: controller.signal,
 			});

@@ -57,7 +57,7 @@ export async function middleware(request: NextRequest) {
 	if (isAppRoute && !isAppApi && !isLoginPage) {
 		const sessionValue = request.cookies.get(SESSION_COOKIE_NAME)?.value;
 
-		if (!sessionValue || Number.isNaN(parseInt(sessionValue, 10))) {
+		if (!sessionValue || !/^[a-f0-9]{64}$/.test(sessionValue)) {
 			const loginUrl = new URL("/app/secure-access", request.url);
 			return NextResponse.redirect(loginUrl);
 		}

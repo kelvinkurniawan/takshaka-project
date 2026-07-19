@@ -16,6 +16,7 @@ import {
 } from "@/lib/schema";
 import { eq, isNull, and, inArray } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+import { sanitizeRichText } from "@/lib/sanitize-html";
 
 type Database = NodePgDatabase<any>;
 
@@ -640,7 +641,7 @@ export function ColumnContentRenderer({ column }: { column: ColumnContent }) {
 			return (
 				<div
 					className="prose prose-sm max-w-none"
-					dangerouslySetInnerHTML={{ __html: column.content }}
+					dangerouslySetInnerHTML={{ __html: sanitizeRichText(column.content) }}
 				/>
 			);
 
@@ -698,7 +699,7 @@ export function ColumnContentRenderer({ column }: { column: ColumnContent }) {
 			return (
 				<div
 					className="embed-container"
-					dangerouslySetInnerHTML={{ __html: column.content }}
+					dangerouslySetInnerHTML={{ __html: sanitizeRichText(column.content) }}
 				/>
 			);
 

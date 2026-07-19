@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuth } from "@/lib/rbac";
 import { logAudit, detectChanges, extractMetadata } from "@/lib/audit-log";
+import { sanitizeRichText } from "@/lib/sanitize-html";
 
 export const dynamic = "force-dynamic";
 
@@ -121,6 +122,9 @@ export async function PUT(
 			.update(contents)
 			.set({
 				...validatedData,
+				...(validatedData.content
+					? { content: sanitizeRichText(validatedData.content) }
+					: {}),
 				updatedAt,
 			})
 			.where(eq(contents.id, contentId))

@@ -1,6 +1,6 @@
 import { getDB } from "@/lib/db";
-import { pageViews, visitors, analyticsDaily } from "@/lib/schema";
-import { sql, count, eq } from "drizzle-orm";
+import { pageViews, analyticsDaily } from "@/lib/schema";
+import { sql, count } from "drizzle-orm";
 
 export const runtime = "nodejs";
 
@@ -11,11 +11,11 @@ export const runtime = "nodejs";
  */
 export async function GET(request: Request) {
 	try {
-		// Verify cron secret (optional security)
+		// Cron must be configured with a secret in every environment.
 		const authHeader = request.headers.get("authorization");
 		const cronSecret = process.env.CRON_SECRET;
 
-		if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+		if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
 			return Response.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
@@ -30,11 +30,9 @@ export async function GET(request: Request) {
 
 		// Get all page slugs that have views in the last 24 hours
 		const pageSlugResults = await db
-			.select({ pageSlug: pageViews.pageSlug })
+			.selectDistinct({ pageSlug: pageViews.pageSlug })
 			.from(pageViews)
-			.where(sql`DATE(${pageViews.createdAt}) = ${yesterdayStr}`)
-			.groupBy(pageViews.pageSlug)
-			.distinct();
+			.where(sql`DATE(${pageViews.createdAt}) = ${yesterdayStr}`);
 
 		const pageSlugList = pageSlugResults.map((r: any) => r.pageSlug);
 
